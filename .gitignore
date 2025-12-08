@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
-vendor/
+vendor/*
+!vendor/autoload.php
+!vendor/aws/
+!vendor/guzzlehttp/
 __pycache__/
 *.pyc
 *.pyo
@@ -72,5 +75,11 @@ out/
 # Configuration
 config/database.php
 config/local.php
-config/r2-config.php
 
+# Uploads (local test files)
+uploads/content/*
+uploads/profiles/*
+uploads/thumbnails/*
+!uploads/content/.gitkeep
+!uploads/profiles/.gitkeep
+!uploads/thumbnails/.gitkeep
