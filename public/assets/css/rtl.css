@@ -1,0 +1,252 @@
+/**
+ * RTL (Right-to-Left) Support
+ * Tsharok LMS
+ */
+
+/* RTL Direction Fix */
+[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+}
+
+/* RTL Margins and Paddings */
+[dir="rtl"] .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+[dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+[dir="rtl"] .mr-3 { margin-right: 0; margin-left: 0.75rem; }
+[dir="rtl"] .ml-3 { margin-left: 0; margin-right: 0.75rem; }
+[dir="rtl"] .mr-4 { margin-right: 0; margin-left: 1rem; }
+[dir="rtl"] .ml-4 { margin-left: 0; margin-right: 1rem; }
+[dir="rtl"] .mr-6 { margin-right: 0; margin-left: 1.5rem; }
+[dir="rtl"] .ml-6 { margin-left: 0; margin-right: 1.5rem; }
+[dir="rtl"] .mr-8 { margin-right: 0; margin-left: 2rem; }
+[dir="rtl"] .ml-8 { margin-left: 0; margin-right: 2rem; }
+
+[dir="rtl"] .pr-2 { padding-right: 0; padding-left: 0.5rem; }
+[dir="rtl"] .pl-2 { padding-left: 0; padding-right: 0.5rem; }
+[dir="rtl"] .pr-3 { padding-right: 0; padding-left: 0.75rem; }
+[dir="rtl"] .pl-3 { padding-left: 0; padding-right: 0.75rem; }
+[dir="rtl"] .pr-4 { padding-right: 0; padding-left: 1rem; }
+[dir="rtl"] .pl-4 { padding-left: 0; padding-right: 1rem; }
+[dir="rtl"] .pr-12 { padding-right: 0; padding-left: 3rem; }
+[dir="rtl"] .pl-12 { padding-left: 0; padding-right: 3rem; }
+[dir="rtl"] .pr-14 { padding-right: 0; padding-left: 3.5rem; }
+[dir="rtl"] .pl-14 { padding-left: 0; padding-right: 3.5rem; }
+
+/* RTL Positioning */
+[dir="rtl"] .left-0 { left: auto; right: 0; }
+[dir="rtl"] .right-0 { right: auto; left: 0; }
+[dir="rtl"] .left-3 { left: auto; right: 0.75rem; }
+[dir="rtl"] .right-3 { right: auto; left: 0.75rem; }
+[dir="rtl"] .left-4 { left: auto; right: 1rem; }
+[dir="rtl"] .right-4 { right: auto; left: 1rem; }
+[dir="rtl"] .left-5 { left: auto; right: 1.25rem; }
+[dir="rtl"] .right-5 { right: auto; left: 1.25rem; }
+
+/* RTL Borders */
+[dir="rtl"] .border-l { border-left: 0; border-right-width: 1px; }
+[dir="rtl"] .border-r { border-right: 0; border-left-width: 1px; }
+[dir="rtl"] .border-l-2 { border-left: 0; border-right-width: 2px; }
+[dir="rtl"] .border-r-2 { border-right: 0; border-left-width: 2px; }
+[dir="rtl"] .border-l-4 { border-left: 0; border-right-width: 4px; }
+[dir="rtl"] .border-r-4 { border-right: 0; border-left-width: 4px; }
+
+/* RTL Rounded Corners */
+[dir="rtl"] .rounded-l { border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0.25rem; border-bottom-right-radius: 0.25rem; }
+[dir="rtl"] .rounded-r { border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0.25rem; border-bottom-left-radius: 0.25rem; }
+[dir="rtl"] .rounded-tl { border-top-left-radius: 0; border-top-right-radius: 0.25rem; }
+[dir="rtl"] .rounded-tr { border-top-right-radius: 0; border-top-left-radius: 0.25rem; }
+[dir="rtl"] .rounded-bl { border-bottom-left-radius: 0; border-bottom-right-radius: 0.25rem; }
+[dir="rtl"] .rounded-br { border-bottom-right-radius: 0; border-bottom-left-radius: 0.25rem; }
+
+/* RTL Flexbox */
+[dir="rtl"] .flex-row { flex-direction: row-reverse; }
+[dir="rtl"] .flex-row-reverse { flex-direction: row; }
+
+/* RTL Text Alignment */
+[dir="rtl"] .text-left { text-align: right; }
+[dir="rtl"] .text-right { text-align: left; }
+
+/* RTL Transforms */
+[dir="rtl"] .translate-x-full { transform: translateX(-100%); }
+[dir="rtl"] .-translate-x-full { transform: translateX(100%); }
+[dir="rtl"] .translate-x-1\/2 { transform: translateX(-50%); }
+[dir="rtl"] .-translate-x-1\/2 { transform: translateX(50%); }
+
+/* RTL Specific Icon Flips */
+[dir="rtl"] .fa-chevron-right::before { content: "\f053"; } /* becomes left */
+[dir="rtl"] .fa-chevron-left::before { content: "\f054"; } /* becomes right */
+[dir="rtl"] .fa-angle-right::before { content: "\f104"; } /* becomes left */
+[dir="rtl"] .fa-angle-left::before { content: "\f105"; } /* becomes right */
+[dir="rtl"] .fa-arrow-right::before { content: "\f060"; } /* becomes left */
+[dir="rtl"] .fa-arrow-left::before { content: "\f061"; } /* becomes right */
+
+/* RTL Input Icons */
+[dir="rtl"] input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+/* RTL Dropdown */
+[dir="rtl"] .dropdown-menu {
+    right: auto;
+    left: 0;
+}
+
+/* RTL Modal */
+[dir="rtl"] .modal {
+    text-align: right;
+}
+
+/* RTL Toast/Notifications */
+[dir="rtl"] .toast-notification {
+    left: 1rem;
+    right: auto;
+}
+
+/* RTL Sidebar */
+[dir="rtl"] .sidebar {
+    left: auto;
+    right: 0;
+}
+
+/* RTL List Styles */
+[dir="rtl"] ul, [dir="rtl"] ol {
+    padding-right: 1.5rem;
+    padding-left: 0;
+}
+
+/* RTL Blockquote */
+[dir="rtl"] blockquote {
+    border-left: none;
+    border-right: 4px solid #4f46e5;
+    padding-left: 0;
+    padding-right: 1rem;
+}
+
+/* RTL Table */
+[dir="rtl"] table {
+    text-align: right;
+}
+
+[dir="rtl"] th:first-child,
+[dir="rtl"] td:first-child {
+    text-align: right;
+}
+
+/* RTL Animation Adjustments */
+@media (prefers-reduced-motion: no-preference) {
+    [dir="rtl"] .animate-slide-in-left {
+        animation: slideInRight 0.3s ease-out;
+    }
+    
+    [dir="rtl"] .animate-slide-in-right {
+        animation: slideInLeft 0.3s ease-out;
+    }
+}
+
+/* RTL Forms */
+[dir="rtl"] .form-check-input {
+    margin-left: 0.5rem;
+    margin-right: 0;
+}
+
+/* RTL Badge Position */
+[dir="rtl"] .badge-position {
+    right: auto;
+    left: -0.5rem;
+}
+
+/* RTL Progress Bar */
+[dir="rtl"] .progress-bar {
+    right: 0;
+    left: auto;
+}
+
+/* Custom RTL Classes */
+.rtl-flip {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .rtl-mirror {
+    transform: scaleX(-1);
+}
+
+/* RTL Grid Gap Fix */
+[dir="rtl"] .gap-reverse {
+    gap: 0;
+}
+
+[dir="rtl"] .gap-reverse > * + * {
+    margin-right: 1rem;
+    margin-left: 0;
+}
+
+/* RTL Navigation */
+[dir="rtl"] .nav-item {
+    margin-left: 0;
+    margin-right: 2rem;
+}
+
+[dir="rtl"] .nav-item:last-child {
+    margin-right: 0;
+}
+
+/* Arabic Font Optimization */
+[dir="rtl"] body {
+    font-family: 'Tajawal', 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* RTL Number Formatting */
+[dir="rtl"] .ltr-numbers {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+/* RTL Code Blocks */
+[dir="rtl"] code, [dir="rtl"] pre {
+    direction: ltr;
+    text-align: left;
+}
+
+/* RTL Search Input */
+[dir="rtl"] input[type="search"] {
+    padding-right: 3rem;
+    padding-left: 3rem;
+}
+
+/* RTL Select Arrow */
+[dir="rtl"] select {
+    background-position: left 0.5rem center;
+    padding-left: 2.5rem;
+    padding-right: 0.75rem;
+}
+
+/* RTL Checkbox & Radio */
+[dir="rtl"] input[type="checkbox"],
+[dir="rtl"] input[type="radio"] {
+    margin-left: 0.5rem;
+    margin-right: 0;
+}
+
+/* RTL Float */
+[dir="rtl"] .float-left {
+    float: right;
+}
+
+[dir="rtl"] .float-right {
+    float: left;
+}
+
+/* RTL Clear */
+[dir="rtl"] .clear-left {
+    clear: right;
+}
+
+[dir="rtl"] .clear-right {
+    clear: left;
+}
+

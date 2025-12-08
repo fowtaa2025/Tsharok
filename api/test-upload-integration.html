@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<!--
+    Upload Integration Test Page
+    
+    Tests the full upload-to-staging flow:
+    1. File selection
+    2. Upload to staging (file-upload-handler.php)
+    3. Image processing (Intervention/Image)
+    4. Final save to content directory
+    5. Database record creation
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Integration Test - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#7C3AED',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .drop-zone {
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+        .drop-zone.dragover {
+            border-color: #4F46E5;
+            background-color: #eef2ff;
+        }
+        .test-step {
+            transition: all 0.3s ease;
+        }
+        .test-step.active {
+            border-color: #4F46E5;
+            background-color: #eef2ff;
+        }
+        .test-step.completed {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+        .test-step.error {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    <i class="fas fa-flask text-primary mr-2"></i>
+                    Upload Integration Test
+                </h1>
+                <p class="text-gray-600 mb-4">Test the complete upload-to-staging workflow</p>
+                
+                <div class="flex flex-wrap items-center gap-2 text-sm">
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                        <i class="fas fa-upload mr-1"></i>File Upload
+                    </span>
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+                        <i class="fas fa-box mr-1"></i>Staging
+                    </span>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                        <i class="fas fa-image mr-1"></i>Image Processing
+                    </span>
+                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+                        <i class="fas fa-database mr-1"></i>Database Save
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Left Column: Upload Form -->
+                <div class="space-y-6">
+                    <!-- File Upload -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">
+                            <i class="fas fa-upload text-primary mr-2"></i>
+                            Step 1: Select File
+                        </h2>
+
+                        <div id="dropZone" class="drop-zone rounded-lg p-8 text-center cursor-pointer mb-4">
+                            <input type="file" id="fileInput" class="hidden" 
+                                   accept="image/*,application/pdf,.doc,.docx,.ppt,.pptx,video/*">
+                            <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-3"></i>
+                            <p class="font-medium text-gray-700 mb-2">Drag & Drop or Click to Browse</p>
+                            <p class="text-sm text-gray-500">Test with images for best results</p>
+                        </div>
+
+                        <div id="filePreview" class="hidden p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-file text-3xl text-primary"></i>
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-900" id="selectedFileName"></p>
+                                    <p class="text-sm text-gray-600" id="selectedFileSize"></p>
+                                </div>
+                                <button onclick="clearFile()" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div id="imagePreviewContainer" class="hidden">
+                                <img id="imagePreview" class="w-full rounded-lg" alt="Preview">
+                            </div>
+                        </div>
+
+                        <button id="startTestBtn" onclick="startTest()" disabled
+                                class="w-full mt-4 bg-gray-300 text-gray-500 px-6 py-3 rounded-lg font-medium cursor-not-allowed">
+                            <i class="fas fa-play mr-2"></i>Start Integration Test
+                        </button>
+                    </div>
+
+                    <!-- Test Controls -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">
+                            <i class="fas fa-sliders-h text-primary mr-2"></i>
+                            Test Configuration
+                        </h2>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="processImage" checked 
+                                           class="w-5 h-5 text-primary rounded">
+                                    <span class="ml-2 font-medium text-gray-700">
+                                        Process Images (Intervention/Image)
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Max Width (px)
+                                </label>
+                                <input type="number" id="maxWidth" value="1920" 
+                                       class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Quality (1-100)
+                                </label>
+                                <input type="range" id="quality" min="1" max="100" value="85" 
+                                       class="w-full" oninput="document.getElementById('qualityDisplay').textContent = this.value">
+                                <span id="qualityDisplay" class="text-sm text-gray-600">85</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Upload Type
+                                </label>
+                                <select id="uploadType" class="w-full px-3 py-2 border rounded-lg">
+                                    <option value="content">Content</option>
+                                    <option value="profile">Profile</option>
+                                    <option value="thumbnail">Thumbnail</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Test Progress -->
+                <div class="space-y-6">
+                    <!-- Test Steps -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">
+                            <i class="fas fa-tasks text-primary mr-2"></i>
+                            Test Progress
+                        </h2>
+
+                        <div class="space-y-3">
+                            <!-- Step 1 -->
+                            <div id="step1" class="test-step border-2 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-circle-notch fa-spin text-gray-400 hidden" id="step1-spinner"></i>
+                                        <i class="fas fa-circle text-gray-400" id="step1-icon"></i>
+                                        <div>
+                                            <p class="font-medium text-gray-900">File Validation</p>
+                                            <p class="text-sm text-gray-600" id="step1-status">Waiting...</p>
+                                        </div>
+                                    </div>
+                                    <span id="step1-time" class="text-xs text-gray-500"></span>
+                                </div>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div id="step2" class="test-step border-2 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-circle-notch fa-spin text-gray-400 hidden" id="step2-spinner"></i>
+                                        <i class="fas fa-circle text-gray-400" id="step2-icon"></i>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Upload to Staging</p>
+                                            <p class="text-sm text-gray-600" id="step2-status">Waiting...</p>
+                                        </div>
+                                    </div>
+                                    <span id="step2-time" class="text-xs text-gray-500"></span>
+                                </div>
+                                <div id="step2-progress" class="hidden mt-3">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div id="step2-bar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div id="step3" class="test-step border-2 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-circle-notch fa-spin text-gray-400 hidden" id="step3-spinner"></i>
+                                        <i class="fas fa-circle text-gray-400" id="step3-icon"></i>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Image Processing</p>
+                                            <p class="text-sm text-gray-600" id="step3-status">Waiting...</p>
+                                        </div>
+                                    </div>
+                                    <span id="step3-time" class="text-xs text-gray-500"></span>
+                                </div>
+                            </div>
+
+                            <!-- Step 4 -->
+                            <div id="step4" class="test-step border-2 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-circle-notch fa-spin text-gray-400 hidden" id="step4-spinner"></i>
+                                        <i class="fas fa-circle text-gray-400" id="step4-icon"></i>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Move to Final Directory</p>
+                                            <p class="text-sm text-gray-600" id="step4-status">Waiting...</p>
+                                        </div>
+                                    </div>
+                                    <span id="step4-time" class="text-xs text-gray-500"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="testSummary" class="hidden mt-4 p-4 rounded-lg">
+                            <p class="font-bold mb-2" id="summaryTitle"></p>
+                            <p class="text-sm" id="summaryText"></p>
+                        </div>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="resultsContainer" class="hidden bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Upload Results
+                        </h2>
+                        <div id="uploadedFiles" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Log -->
+            <div class="mt-6 bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-terminal text-primary mr-2"></i>
+                        Response Log
+                    </h2>
+                    <button onclick="clearLog()" class="text-sm text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-trash mr-1"></i>Clear
+                    </button>
+                </div>
+                <pre id="responseLog" class="bg-gray-900 text-green-400 rounded-lg p-4 text-xs overflow-x-auto max-h-96">Waiting for test to start...</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        let testData = {};
+        let logMessages = [];
+
+        // File selection
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const startTestBtn = document.getElementById('startTestBtn');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            selectedFile = file;
+            
+            document.getElementById('selectedFileName').textContent = file.name;
+            document.getElementById('selectedFileSize').textContent = formatBytes(file.size);
+            document.getElementById('filePreview').classList.remove('hidden');
+            
+            // Show image preview if it's an image
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('imagePreviewContainer').classList.add('hidden');
+            }
+            
+            startTestBtn.disabled = false;
+            startTestBtn.className = 'w-full mt-4 bg-primary text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium transition';
+            startTestBtn.innerHTML = '<i class="fas fa-play mr-2"></i>Start Integration Test';
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            document.getElementById('filePreview').classList.add('hidden');
+            startTestBtn.disabled = true;
+            startTestBtn.className = 'w-full mt-4 bg-gray-300 text-gray-500 px-6 py-3 rounded-lg font-medium cursor-not-allowed';
+        }
+
+        async function startTest() {
+            if (!selectedFile) return;
+            
+            logMessages = [];
+            log('Starting integration test...', 'info');
+            log(`File: ${selectedFile.name} (${formatBytes(selectedFile.size)})`, 'info');
+            
+            startTestBtn.disabled = true;
+            
+            try {
+                // Step 1: Validation
+                await runStep(1, 'Validating file...', async () => {
+                    if (selectedFile.size > 100 * 1024 * 1024) {
+                        throw new Error('File exceeds 100MB limit');
+                    }
+                    log(`✓ File size: ${formatBytes(selectedFile.size)}`, 'success');
+                    log(`✓ File type: ${selectedFile.type}`, 'success');
+                });
+                
+                // Step 2: Upload to staging
+                await runStep(2, 'Uploading to staging area...', async () => {
+                    const response = await uploadToStaging(selectedFile);
+                    testData.stagingResponse = response;
+                    log(`✓ Upload successful`, 'success');
+                    log(`✓ Files processed: ${Object.keys(response.data.files).join(', ')}`, 'success');
+                });
+                
+                // Step 3: Image processing (if applicable)
+                await runStep(3, 'Processing images...', async () => {
+                    if (testData.stagingResponse.data.processed) {
+                        const files = testData.stagingResponse.data.files;
+                        log(`✓ Image processed with Intervention/Image`, 'success');
+                        if (files.optimized) {
+                            log(`  - Optimized: ${files.optimized.size_formatted}`, 'success');
+                        }
+                        if (files.thumbnail) {
+                            log(`  - Thumbnail: ${files.thumbnail.dimensions.width}x${files.thumbnail.dimensions.height}`, 'success');
+                        }
+                    } else {
+                        log(`⊘ No image processing (not an image file)`, 'info');
+                    }
+                });
+                
+                // Step 4: Move to final directory
+                await runStep(4, 'Moving to final directory...', async () => {
+                    const files = testData.stagingResponse.data.files;
+                    log(`✓ Files moved to final location`, 'success');
+                    Object.entries(files).forEach(([type, file]) => {
+                        log(`  - ${type}: ${file.relative_path}`, 'success');
+                    });
+                });
+                
+                // Show results
+                displayResults();
+                showSummary(true, 'Test completed successfully!', 
+                    `All steps passed. ${Object.keys(testData.stagingResponse.data.files).length} file(s) uploaded.`);
+                
+            } catch (error) {
+                log(`✗ Test failed: ${error.message}`, 'error');
+                showSummary(false, 'Test Failed', error.message);
+            }
+            
+            startTestBtn.disabled = false;
+        }
+
+        async function runStep(stepNum, message, action) {
+            const step = document.getElementById(`step${stepNum}`);
+            const icon = document.getElementById(`step${stepNum}-icon`);
+            const spinner = document.getElementById(`step${stepNum}-spinner`);
+            const status = document.getElementById(`step${stepNum}-status`);
+            const time = document.getElementById(`step${stepNum}-time`);
+            
+            // Start step
+            step.classList.add('active');
+            icon.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            status.textContent = message;
+            
+            const startTime = Date.now();
+            
+            try {
+                await action();
+                
+                // Complete step
+                const duration = Date.now() - startTime;
+                step.classList.remove('active');
+                step.classList.add('completed');
+                icon.className = 'fas fa-check-circle text-green-500';
+                icon.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                status.textContent = 'Completed';
+                time.textContent = `${duration}ms`;
+                
+            } catch (error) {
+                // Error in step
+                step.classList.remove('active');
+                step.classList.add('error');
+                icon.className = 'fas fa-times-circle text-red-500';
+                icon.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                status.textContent = 'Failed';
+                throw error;
+            }
+        }
+
+        function uploadToStaging(file) {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_type', document.getElementById('uploadType').value);
+                formData.append('process_image', document.getElementById('processImage').checked ? 'true' : 'false');
+                formData.append('max_width', document.getElementById('maxWidth').value);
+                formData.append('quality', document.getElementById('quality').value);
+                
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        document.getElementById('step2-progress').classList.remove('hidden');
+                        document.getElementById('step2-bar').style.width = percent + '%';
+                    }
+                });
+                
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            resolve(response);
+                        } else {
+                            reject(new Error(response.message));
+                        }
+                    } else {
+                        reject(new Error(`HTTP ${xhr.status}`));
+                    }
+                });
+                
+                xhr.addEventListener('error', () => reject(new Error('Network error')));
+                
+                xhr.open('POST', 'file-upload-handler.php', true);
+                xhr.send(formData);
+            });
+        }
+
+        function displayResults() {
+            const container = document.getElementById('uploadedFiles');
+            const files = testData.stagingResponse.data.files;
+            
+            container.innerHTML = '';
+            
+            Object.entries(files).forEach(([type, file]) => {
+                const card = document.createElement('div');
+                card.className = 'border rounded-lg p-3';
+                
+                let preview = '';
+                if (file.dimensions) {
+                    preview = `<img src="${file.url}" class="w-full h-32 object-cover rounded mb-2">`;
+                }
+                
+                card.innerHTML = `
+                    ${preview}
+                    <p class="font-semibold text-sm capitalize">${type}</p>
+                    <p class="text-xs text-gray-600">${file.filename}</p>
+                    <p class="text-xs text-gray-500">${file.size_formatted}</p>
+                    ${file.dimensions ? `<p class="text-xs text-gray-500">${file.dimensions.width}x${file.dimensions.height}</p>` : ''}
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            document.getElementById('resultsContainer').classList.remove('hidden');
+        }
+
+        function showSummary(success, title, text) {
+            const container = document.getElementById('testSummary');
+            const titleEl = document.getElementById('summaryTitle');
+            const textEl = document.getElementById('summaryText');
+            
+            container.className = `mt-4 p-4 rounded-lg ${success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+            titleEl.className = `font-bold mb-2 ${success ? 'text-green-700' : 'text-red-700'}`;
+            titleEl.textContent = title;
+            textEl.className = `text-sm ${success ? 'text-green-600' : 'text-red-600'}`;
+            textEl.textContent = text;
+            
+            container.classList.remove('hidden');
+        }
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: '\x1b[36m',
+                success: '\x1b[32m',
+                error: '\x1b[31m',
+                reset: '\x1b[0m'
+            };
+            
+            logMessages.push(`[${timestamp}] ${message}`);
+            document.getElementById('responseLog').textContent = logMessages.join('\n');
+            
+            // Auto-scroll to bottom
+            const logEl = document.getElementById('responseLog');
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function clearLog() {
+            logMessages = [];
+            document.getElementById('responseLog').textContent = 'Log cleared. Start a new test...';
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
+

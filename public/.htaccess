@@ -1,0 +1,96 @@
+# Apache Configuration for Tsharok LMS
+
+# Enable RewriteEngine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Force HTTPS (uncomment in production)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # API Routes - Redirect to parent api directory
+    RewriteRule ^api/register\.php$ ../api/register.php [L]
+    RewriteRule ^api/login\.php$ ../api/login.php [L]
+    RewriteRule ^api/logout\.php$ ../api/logout.php [L]
+    RewriteRule ^api/check-auth\.php$ ../api/check-auth.php [L]
+    RewriteRule ^api/verify-email\.php$ ../api/verify-email.php [L]
+    RewriteRule ^api/resend-verification\.php$ ../api/resend-verification.php [L]
+    RewriteRule ^api/forgot-password\.php$ ../api/forgot-password.php [L]
+    RewriteRule ^api/reset-password\.php$ ../api/reset-password.php [L]
+    RewriteRule ^api/courses\.php$ ../api/courses.php [L]
+    RewriteRule ^api/course-details\.php$ ../api/course-details.php [L]
+    RewriteRule ^api/enroll\.php$ ../api/enroll.php [L]
+    RewriteRule ^api/unenroll\.php$ ../api/unenroll.php [L]
+    RewriteRule ^api/my-courses\.php$ ../api/my-courses.php [L]
+    RewriteRule ^api/majors\.php$ ../api/majors.php [L]
+    RewriteRule ^api/(.*)$ ../api/$1 [L]
+
+    # Remove .html extension
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !\.(php|js|css|jpg|jpeg|png|gif|svg|pdf|json)$
+    RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+    # Redirect to index if file doesn't exist
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Compress files
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    # Prevent XSS attacks
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # CORS for API (adjust as needed)
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+# Protect sensitive files
+<FilesMatch "(\.env|composer\.json|composer\.lock)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# PHP settings
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+
+# Error pages
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html

@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Content - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2C3E50',
+                        secondary: '#34495E',
+                        accent: '#3498DB',
+                        success: '#27AE60',
+                        warning: '#F39C12',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Tab Styles */
+        .tab-active {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
+        }
+
+        .tab-inactive {
+            background-color: white;
+            color: #6B7280;
+            transition: all 0.3s ease;
+        }
+
+        .tab-inactive:hover {
+            background-color: #f3f4f6;
+            color: #2C3E50;
+        }
+
+        /* Course Header Gradient */
+        .course-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* File Card Hover Effect */
+        .file-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+
+        .file-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        /* Add File Card */
+        .add-file-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+
+        .add-file-card:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        }
+
+        .add-file-card:hover .add-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .add-icon {
+            transition: all 0.3s ease;
+        }
+
+        /* Rating Stars */
+        .rating-star {
+            color: #F59E0B;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Knowledge Badge */
+        .knowledge-badge {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Upload Box */
+        .upload-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border-color: #667eea;
+        }
+
+        /* Button Gradient */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        /* Toast Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Page Background Container -->
+    <div class="bg-shapes-container min-h-screen">
+        <!-- Background Shapes -->
+        <div class="bg-shape bg-circle"></div>
+        <div class="bg-shape bg-rounded-rect"></div>
+
+        <!-- Top Navigation -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm relative z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Left Side - Logo -->
+                    <div class="flex items-center">
+                        <a href="student.html" class="flex items-center">
+                            <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                        </a>
+                    </div>
+
+                    <!-- Center - Search -->
+                    <div class="flex-1 max-w-2xl mx-8">
+                        <div class="relative">
+                            <input type="text" placeholder="Search"
+                                class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <button class="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="absolute right-10 top-2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - User Info -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700 font-medium" data-user-name>student name</span>
+
+                        <!-- Profile Dropdown -->
+                        <div class="relative">
+                            <button onclick="toggleProfileMenu()" id="profileButton"
+                                class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold hover:opacity-90 transition">
+                                <span id="profileInitial">S</span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="profileMenu"
+                                class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                                <!-- User Info -->
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <p class="text-sm font-semibold text-gray-900" data-user-name>student name</p>
+                                    <p class="text-xs text-gray-500" data-user-email>student@email.com</p>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <a href="profile.html"
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
+                                    <span>My Profile</span>
+                                </a>
+
+                                <a href="settings.html"
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
+                                    <span>Settings</span>
+                                </a>
+
+                                <div class="border-t border-gray-200 my-2"></div>
+
+                                <a href="#" onclick="logout(); return false;"
+                                    class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
+                                    <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium">
+                            عربي
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Course Header Card -->
+            <div class="course-header p-8 mb-8 text-white shadow-xl">
+                <div class="relative z-10 flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div
+                                class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-book-open text-2xl"></i>
+                            </div>
+                            <div>
+                                <h1 id="courseName" class="text-3xl font-bold">Loading...</h1>
+                                <p class="text-white/70 text-sm">Course Materials</p>
+                            </div>
+                        </div>
+                        <div id="descriptionBox" class="bg-white/10 backdrop-blur-sm rounded-xl p-5 max-w-2xl mt-4">
+                            <p id="courseDescription" class="text-white/90 leading-relaxed"></p>
+                        </div>
+                    </div>
+                    <div class="text-right ml-8">
+                        <div class="knowledge-badge rounded-xl px-5 py-3 inline-flex items-center gap-3">
+                            <div class="text-left">
+                                <p class="text-xs text-amber-700 font-medium">Knowledge Rating</p>
+                                <p id="courseRating" class="text-2xl font-bold text-amber-600">0.0<span
+                                        class="rating-star">★</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Tabs -->
+            <div class="flex justify-center mb-8">
+                <div class="inline-flex rounded-2xl overflow-hidden border-2 border-gray-200 bg-white p-1 shadow-lg">
+                    <button id="docsTab" onclick="switchTab('documents')"
+                        class="px-8 py-3 font-semibold tab-active rounded-xl flex items-center gap-2 transition-all">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documents</span>
+                    </button>
+                    <button id="videoTab" onclick="switchTab('video')"
+                        class="px-8 py-3 font-semibold tab-inactive rounded-xl flex items-center gap-2 transition-all">
+                        <i class="fas fa-video"></i>
+                        <span>Videos</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter/Sort Dropdown -->
+            <div class="flex justify-end mb-6">
+                <div class="relative">
+                    <label class="text-sm text-gray-600 font-medium mr-2">Sort by:</label>
+                    <select id="sortFilter" onchange="applyFilter(this.value)"
+                        class="px-4 py-2 pr-10 border-2 border-gray-200 rounded-xl bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition cursor-pointer hover:border-indigo-300">
+                        <option value="newest">🕐 Newest First</option>
+                        <option value="oldest">🕐 Oldest First</option>
+                        <option value="a-z">📝 A to Z</option>
+                        <option value="z-a">📝 Z to A</option>
+                        <option value="highest-rating">⭐ Highest Rating</option>
+                        <option value="lowest-rating">⭐ Lowest Rating</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Documents Grid -->
+            <div id="documentsContent">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <!-- Add File Card -->
+                    <div onclick="addFile('document')"
+                        class="add-file-card rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer h-48 group">
+                        <div
+                            class="add-icon w-16 h-16 rounded-2xl bg-white border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 shadow-sm">
+                            <i class="fas fa-plus text-gray-400 text-2xl group-hover:text-white"></i>
+                        </div>
+                        <p class="text-gray-600 font-semibold">Add Document</p>
+                        <p class="text-gray-400 text-xs mt-1">PDF, DOCX, Images</p>
+                    </div>
+
+                    <!-- File Cards will be loaded dynamically -->
+                    <div id="documentsGrid" class="contents"></div>
+                </div>
+            </div>
+
+            <!-- Video Grid (Hidden by default) -->
+            <div id="videoContent" class="hidden">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                    <!-- Add Video Card -->
+                    <div onclick="addFile('video')"
+                        class="add-file-card rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer h-48 group">
+                        <div
+                            class="add-icon w-16 h-16 rounded-2xl bg-white border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 shadow-sm">
+                            <i class="fas fa-video text-gray-400 text-2xl group-hover:text-white"></i>
+                        </div>
+                        <p class="text-gray-600 font-semibold">Add Video</p>
+                        <p class="text-gray-400 text-xs mt-1">MP4, AVI, MOV</p>
+                    </div>
+
+                    <!-- Video Cards will be loaded dynamically -->
+                    <div id="videoGrid" class="contents"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Add File Modal -->
+        <div id="addFileModal"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">
+            <div
+                class="modal-content bg-white rounded-3xl p-8 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                            <i id="modalIcon" class="fas fa-file-upload text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Add New File</h3>
+                            <p class="text-sm text-gray-500">Share materials with your classmates</p>
+                        </div>
+                    </div>
+                    <button onclick="closeModal()"
+                        class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
+                        <i class="fas fa-times text-gray-500"></i>
+                    </button>
+                </div>
+
+                <form onsubmit="submitFile(event)">
+                    <!-- File Name Input -->
+                    <div class="mb-5">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-tag mr-2 text-indigo-500"></i>File Name
+                        </label>
+                        <input type="text" id="fileName" required
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            placeholder="Enter a name for this file">
+                    </div>
+
+                    <!-- Description Input -->
+                    <div class="mb-5">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-align-left mr-2 text-indigo-500"></i>Description
+                            <span class="text-gray-400 font-normal text-sm">(optional)</span>
+                        </label>
+                        <textarea id="fileDescription"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none transition"
+                            rows="3" placeholder="Describe what this file contains..."></textarea>
+                    </div>
+
+                    <!-- Upload Box -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-upload mr-2 text-indigo-500"></i>Upload File
+                        </label>
+                        <div id="uploadBox"
+                            class="upload-box border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer hover:border-indigo-500 transition">
+                            <input type="file" id="fileInput" class="hidden" onchange="validateAndUpdateFileName()">
+                            <label for="fileInput" class="cursor-pointer block">
+                                <div
+                                    class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                                    <i id="uploadIcon" class="fas fa-cloud-upload-alt text-3xl text-indigo-500"></i>
+                                </div>
+                                <p class="text-gray-700 font-medium">Click to upload or drag and drop</p>
+                                <p id="acceptedFormats" class="text-sm text-gray-400 mt-2">Accepted: PDF, PNG, DOCX, PPT
+                                </p>
+                                <p id="selectedFileName" class="text-indigo-600 font-semibold mt-3"></p>
+                                <p id="fileError" class="text-red-500 text-sm mt-2 hidden"></p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <button type="button" onclick="closeModal()"
+                            class="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">
+                            Cancel
+                        </button>
+                        <button type="submit" id="uploadBtn"
+                            class="flex-1 px-6 py-3 btn-gradient text-white rounded-xl font-semibold shadow-lg">
+                            <i class="fas fa-upload mr-2"></i>Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="../assets/js/session.js"></script>
+        <script src="../assets/js/background-styles.js"></script>
+        <script>
+            // Load user data on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                // Check if user is logged in and update display
+                const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
+                if (user) {
+                    if (user.fullName) {
+                        const nameElements = document.querySelectorAll('[data-user-name]');
+                        nameElements.forEach(el => {
+                            el.textContent = user.fullName;
+                        });
+                    }
+                    if (user.email) {
+                        const emailElements = document.querySelectorAll('[data-user-email]');
+                        emailElements.forEach(el => {
+                            el.textContent = user.email;
+                        });
+                    }
+                    // Update profile initial and color
+                    const userName = user.fullName || user.name || 'S';
+                    const initial = userName.charAt(0).toUpperCase();
+                    const profileInitial = document.getElementById('profileInitial');
+                    const profileButton = document.getElementById('profileButton');
+                    if (profileInitial) profileInitial.textContent = initial;
+
+                    // Use same color scheme as comments for consistency
+                    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                    const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
+                    if (profileButton) {
+                        profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
+                    }
+                }
+            });
+
+            // Course data with descriptions - Complete list matching student.html
+            const allCoursesData = {
+                // Level 1
+                1: { code: '48021400-4', name: 'Calculus (1)', level: 1, rating: 4.5, description: 'Introduction to limits, derivatives, and their applications in solving real-world problems.' },
+                2: { code: '48021700-6', name: 'English Language (1)', level: 1, rating: 4.5, description: 'Basic English skills: reading, writing, listening, and speaking for academic purposes.' },
+                3: { code: '48021503-3', name: 'Computer Programming Skills', level: 1, rating: 4.5, description: 'Introduction to programming logic and problem-solving using a programming language.' },
+                4: { code: '48021200-4', name: 'General Chemistry (1)', level: 1, rating: 4.5, description: 'Fundamentals of chemistry: atomic structure, chemical bonding, and reactions.' },
+                // Level 2
+                5: { code: '48021300-4', name: 'General Physics (1)', level: 2, rating: 4.5, description: 'Mechanics, motion, forces, energy, and basic thermodynamics.' },
+                6: { code: '48021701-4', name: 'Technical English', level: 2, rating: 4.5, description: 'English for technical writing and scientific communication.' },
+                7: { code: '48021002-3', name: 'Learning Skills', level: 2, rating: 4.5, description: 'Study techniques, time management, and effective learning strategies.' },
+                8: { code: '48021401-4', name: 'Calculus (2)', level: 2, rating: 4.5, description: 'Integration techniques, series, and applications of integral calculus.' },
+                // Level 3
+                9: { code: '14011801-3', name: 'Discrete Structures I', level: 3, rating: 4.5, description: 'Logic, sets, relations, functions, and graph theory for computer science.' },
+                10: { code: '4042301-3', name: 'Elements of Statistics and Probability', level: 3, rating: 4.5, description: 'Probability theory, random variables, and statistical data analysis.' },
+                11: { code: '14031201-4', name: 'Digital Logic Design', level: 3, rating: 4.5, description: 'Boolean algebra, logic gates, combinational and sequential circuits design.' },
+                12: { code: '605101-2', name: 'The Holy Qur\'aan I', level: 3, rating: 4.5, description: '' },
+                13: { code: '14011101-4', name: 'Computer Programming', level: 3, rating: 4.5, description: 'Fundamentals of programming using a high-level language like C++ or Java.' },
+                // Level 4
+                14: { code: '14011102-4', name: 'Object Oriented Programming', level: 4, rating: 4.5, description: 'OOP concepts: classes, inheritance, polymorphism, and encapsulation.' },
+                15: { code: '4042402-4', name: 'Linear Algebra (1)', level: 4, rating: 4.5, description: 'Vectors, matrices, linear equations, eigenvalues and eigenvectors.' },
+                16: { code: '14032205-4', name: 'Computer Organization & Architecture', level: 4, rating: 4.5, description: 'CPU design, memory systems, instruction sets, and computer architecture.' },
+                17: { code: '14011802-3', name: 'Discrete Structures II', level: 4, rating: 4.5, description: 'Advanced topics: counting, recurrence relations, and graph algorithms.' },
+                // Level 5
+                18: { code: '14032401-4', name: 'Numerical Methods for Computing', level: 5, rating: 4.5, description: 'Numerical solutions for equations, interpolation, and numerical integration.' },
+                19: { code: '14012301-3', name: 'Database I', level: 5, rating: 4.5, description: 'Relational database design, SQL queries, and normalization.' },
+                20: { code: '14012401-3', name: 'Data Structures', level: 5, rating: 4.5, description: 'Arrays, linked lists, stacks, queues, trees, graphs, and their implementations.' },
+                21: { code: '14012203-4', name: 'Operating Systems', level: 5, rating: 4.5, description: 'Process management, memory management, file systems, and scheduling.' },
+                22: { code: '601101-2', name: 'Islamic Culture I', level: 5, rating: 4.5, description: '' },
+                // Level 6
+                23: { code: '605201-2', name: 'The Holy Qur\'aan II', level: 6, rating: 4.5, description: '' },
+                24: { code: '14012109-3', name: 'Compilers Construction', level: 6, rating: 4.5, description: 'Lexical analysis, parsing, semantic analysis, and code generation.' },
+                25: { code: '14012402-4', name: 'Algorithms', level: 6, rating: 4.5, description: 'Algorithm design, complexity analysis, sorting, searching, and optimization.' },
+                26: { code: '14012501-3', name: 'Computer Graphics', level: 6, rating: 4.5, description: '2D/3D graphics, transformations, rendering, and visualization techniques.' },
+                27: { code: '14033103-4', name: 'Computer Networks', level: 6, rating: 4.5, description: 'Network architecture, OSI model, TCP/IP protocols, and data communication.' },
+                // Level 7
+                28: { code: '14013303-3', name: 'Software Engineering I', level: 7, rating: 4.5, description: 'Software development lifecycle, requirements analysis, and project management.' },
+                29: { code: '14013701-4', name: 'Artificial Intelligence', level: 7, rating: 4.5, description: 'AI concepts, search algorithms, knowledge representation, and machine learning basics.' },
+                30: { code: '601201-2', name: 'Islamic Culture II', level: 7, rating: 4.5, description: '' },
+                31: { code: '14013104-3', name: 'Internet Applications', level: 7, rating: 4.5, description: 'Web development, client-server architecture, and internet technologies.' },
+                32: { code: '14013103-4', name: 'Advanced Programming', level: 7, rating: 4.5, description: 'Advanced programming concepts, design patterns, and software development.' },
+                // Level 8
+                33: { code: '14013888-2', name: 'Summer Training', level: 8, rating: 4.5, description: '' },
+                34: { code: '14013602-3', name: 'Computer Security', level: 8, rating: 4.5, description: 'Security fundamentals, cryptography, authentication, and network security.' },
+                35: { code: '14013502-3', name: 'User Interface Design', level: 8, rating: 4.5, description: 'UI/UX principles, usability, prototyping, and user-centered design.' },
+                36: { code: '14013304-3', name: 'Software Engineering II', level: 8, rating: 4.5, description: 'Advanced software engineering: testing, maintenance, and quality assurance.' },
+                37: { code: '14013204-3', name: 'Parallel Computing', level: 8, rating: 4.5, description: 'Parallel algorithms, multithreading, and distributed computing concepts.' },
+                38: { code: '605301-2', name: 'The Holy Qur\'aan III', level: 8, rating: 4.5, description: '' },
+                // Level 9
+                39: { code: '14014902-4', name: 'Graduation Project I', level: 9, rating: 4.5, description: '' },
+                40: { code: '14014305-2', name: 'Computers and Society', level: 9, rating: 4.5, description: 'Social, ethical, and professional issues in computing and technology.' },
+                41: { code: '605401-2', name: 'The Holy Qur\'aan (IV)', level: 9, rating: 4.5, description: '' },
+                42: { code: '601301-3', name: 'Islamic Culture III', level: 9, rating: 4.5, description: '' },
+                // Level 10
+                43: { code: '102101-2', name: 'Biography of the Prophet', level: 10, rating: 4.5, description: '' },
+                44: { code: '14014903-4', name: 'Graduation Project II', level: 10, rating: 4.5, description: '' },
+                45: { code: '501101-2', name: 'Arabic Language I', level: 10, rating: 4.5, description: '' },
+                46: { code: '601401-2', name: 'Islamic Culture (iv)', level: 10, rating: 4.5, description: '' },
+                // Elective Courses
+                47: { code: '14014905-3', name: 'Special Topics I', level: 'Elective', rating: 4.5, description: 'Advanced topics in computer science selected by the instructor.' },
+                48: { code: '14014106-3', name: 'Programming Languages', level: 'Elective', rating: 4.5, description: 'Programming paradigms, language design principles, and comparison of languages.' },
+                49: { code: '14014604-3', name: 'Introduction to Cryptography', level: 'Elective', rating: 4.5, description: 'Encryption algorithms, hash functions, digital signatures, and security protocols.' },
+                50: { code: '14014605-3', name: 'Forensics Computing', level: 'Elective', rating: 4.5, description: 'Digital forensics, evidence collection, and cybercrime investigation.' },
+                51: { code: '14014702-3', name: 'Artificial Neural Networks', level: 'Elective', rating: 4.5, description: 'Neural network architectures, training algorithms, and deep learning.' },
+                52: { code: '14014703-3', name: 'Pattern Recognition', level: 'Elective', rating: 4.5, description: 'Classification, feature extraction, and machine learning for pattern analysis.' },
+                53: { code: '14014704-3', name: 'Natural Language Processing', level: 'Elective', rating: 4.5, description: 'Text processing, sentiment analysis, and language understanding by computers.' },
+                54: { code: '14014803-3', name: 'Theory of Computing', level: 'Elective', rating: 4.5, description: 'Automata theory, formal languages, Turing machines, and computability.' },
+                55: { code: '14014305-3', name: 'Big Data Analytics', level: 'Elective', rating: 4.5, description: 'Large-scale data processing, Hadoop, Spark, and data mining techniques.' },
+                56: { code: '14014306-3', name: 'Software Testing', level: 'Elective', rating: 4.5, description: 'Testing methodologies, test case design, automation, and quality assurance.' },
+                57: { code: '14014307-3', name: 'Software Architecture', level: 'Elective', rating: 4.5, description: 'Architectural patterns, design principles, and system design.' },
+                58: { code: '14014308-3', name: 'Information Retrieval Systems', level: 'Elective', rating: 4.5, description: 'Search engines, indexing, ranking algorithms, and text retrieval.' },
+                59: { code: '14014404-3', name: 'Bioinformatics', level: 'Elective', rating: 4.5, description: 'Computational methods for biological data analysis and genomics.' },
+                60: { code: '14014503-3', name: 'Image Processing', level: 'Elective', rating: 4.5, description: 'Digital image processing, filtering, segmentation, and computer vision.' },
+                61: { code: '14014105-3', name: 'Mobile Applications', level: 'Elective', rating: 4.5, description: 'Mobile app development for Android and iOS platforms.' },
+                62: { code: '14014906-3', name: 'Special Topics II', level: 'Elective', rating: 4.5, description: 'Advanced topics in computer science selected by the instructor.' },
+                63: { code: '14014108-3', name: 'Game Programming', level: 'Elective', rating: 4.5, description: 'Game development, game engines, physics, and graphics programming.' },
+                64: { code: '14014110-3', name: 'Advanced Web Programming', level: 'Elective', rating: 4.5, description: 'Modern web frameworks, APIs, and full-stack development.' },
+                65: { code: '14014205-3', name: 'Cloud Computing', level: 'Elective', rating: 4.5, description: 'Cloud services, virtualization, containerization, and distributed systems.' },
+                66: { code: '14014302-3', name: 'Database II', level: 'Elective', rating: 4.5, description: 'Advanced database: transactions, concurrency, optimization, and NoSQL.' },
+            };
+
+            let currentCourseId = null;
+            let currentFileType = 'document';
+            let currentSortOption = 'newest'; // Default sort option
+
+            // Get course ID from URL
+            function getCourseId() {
+                const params = new URLSearchParams(window.location.search);
+                return parseInt(params.get('id')) || 1;
+            }
+
+            // Load course data
+            function loadCourse() {
+                currentCourseId = getCourseId();
+                const course = allCoursesData[currentCourseId];
+
+                if (course) {
+                    document.getElementById('courseName').textContent = course.name;
+                    document.title = course.name + ' - Tsharok';
+
+                    // Show description only if it exists
+                    const descBox = document.getElementById('descriptionBox');
+                    const descText = document.getElementById('courseDescription');
+                    if (course.description && course.description.trim() !== '') {
+                        descText.textContent = course.description;
+                        descBox.style.display = 'block';
+                    } else {
+                        descBox.style.display = 'none';
+                    }
+                } else {
+                    document.getElementById('courseName').textContent = 'Course not found';
+                    document.getElementById('descriptionBox').style.display = 'none';
+                }
+
+                loadFiles();
+            }
+
+            // Get file icon based on extension
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fa-file-pdf',
+                    'doc': 'fa-file-word',
+                    'docx': 'fa-file-word',
+                    'xls': 'fa-file-excel',
+                    'xlsx': 'fa-file-excel',
+                    'ppt': 'fa-file-powerpoint',
+                    'pptx': 'fa-file-powerpoint',
+                    'png': 'fa-file-image',
+                    'jpg': 'fa-file-image',
+                    'jpeg': 'fa-file-image',
+                    'gif': 'fa-file-image',
+                    'txt': 'fa-file-alt',
+                    'zip': 'fa-file-archive',
+                    'rar': 'fa-file-archive'
+                };
+                return icons[extension?.toLowerCase()] || 'fa-file-alt';
+            }
+
+            // Calculate average rating for a file from comments and ratings
+            function calculateFileRating(courseId, fileId) {
+                const comments = JSON.parse(localStorage.getItem(`file_${courseId}_${fileId}_comments`) || '[]');
+                const ratings = JSON.parse(localStorage.getItem(`file_${courseId}_${fileId}_ratings`) || '[]');
+
+                // Combine ratings from comments and separate ratings
+                let allRatings = [];
+
+                // Add comment ratings
+                comments.forEach(c => {
+                    if (c.rating) allRatings.push(c.rating);
+                });
+
+                // Add separate ratings
+                ratings.forEach(r => {
+                    if (r.rating) allRatings.push(r.rating);
+                });
+
+                if (allRatings.length === 0) {
+                    return '0.0';
+                }
+
+                const avgRating = allRatings.reduce((sum, r) => sum + r, 0) / allRatings.length;
+                return avgRating.toFixed(1);
+            }
+
+            // Calculate overall course rating from all files (documents + videos)
+            function calculateOverallCourseRating() {
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                let allFileRatings = [];
+
+                // Get ratings from actual uploaded files
+                sortedFiles.forEach((file) => {
+                    const rating = parseFloat(calculateFileRating(currentCourseId, index));
+                    if (rating > 0) {
+                        allFileRatings.push(rating);
+                    }
+                });
+
+                // Update the course rating display
+                const courseRatingEl = document.getElementById('courseRating');
+                if (allFileRatings.length === 0) {
+                    courseRatingEl.textContent = '0.0★';
+                } else {
+                    const overallRating = allFileRatings.reduce((sum, r) => sum + r, 0) / allFileRatings.length;
+                    courseRatingEl.textContent = overallRating.toFixed(1) + '★';
+                }
+            }
+
+            // Sort files based on selected option
+            function sortFiles(files, sortOption) {
+                const filesWithIndices = files.map((file, idx) => ({ ...file, originalIndex: idx }));
+
+                switch (sortOption) {
+                    case 'a-z':
+                        return filesWithIndices.sort((a, b) => a.name.localeCompare(b.name));
+
+                    case 'z-a':
+                        return filesWithIndices.sort((a, b) => b.name.localeCompare(a.name));
+
+                    case 'newest':
+                        return filesWithIndices.sort((a, b) => {
+                            const dateA = a.date ? new Date(a.date).getTime() : 0;
+                            const dateB = b.date ? new Date(b.date).getTime() : 0;
+                            return dateB - dateA; // Newest first
+                        });
+
+                    case 'oldest':
+                        return filesWithIndices.sort((a, b) => {
+                            const dateA = a.date ? new Date(a.date).getTime() : 0;
+                            const dateB = b.date ? new Date(b.date).getTime() : 0;
+                            return dateA - dateB; // Oldest first
+                        });
+
+                    case 'highest-rating':
+                        return filesWithIndices.sort((a, b) => {
+                            const ratingA = parseFloat(calculateFileRating(currentCourseId, a.originalIndex));
+                            const ratingB = parseFloat(calculateFileRating(currentCourseId, b.originalIndex));
+                            return ratingB - ratingA; // Highest first
+                        });
+
+                    case 'lowest-rating':
+                        return filesWithIndices.sort((a, b) => {
+                            const ratingA = parseFloat(calculateFileRating(currentCourseId, a.originalIndex));
+                            const ratingB = parseFloat(calculateFileRating(currentCourseId, b.originalIndex));
+                            return ratingA - ratingB; // Lowest first
+                        });
+
+                    default:
+                        return filesWithIndices; // No sorting
+                }
+            }
+
+            // Apply filter and reload files
+            function applyFilter(sortOption) {
+                currentSortOption = sortOption;
+                loadFiles();
+            }
+
+            // Load files for this course
+            function loadFiles() {
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                const sortedFiles = sortFiles(files, currentSortOption);
+
+                const docsGrid = document.getElementById('documentsGrid');
+                const videoGrid = document.getElementById('videoGrid');
+
+                let docsHTML = '';
+                let videoHTML = '';
+
+                sortedFiles.forEach((file) => {
+                    // Format the date
+                    const index = file.originalIndex || 0; // Get original index for file linking
+                    const uploadDate = file.date ? new Date(file.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+
+                    // Calculate average rating from comments and ratings
+                    const avgRating = calculateFileRating(currentCourseId, index);
+
+                    // Get file type icon and color
+                    const fileIcon = file.type === 'video' ? 'fa-play-circle' : getFileIcon(file.extension);
+                    const iconBg = file.type === 'video' ? 'from-red-500 to-pink-500' : 'from-indigo-500 to-purple-500';
+
+                    const cardHTML = `
+                    <a href="file.html?courseId=${currentCourseId}&fileId=${index}&name=${encodeURIComponent(file.name)}" class="file-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer block h-48">
+                        <div class="h-24 bg-gradient-to-br ${iconBg} flex items-center justify-center relative">
+                            <i class="fas ${fileIcon} text-4xl text-white/90"></i>
+                            <div class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1">
+                                <span class="text-white text-xs font-semibold">${file.extension?.toUpperCase() || 'FILE'}</span>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm font-semibold text-gray-800 truncate mb-2">${file.name}</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-star text-amber-400 text-xs"></i>
+                                    <span class="text-xs font-bold text-amber-600">${avgRating}</span>
+                                </div>
+                                <span class="text-xs text-gray-400">${uploadDate}</span>
+                            </div>
+                            <div class="mt-2 flex items-center gap-1 text-gray-400">
+                                <i class="fas fa-user text-xs"></i>
+                                <span class="text-xs truncate">${file.uploadedBy || 'Student'}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+
+                    if (file.type === 'video') {
+                        videoHTML += cardHTML;
+                    } else {
+                        docsHTML += cardHTML;
+                    }
+                });
+
+                docsGrid.innerHTML = docsHTML;
+                videoGrid.innerHTML = videoHTML;
+
+                // If no files, show empty state message
+                if (files.length === 0 || docsHTML === '') {
+                    docsGrid.innerHTML = `
+                    <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                            <i class="fas fa-file-alt text-4xl text-indigo-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No documents yet</h3>
+                        <p class="text-gray-500">Click "Add Document" to share study materials with your classmates</p>
+                    </div>
+                `;
+                }
+                if (files.length === 0 || videoHTML === '') {
+                    videoGrid.innerHTML = `
+                    <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
+                            <i class="fas fa-video text-4xl text-red-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No videos yet</h3>
+                        <p class="text-gray-500">Click "Add Video" to share educational videos with your classmates</p>
+                    </div>
+                `;
+                }
+
+                // Calculate and display overall course rating
+                calculateOverallCourseRating();
+            }
+
+            // Switch between tabs
+            function switchTab(tab) {
+                const docsTab = document.getElementById('docsTab');
+                const videoTab = document.getElementById('videoTab');
+                const docsContent = document.getElementById('documentsContent');
+                const videoContent = document.getElementById('videoContent');
+
+                if (tab === 'documents') {
+                    docsTab.className = 'px-6 py-2 font-medium tab-active rounded-l-full';
+                    videoTab.className = 'px-6 py-2 font-medium tab-inactive rounded-r-full';
+                    docsContent.classList.remove('hidden');
+                    videoContent.classList.add('hidden');
+                } else {
+                    docsTab.className = 'px-6 py-2 font-medium tab-inactive rounded-l-full';
+                    videoTab.className = 'px-6 py-2 font-medium tab-active rounded-r-full';
+                    docsContent.classList.add('hidden');
+                    videoContent.classList.remove('hidden');
+                }
+            }
+
+            // Allowed file types
+            const documentFormats = ['.pdf', '.png', '.docx', '.doc', '.jpg', '.jpeg'];
+            const videoFormats = ['.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.webm'];
+
+            let isFileValid = false;
+
+            // Add file
+            function addFile(type) {
+                currentFileType = type;
+                isFileValid = false;
+
+                const modal = document.getElementById('addFileModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const fileInput = document.getElementById('fileInput');
+                const acceptedFormats = document.getElementById('acceptedFormats');
+                const uploadIcon = document.getElementById('uploadIcon');
+
+                // Reset modal
+                document.getElementById('fileName').value = '';
+                document.getElementById('selectedFileName').textContent = '';
+                document.getElementById('fileError').classList.add('hidden');
+                document.getElementById('uploadBox').classList.remove('border-red-500');
+                document.getElementById('uploadBox').classList.add('border-gray-300');
+
+                const modalIcon = document.getElementById('modalIcon');
+
+                if (type === 'video') {
+                    modalTitle.textContent = 'Add New Video';
+                    fileInput.accept = videoFormats.join(',');
+                    acceptedFormats.textContent = 'Accepted: MP4, AVI, MOV, MKV, WMV, WEBM';
+                    uploadIcon.className = 'fas fa-video text-3xl text-indigo-500';
+                    if (modalIcon) modalIcon.className = 'fas fa-video text-white text-xl';
+                } else {
+                    modalTitle.textContent = 'Add New Document';
+                    fileInput.accept = documentFormats.join(',');
+                    acceptedFormats.textContent = 'Accepted: PDF, PNG, JPG, DOCX';
+                    uploadIcon.className = 'fas fa-file-alt text-3xl text-indigo-500';
+                    if (modalIcon) modalIcon.className = 'fas fa-file-upload text-white text-xl';
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            // Close modal
+            function closeModal() {
+                document.getElementById('addFileModal').classList.add('hidden');
+                document.getElementById('addFileModal').classList.remove('flex');
+                document.getElementById('fileName').value = '';
+                document.getElementById('fileDescription').value = '';
+                document.getElementById('selectedFileName').textContent = '';
+                document.getElementById('fileError').classList.add('hidden');
+                document.getElementById('fileInput').value = '';
+                document.getElementById('uploadBtn').textContent = 'Upload';
+                document.getElementById('uploadBtn').disabled = false;
+                document.getElementById('uploadBox').classList.remove('border-red-500', 'border-teal-500');
+                document.getElementById('uploadBox').classList.add('border-gray-300');
+                isFileValid = false;
+            }
+
+            // Validate and update file name display
+            function validateAndUpdateFileName() {
+                const input = document.getElementById('fileInput');
+                const display = document.getElementById('selectedFileName');
+                const errorDisplay = document.getElementById('fileError');
+                const uploadBox = document.getElementById('uploadBox');
+
+                if (input.files.length > 0) {
+                    const file = input.files[0];
+                    const fileName = file.name.toLowerCase();
+                    const extension = '.' + fileName.split('.').pop();
+
+                    let allowedFormats = currentFileType === 'video' ? videoFormats : documentFormats;
+
+                    if (allowedFormats.includes(extension)) {
+                        // Valid file
+                        display.textContent = file.name;
+                        errorDisplay.classList.add('hidden');
+                        uploadBox.classList.remove('border-red-500');
+                        uploadBox.classList.add('border-teal-500');
+                        isFileValid = true;
+                    } else {
+                        // Invalid file
+                        display.textContent = '';
+                        if (currentFileType === 'video') {
+                            errorDisplay.textContent = '⚠️ Please select a video file (MP4, AVI, MOV, MKV, WMV, WEBM)';
+                        } else {
+                            errorDisplay.textContent = '⚠️ Please select a document file (PDF, PNG, JPG, DOCX)';
+                        }
+                        errorDisplay.classList.remove('hidden');
+                        uploadBox.classList.add('border-red-500');
+                        uploadBox.classList.remove('border-gray-300');
+                        isFileValid = false;
+                        input.value = ''; // Clear the invalid file
+                    }
+                }
+            }
+
+            // Submit file
+            function submitFile(e) {
+                e.preventDefault();
+
+                const name = document.getElementById('fileName').value;
+                const fileInput = document.getElementById('fileInput');
+
+                if (!name.trim()) {
+                    alert('Please enter a file name');
+                    return;
+                }
+
+                if (!fileInput.files.length || !isFileValid) {
+                    const errorDisplay = document.getElementById('fileError');
+                    if (currentFileType === 'video') {
+                        errorDisplay.textContent = '⚠️ Please select a valid video file';
+                    } else {
+                        errorDisplay.textContent = '⚠️ Please select a valid document file';
+                    }
+                    errorDisplay.classList.remove('hidden');
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                // Show loading state
+                document.getElementById('uploadBtn').textContent = 'Uploading...';
+                document.getElementById('uploadBtn').disabled = true;
+
+                reader.onload = function (event) {
+                    const fileData = event.target.result;
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    const description = document.getElementById('fileDescription').value.trim();
+                    // Get user data from sessionStorage (getCurrentUser) or localStorage as fallback
+                    const userData = (typeof getCurrentUser === 'function' ? getCurrentUser() : null) ||
+                        JSON.parse(sessionStorage.getItem('user') || '{}') ||
+                        JSON.parse(localStorage.getItem('user') || '{}');
+
+                    let files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                    files.push({
+                        name: name,
+                        description: description || '',
+                        type: currentFileType,
+                        rating: 4.5,
+                        date: new Date().toISOString(),
+                        originalName: file.name,
+                        fileData: fileData,
+                        mimeType: file.type,
+                        extension: extension,
+                        size: file.size,
+                        uploadedBy: userData.fullName || userData.name || userData.username || 'Student',
+                        uploaderId: userData.id || null
+                    });
+
+                    try {
+                        localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                        // Create notification for this upload
+                        createNotification(name, currentFileType, extension);
+                        closeModal();
+                        loadFiles();
+                        showToast(currentFileType === 'video' ? 'Video added successfully!' : 'Document added successfully!');
+                    } catch (err) {
+                        // If file is too large for localStorage, save without file data
+                        console.log('File too large for localStorage, saving metadata only');
+
+                        // Remove the last added file and re-add without fileData
+                        files.pop();
+                        files.push({
+                            name: name,
+                            description: description || '',
+                            type: currentFileType,
+                            rating: 4.5,
+                            date: new Date().toISOString(),
+                            originalName: file.name,
+                            fileData: null, // No file data - too large
+                            mimeType: file.type,
+                            extension: extension,
+                            size: file.size,
+                            uploadedBy: userData.fullName || userData.name || userData.username || 'Student',
+                            uploaderId: userData.id || null,
+                            tooLarge: true // Flag to indicate file was too large
+                        });
+
+                        try {
+                            localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                            // Create notification for this upload
+                            createNotification(name, currentFileType, extension);
+                            closeModal();
+                            loadFiles();
+                            showToast('File added! Note: File is too large for preview (max ~5MB). Content saved as reference only.', 'warning');
+                        } catch (err2) {
+                            alert('Unable to save file. Storage may be full.');
+                            document.getElementById('uploadBtn').textContent = 'Upload';
+                            document.getElementById('uploadBtn').disabled = false;
+                        }
+                    }
+                };
+
+                reader.onerror = function () {
+                    alert('Error reading file. Please try again.');
+                    document.getElementById('uploadBtn').textContent = 'Upload';
+                    document.getElementById('uploadBtn').disabled = false;
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+            // Create notification for new file upload
+            function createNotification(fileName, fileType, extension) {
+                const course = allCoursesData[currentCourseId];
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+
+                // Determine icon based on file type/extension
+                let icon = 'fa-file-alt';
+                let iconColor = 'text-gray-600';
+                if (fileType === 'video' || ['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(extension?.toLowerCase())) {
+                    icon = 'fa-video';
+                    iconColor = 'text-gray-600';
+                } else if (extension === 'pdf') {
+                    icon = 'fa-file-pdf';
+                    iconColor = 'text-red-600';
+                } else if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(extension?.toLowerCase())) {
+                    icon = 'fa-image';
+                    iconColor = 'text-blue-600';
+                } else if (['doc', 'docx'].includes(extension?.toLowerCase())) {
+                    icon = 'fa-file-word';
+                    iconColor = 'text-blue-600';
+                } else if (['xls', 'xlsx'].includes(extension?.toLowerCase())) {
+                    icon = 'fa-file-excel';
+                    iconColor = 'text-green-600';
+                } else if (['ppt', 'pptx'].includes(extension?.toLowerCase())) {
+                    icon = 'fa-file-powerpoint';
+                    iconColor = 'text-orange-600';
+                }
+
+                const notification = {
+                    id: Date.now(),
+                    courseId: currentCourseId,
+                    courseName: course ? course.name : `Course ${currentCourseId}`,
+                    fileName: fileName,
+                    fileType: fileType,
+                    icon: icon,
+                    iconColor: iconColor,
+                    uploadedBy: userData.fullName || userData.name || userData.username || 'Student',
+                    uploaderId: userData.id || null,
+                    timestamp: new Date().toISOString()
+                };
+
+                // Get existing notifications
+                let notifications = JSON.parse(localStorage.getItem('course_notifications') || '[]');
+
+                // Add new notification at the beginning
+                notifications.unshift(notification);
+
+                // Keep only last 50 notifications
+                if (notifications.length > 50) {
+                    notifications = notifications.slice(0, 50);
+                }
+
+                // Save to localStorage
+                localStorage.setItem('course_notifications', JSON.stringify(notifications));
+            }
+
+            // Show toast notification
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                const styles = {
+                    success: { bg: 'from-emerald-500 to-green-600', icon: 'fa-check-circle' },
+                    warning: { bg: 'from-amber-500 to-orange-500', icon: 'fa-exclamation-triangle' },
+                    error: { bg: 'from-red-500 to-rose-600', icon: 'fa-times-circle' }
+                };
+                const style = styles[type] || styles.success;
+                toast.className = `fixed bottom-6 right-6 bg-gradient-to-r ${style.bg} text-white px-6 py-4 rounded-2xl shadow-2xl z-50 max-w-md flex items-center gap-3 transform transition-all duration-300`;
+                toast.innerHTML = `
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <i class="fas ${style.icon} text-xl"></i>
+                </div>
+                <span class="font-medium">${message}</span>
+            `;
+                toast.style.animation = 'slideInUp 0.3s ease';
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutDown 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, type === 'warning' ? 5000 : 3000);
+            }
+
+            // Load user name
+            function loadUserName() {
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                if (userData.name) {
+                    document.getElementById('userName').textContent = userData.name;
+                }
+            }
+
+            // Language toggle
+            function toggleLanguage() {
+                const currentLang = document.documentElement.lang;
+                if (currentLang === 'en') {
+                    document.documentElement.lang = 'ar';
+                    document.documentElement.dir = 'rtl';
+                } else {
+                    document.documentElement.lang = 'en';
+                    document.documentElement.dir = 'ltr';
+                }
+            }
+
+            // ========== PROFILE MENU FUNCTIONALITY ==========
+
+            function toggleProfileMenu() {
+                const menu = document.getElementById('profileMenu');
+                menu.classList.toggle('hidden');
+            }
+
+            // Close profile menu when clicking outside
+            document.addEventListener('click', function (event) {
+                const menu = document.getElementById('profileMenu');
+                const button = document.getElementById('profileButton');
+
+                if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', () => {
+                loadCourse();
+                loadUserName();
+            });
+        </script>
+    </div><!-- End of bg-shapes-container -->
+</body>
+
+</html>

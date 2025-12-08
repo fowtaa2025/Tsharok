@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <!-- Axios for AJAX calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Moment.js for date/time formatting -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/ar.js"></script>
+    <!-- Tailwind Typography for Markdown rendering -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                maxWidth: 'none'
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [require('@tailwindcss/typography')]
+        }
+    </script>
+    <style>
+        .star-rating {
+            display: inline-flex;
+            gap: 0.25rem;
+            cursor: pointer;
+        }
+        .star {
+            font-size: 1.5rem;
+            color: #d1d5db;
+            transition: all 0.2s ease;
+        }
+        .star.active {
+            color: #fbbf24;
+        }
+        .star.hover {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+        .comment-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .comment-card:hover .comment-actions {
+            opacity: 1;
+        }
+        .rating-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .rating-bar-fill {
+            background: #fbbf24;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Markdown prose styles */
+        .prose {
+            color: #374151;
+        }
+        .prose strong {
+            color: #111827;
+            font-weight: 600;
+        }
+        .prose code {
+            background: #f3f4f6;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+        }
+        .prose pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .prose blockquote {
+            border-left: 4px solid #4f46e5;
+            padding-left: 1rem;
+            font-style: italic;
+            color: #6b7280;
+        }
+        .prose ul, .prose ol {
+            padding-left: 1.5rem;
+        }
+        .prose a {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+        
+        /* Loading animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Optimistic UI updates */
+        .updating {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <i class="fas fa-graduation-cap text-3xl text-indigo-600 mr-2"></i>
+                        <span class="text-2xl font-bold text-gray-900">Tsharok</span>
+                    </a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="catalog.html" class="text-gray-700 hover:text-indigo-600 transition">
+                        <i class="fas fa-th mr-1"></i> Catalog
+                    </a>
+                    <a href="dashboard/student.html" class="text-gray-700 hover:text-indigo-600 transition">
+                        <i class="fas fa-user mr-1"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
+                            <i class="fas fa-star"></i> 4.8
+                        </span>
+                        <span class="text-sm opacity-90" id="totalRatingsCount">(234 ratings)</span>
+                    </div>
+                    <h1 class="text-4xl font-bold mb-4" id="courseTitle">Advanced Web Development</h1>
+                    <p class="text-lg opacity-90 mb-6" id="courseDescription">
+                        Master modern web development with React, Node.js, and MongoDB. Build real-world applications.
+                    </p>
+                    <div class="flex items-center gap-6">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-tie"></i>
+                            <span id="instructorName">Dr. Ahmed Ali</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-users"></i>
+                            <span id="studentsCount">1,234 students</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clock"></i>
+                            <span id="courseDuration">12 weeks</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="enrollBtn" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition transform hover:scale-105 shadow-xl">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Enroll Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Left Column - Course Info -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Course Materials -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-book-open text-indigo-600 mr-2"></i>
+                        Course Materials
+                    </h2>
+                    <div class="space-y-3" id="materialsList">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Ratings Overview -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">
+                            <i class="fas fa-star text-yellow-400 mr-2"></i>
+                            Ratings & Reviews
+                        </h2>
+                        <button id="writeReviewBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                            <i class="fas fa-pen mr-2"></i>
+                            Write Review
+                        </button>
+                    </div>
+
+                    <!-- Rating Statistics -->
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <!-- Loading Spinner -->
+                        <div id="ratingsLoader" class="hidden col-span-2 flex justify-center py-8">
+                            <i class="fas fa-spinner fa-spin text-4xl text-indigo-600"></i>
+                        </div>
+                        
+                        <!-- Average Rating -->
+                        <div class="text-center">
+                            <div class="text-6xl font-bold text-gray-900 mb-2" id="averageRating">0.0</div>
+                            <div class="flex justify-center mb-2" id="averageStars">
+                                <!-- Will be populated by JS -->
+                            </div>
+                            <p class="text-gray-600" id="totalReviews">Based on 0 reviews</p>
+                        </div>
+
+                        <!-- Rating Distribution -->
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3" id="rating5">
+                                <span class="text-sm font-medium text-gray-700 w-12">5 <i class="fas fa-star text-xs text-yellow-400"></i></span>
+                                <div class="flex-1 rating-bar">
+                                    <div class="rating-bar-fill" style="width: 70%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-12 text-right">164</span>
+                            </div>
+                            <div class="flex items-center gap-3" id="rating4">
+                                <span class="text-sm font-medium text-gray-700 w-12">4 <i class="fas fa-star text-xs text-yellow-400"></i></span>
+                                <div class="flex-1 rating-bar">
+                                    <div class="rating-bar-fill" style="width: 20%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-12 text-right">47</span>
+                            </div>
+                            <div class="flex items-center gap-3" id="rating3">
+                                <span class="text-sm font-medium text-gray-700 w-12">3 <i class="fas fa-star text-xs text-yellow-400"></i></span>
+                                <div class="flex-1 rating-bar">
+                                    <div class="rating-bar-fill" style="width: 5%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-12 text-right">12</span>
+                            </div>
+                            <div class="flex items-center gap-3" id="rating2">
+                                <span class="text-sm font-medium text-gray-700 w-12">2 <i class="fas fa-star text-xs text-yellow-400"></i></span>
+                                <div class="flex-1 rating-bar">
+                                    <div class="rating-bar-fill" style="width: 3%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-12 text-right">7</span>
+                            </div>
+                            <div class="flex items-center gap-3" id="rating1">
+                                <span class="text-sm font-medium text-gray-700 w-12">1 <i class="fas fa-star text-xs text-yellow-400"></i></span>
+                                <div class="flex-1 rating-bar">
+                                    <div class="rating-bar-fill" style="width: 2%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-12 text-right">4</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Reviews -->
+                    <div class="flex items-center gap-3 mb-6 pb-6 border-b">
+                        <label class="text-sm font-medium text-gray-700">Filter:</label>
+                        <select id="ratingFilter" class="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-600">
+                            <option value="all">All Ratings</option>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                        <select id="sortReviews" class="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-600">
+                            <option value="recent">Most Recent</option>
+                            <option value="helpful">Most Helpful</option>
+                            <option value="highest">Highest Rating</option>
+                            <option value="lowest">Lowest Rating</option>
+                        </select>
+                    </div>
+
+                    <!-- Reviews List -->
+                    <div class="space-y-6" id="reviewsList">
+                        <!-- Will be populated by JS -->
+                    </div>
+                    
+                    <!-- Reviews Loading Spinner -->
+                    <div id="reviewsLoader" class="hidden flex justify-center py-8">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-2"></i>
+                            <p class="text-gray-600">Loading reviews...</p>
+                        </div>
+                    </div>
+
+                    <!-- Load More -->
+                    <div class="text-center mt-8">
+                        <button id="loadMoreReviews" class="text-indigo-600 hover:text-indigo-700 font-semibold px-6 py-2 rounded-lg hover:bg-indigo-50 transition">
+                            <i class="fas fa-chevron-down mr-2"></i>
+                            Load More Reviews
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="space-y-6">
+                <!-- Course Info Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Course Info</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <span class="text-gray-600"><i class="fas fa-signal mr-2"></i>Level</span>
+                            <span class="font-semibold" id="courseLevel">Intermediate</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <span class="text-gray-600"><i class="fas fa-calendar mr-2"></i>Start Date</span>
+                            <span class="font-semibold" id="startDate">Jan 15, 2025</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <span class="text-gray-600"><i class="fas fa-calendar-check mr-2"></i>End Date</span>
+                            <span class="font-semibold" id="endDate">Apr 15, 2025</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2">
+                            <span class="text-gray-600"><i class="fas fa-tag mr-2"></i>Category</span>
+                            <span class="font-semibold" id="courseCategory">Web Development</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-star text-yellow-400 mr-2"></i>
+                        Write a Review
+                    </h3>
+                    <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="reviewForm" class="p-6 space-y-6">
+                <!-- Rating -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Your Rating *
+                    </label>
+                    <div class="star-rating" id="modalStarRating">
+                        <i class="fas fa-star star" data-rating="1"></i>
+                        <i class="fas fa-star star" data-rating="2"></i>
+                        <i class="fas fa-star star" data-rating="3"></i>
+                        <i class="fas fa-star star" data-rating="4"></i>
+                        <i class="fas fa-star star" data-rating="5"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1" id="ratingText">Click to rate</p>
+                    <input type="hidden" id="ratingValue" name="rating" required>
+                </div>
+
+                <!-- Review Title -->
+                <div>
+                    <label for="reviewTitle" class="block text-sm font-medium text-gray-700 mb-2">
+                        Review Title *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="reviewTitle" 
+                        name="title"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                        placeholder="Summarize your experience"
+                        required
+                    >
+                </div>
+
+                <!-- Review Content -->
+                <div>
+                    <label for="reviewContent" class="block text-sm font-medium text-gray-700 mb-2">
+                        Your Review *
+                    </label>
+                    <textarea 
+                        id="reviewContent" 
+                        name="comment"
+                        rows="6"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent resize-none"
+                        placeholder="Share your thoughts about this course..."
+                        required
+                    ></textarea>
+                    <p class="text-sm text-gray-500 mt-1">
+                        <span id="charCount">0</span>/1000 characters
+                    </p>
+                </div>
+
+                <!-- Would Recommend -->
+                <div class="flex items-center">
+                    <input 
+                        type="checkbox" 
+                        id="wouldRecommend" 
+                        name="recommend"
+                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    >
+                    <label for="wouldRecommend" class="ml-2 block text-sm text-gray-900">
+                        <i class="fas fa-thumbs-up text-indigo-600 mr-1"></i>
+                        I would recommend this course
+                    </label>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex gap-3 pt-4 border-t">
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+                    >
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Submit Review
+                    </button>
+                    <button 
+                        type="button" 
+                        id="cancelReviewBtn"
+                        class="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl p-4 transform translate-y-32 transition-all duration-300 z-50 max-w-sm border-l-4 border-indigo-600">
+        <div class="flex items-center gap-3">
+            <div id="toastIcon" class="flex-shrink-0"></div>
+            <div class="flex-1">
+                <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+            </div>
+            <button onclick="document.getElementById('toast').style.transform = 'translateY(8rem)'" class="text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="assets/js/axios-config.js"></script>
+    <script src="assets/js/ratings-comments.js"></script>
+</body>
+</html>
+

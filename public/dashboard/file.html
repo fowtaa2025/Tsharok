@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File View - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2C3E50',
+                        secondary: '#34495E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .preview-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .file-badge {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Page Background Container -->
+    <div class="bg-shapes-container min-h-screen">
+        <!-- Background Shapes -->
+        <div class="bg-shape bg-circle"></div>
+        <div class="bg-shape bg-rounded-rect"></div>
+
+        <!-- Top Navigation -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm relative z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Left Side - Logo -->
+                    <div class="flex items-center">
+                        <a href="student.html" class="flex items-center">
+                            <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                        </a>
+                    </div>
+
+                    <!-- Center - Search -->
+                    <div class="flex-1 max-w-2xl mx-8">
+                        <div class="relative">
+                            <input type="text" placeholder="Search files..."
+                                class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <button class="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="absolute right-10 top-2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - User Info -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700 font-medium" data-user-name>student name</span>
+
+                        <!-- Profile Dropdown -->
+                        <div class="relative">
+                            <button onclick="toggleProfileMenu()" id="profileButton"
+                                class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold hover:opacity-90 transition">
+                                <span id="profileInitial">S</span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="profileMenu"
+                                class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                                <!-- User Info -->
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <p class="text-sm font-semibold text-gray-900" data-user-name>student name</p>
+                                    <p class="text-xs text-gray-500" data-user-email>student@email.com</p>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <a href="profile.html"
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
+                                    <span>My Profile</span>
+                                </a>
+
+                                <a href="settings.html"
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
+                                    <span>Settings</span>
+                                </a>
+
+                                <div class="border-t border-gray-200 my-2"></div>
+
+                                <a href="#" onclick="logout(); return false;"
+                                    class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
+                                    <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium">
+                            عربي
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-6">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                <a href="student.html" class="hover:text-primary">Dashboard</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <a href="#" id="courseBreadcrumb" class="hover:text-primary">Course</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span id="fileBreadcrumb" class="text-gray-700">File</span>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Left Side - File Content Preview (2 columns) -->
+                <div class="lg:col-span-2">
+                    <!-- File Preview Area -->
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <!-- File Header -->
+                        <div class="bg-gradient-to-r from-teal-600 to-teal-500 p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div id="fileTypeIcon"
+                                        class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h1 id="fileName" class="text-xl font-bold">File Name</h1>
+                                        <p id="fileType" class="text-teal-100 text-sm">Document</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="downloadFile()"
+                                        class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition"
+                                        title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button onclick="shareFile()"
+                                        class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition" title="Share">
+                                        <i class="fas fa-share-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview Content -->
+                        <div id="filePreview"
+                            class="preview-container min-h-[750px] flex items-center justify-center p-8">
+                            <!-- Placeholder -->
+                            <div id="contentPlaceholder" class="text-center">
+                                <div
+                                    class="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-file-alt text-4xl text-gray-400"></i>
+                                </div>
+                                <p class="text-xl font-semibold text-gray-600 mb-2">File Content</p>
+                                <p class="text-gray-400">Preview will appear here</p>
+                            </div>
+
+                            <!-- Image Preview -->
+                            <img id="imagePreview"
+                                class="hidden max-w-full max-h-[700px] rounded-lg shadow-lg object-contain"
+                                alt="File preview">
+
+                            <!-- Video Preview -->
+                            <video id="videoPreview" class="hidden w-full max-h-[700px] rounded-lg shadow-lg" controls>
+                                Your browser does not support the video tag.
+                            </video>
+
+                            <!-- PDF Preview -->
+                            <iframe id="pdfPreview" class="hidden w-full h-[700px] rounded-lg border-0"></iframe>
+
+                            <!-- Document Preview (non-viewable) -->
+                            <div id="docPreview" class="hidden text-center">
+                                <div
+                                    class="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-file-word text-4xl text-blue-500"></i>
+                                </div>
+                                <p class="text-xl font-semibold text-gray-600 mb-2">Document File</p>
+                                <p class="text-gray-500 mb-4">This document cannot be previewed in browser</p>
+                                <button onclick="downloadFile()"
+                                    class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary-dark transition shadow-lg">
+                                    <i class="fas fa-download mr-2"></i>Download to View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Description -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-info-circle text-primary mr-2"></i>Description
+                            </h3>
+                            <button id="editDescBtn" onclick="toggleEditDescription()"
+                                class="hidden text-primary hover:text-primary-dark text-sm">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </button>
+                        </div>
+                        <p id="fileDescription" class="text-gray-600 leading-relaxed">
+                            No description available for this file.
+                        </p>
+                        <!-- Edit Description Form (hidden by default) -->
+                        <div id="editDescForm" class="hidden">
+                            <textarea id="descriptionInput"
+                                class="w-full p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                rows="4" placeholder="Write a description for this file..."></textarea>
+                            <div class="flex justify-end gap-2 mt-2">
+                                <button onclick="cancelEditDescription()"
+                                    class="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
+                                    Cancel
+                                </button>
+                                <button onclick="saveDescription()"
+                                    class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark text-sm">
+                                    <i class="fas fa-save mr-1"></i>Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Info & Comments (1 column) -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- File Info Card -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">
+                            <i class="fas fa-file-invoice text-primary mr-2"></i>File Information
+                        </h3>
+
+                        <!-- Average Rating from all users -->
+                        <div class="mb-4 pb-4 border-b">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-600">Knowledge Rating</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-0.5" id="avgRatingStars">
+                                        <i class="far fa-star text-lg text-gray-300"></i>
+                                        <i class="far fa-star text-lg text-gray-300"></i>
+                                        <i class="far fa-star text-lg text-gray-300"></i>
+                                        <i class="far fa-star text-lg text-gray-300"></i>
+                                        <i class="far fa-star text-lg text-gray-300"></i>
+                                    </div>
+                                    <span id="avgRatingValue" class="text-lg font-bold text-yellow-500">0.0</span>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-400 text-right">
+                                <span id="totalRatings">0</span> ratings
+                            </div>
+                        </div>
+
+                        <!-- File Details -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fas fa-user-circle mr-2"></i>Uploaded by</span>
+                                <span id="uploadedBy" class="text-gray-800 font-medium">Student</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fas fa-calendar mr-2"></i>Upload Date</span>
+                                <span id="uploadDate" class="text-gray-800">-</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fas fa-file mr-2"></i>File Type</span>
+                                <span id="fileExtension" class="text-gray-800 uppercase">-</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fas fa-weight mr-2"></i>File Size</span>
+                                <span id="fileSize" class="text-gray-800">-</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fas fa-eye mr-2"></i>Views</span>
+                                <span id="viewCount" class="text-gray-800">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">
+                            <i class="fas fa-comments text-primary mr-2"></i>Comments
+                            <span id="commentCount" class="text-sm font-normal text-gray-500 ml-2">(0)</span>
+                        </h3>
+
+                        <!-- Add Comment -->
+                        <div class="mb-4">
+                            <div class="flex items-start gap-3">
+                                <div id="commentUserAvatar"
+                                    class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span id="commentUserInitial" class="text-white font-bold">S</span>
+                                </div>
+                                <div class="flex-1">
+                                    <textarea id="commentInput" placeholder="Share your thoughts about this file..."
+                                        class="w-full p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                                        rows="3"></textarea>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <span class="text-gray-500">Your rating:</span>
+                                            <div id="commentRating" class="flex gap-1">
+                                                <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
+                                                    onclick="setCommentRating(1)"></i>
+                                                <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
+                                                    onclick="setCommentRating(2)"></i>
+                                                <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
+                                                    onclick="setCommentRating(3)"></i>
+                                                <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
+                                                    onclick="setCommentRating(4)"></i>
+                                                <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
+                                                    onclick="setCommentRating(5)"></i>
+                                            </div>
+                                            <span id="commentRatingError" class="text-red-500 text-xs hidden">Rate 1-3
+                                                stars minimum!</span>
+                                        </div>
+                                        <button onclick="addComment()"
+                                            class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark text-sm transition">
+                                            <i class="fas fa-paper-plane mr-1"></i>Post
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comments List -->
+                        <div id="commentsList" class="space-y-4 max-h-80 overflow-y-auto">
+                            <!-- Comments will be loaded dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="fixed bottom-6 right-6 z-50"></div>
+
+        <script src="../assets/js/session.js"></script>
+        <script src="../assets/js/background-styles.js"></script>
+        <script>
+            let currentFileId = null;
+            let currentCourseId = null;
+            let currentRating = 0;
+            let commentRating = 0;
+
+            // Load user data on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                // Check if user is logged in and update display
+                const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
+                if (user) {
+                    if (user.fullName) {
+                        const nameElements = document.querySelectorAll('[data-user-name]');
+                        nameElements.forEach(el => {
+                            el.textContent = user.fullName;
+                        });
+                    }
+                    if (user.email) {
+                        const emailElements = document.querySelectorAll('[data-user-email]');
+                        emailElements.forEach(el => {
+                            el.textContent = user.email;
+                        });
+                    }
+                    // Update profile initial and color
+                    const userName = user.fullName || user.name || 'S';
+                    const initial = userName.charAt(0).toUpperCase();
+                    const profileInitial = document.getElementById('profileInitial');
+                    const profileButton = document.getElementById('profileButton');
+                    if (profileInitial) profileInitial.textContent = initial;
+
+                    // Use same color scheme as comments for consistency
+                    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                    const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
+                    if (profileButton) {
+                        profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
+                    }
+
+                    // Update comment input avatar to match
+                    const commentUserAvatar = document.getElementById('commentUserAvatar');
+                    const commentUserInitial = document.getElementById('commentUserInitial');
+                    if (commentUserAvatar) {
+                        commentUserAvatar.className = `w-10 h-10 ${userColor} rounded-full flex items-center justify-center flex-shrink-0`;
+                    }
+                    if (commentUserInitial) {
+                        commentUserInitial.textContent = initial;
+                    }
+                }
+            });
+
+            // Get parameters from URL
+            function getParams() {
+                const params = new URLSearchParams(window.location.search);
+                return {
+                    fileId: parseInt(params.get('fileId')) || 0,
+                    courseId: parseInt(params.get('courseId')) || 1,
+                    fileName: params.get('name') || 'File'
+                };
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (!bytes) return '-';
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            }
+
+            // Format date
+            function formatDate(dateString) {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            }
+
+            // Get file type icon
+            function getFileTypeIcon(extension, fileType) {
+                // Check file type first
+                if (fileType === 'video') return 'fa-file-video text-pink-500';
+
+                const icons = {
+                    'pdf': 'fa-file-pdf text-red-500',
+                    'doc': 'fa-file-word text-blue-500',
+                    'docx': 'fa-file-word text-blue-500',
+                    'xls': 'fa-file-excel text-green-500',
+                    'xlsx': 'fa-file-excel text-green-500',
+                    'ppt': 'fa-file-powerpoint text-orange-500',
+                    'pptx': 'fa-file-powerpoint text-orange-500',
+                    'png': 'fa-file-image text-purple-500',
+                    'jpg': 'fa-file-image text-purple-500',
+                    'jpeg': 'fa-file-image text-purple-500',
+                    'gif': 'fa-file-image text-purple-500',
+                    'mp4': 'fa-file-video text-pink-500',
+                    'avi': 'fa-file-video text-pink-500',
+                    'mov': 'fa-file-video text-pink-500',
+                    'mkv': 'fa-file-video text-pink-500',
+                    'webm': 'fa-file-video text-pink-500',
+                    'wmv': 'fa-file-video text-pink-500',
+                    'flv': 'fa-file-video text-pink-500'
+                };
+                return icons[extension?.toLowerCase()] || 'fa-file-alt text-gray-500';
+            }
+
+            // Get file type name
+            function getFileTypeName(extension, fileType) {
+                // Check file type first (from upload)
+                if (fileType === 'video') return 'Video';
+                if (fileType === 'document') return 'Document';
+
+                const types = {
+                    'pdf': 'PDF Document',
+                    'doc': 'Word Document',
+                    'docx': 'Word Document',
+                    'xls': 'Excel Spreadsheet',
+                    'xlsx': 'Excel Spreadsheet',
+                    'ppt': 'PowerPoint',
+                    'pptx': 'PowerPoint',
+                    'png': 'Image',
+                    'jpg': 'Image',
+                    'jpeg': 'Image',
+                    'gif': 'Image',
+                    'mp4': 'Video',
+                    'avi': 'Video',
+                    'mov': 'Video',
+                    'mkv': 'Video',
+                    'webm': 'Video',
+                    'wmv': 'Video',
+                    'flv': 'Video'
+                };
+                return types[extension?.toLowerCase()] || 'File';
+            }
+
+            // Course data for breadcrumb
+            const allCoursesData = {
+                1: { code: '48021400-4', name: 'Calculus (1)' },
+                2: { code: '48021700-6', name: 'English Language (1)' },
+                3: { code: '48021503-3', name: 'Computer Programming Skills' },
+                4: { code: '48021200-4', name: 'General Chemistry (1)' },
+                5: { code: '48021300-4', name: 'General Physics (1)' },
+                6: { code: '48021400-6', name: 'Calculus (2)' },
+                7: { code: '48021701-6', name: 'English Language (2)' },
+                8: { code: '48021101-3', name: 'Discrete Mathematics (1)' },
+                9: { code: '48022316-3', name: 'Object-Oriented Programming (OOP)' },
+                10: { code: '48021102-3', name: 'Discrete Mathematics (2)' },
+                11: { code: '48022100-3', name: 'Logic Design' },
+                12: { code: '48022210-3', name: 'Data Structure' },
+                13: { code: '48022312-3', name: 'Systems Analysis and Design' },
+                14: { code: '48022214-3', name: 'Database Management' },
+                15: { code: '48022101-3', name: 'Computer Organization' },
+                16: { code: '48022110-3', name: 'Operating Systems' },
+                17: { code: '48022410-3', name: 'Algorithms Design' },
+                18: { code: '48022311-3', name: 'Software Engineering' },
+                19: { code: '48022217-3', name: 'Visual Programming' },
+                20: { code: '48022517-3', name: 'Artificial Intelligence (AI)' },
+                21: { code: '48022315-3', name: 'Internet Programming' },
+                22: { code: '48022515-3', name: 'Machine Learning' },
+                23: { code: '48022413-3', name: 'Computer Networks' },
+                24: { code: '48022516-3', name: 'Natural Language Processing' },
+                25: { code: '48021504-3', name: 'Analytical and Critical Thinking Skills' },
+                26: { code: '48021505-3', name: 'Information Management Skills' },
+                27: { code: '48021506-3', name: 'Introduction to Web Development' },
+                28: { code: '48022218-3', name: 'Game Development' },
+                29: { code: '48022514-3', name: 'Computer Graphics' },
+                30: { code: '48022513-3', name: 'Image Processing' }
+            };
+
+            // Get course name by ID
+            function getCourseName(courseId) {
+                const course = allCoursesData[courseId];
+                return course ? course.name : `Course ${courseId}`;
+            }
+
+            // Load file data
+            function loadFile() {
+                const params = getParams();
+                currentFileId = params.fileId;
+                currentCourseId = params.courseId;
+
+                // Get file data from localStorage
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                const file = files[currentFileId];
+
+                // Update breadcrumb with actual course name
+                document.getElementById('courseBreadcrumb').href = `course.html?id=${currentCourseId}`;
+                const courseName = getCourseName(currentCourseId);
+                document.getElementById('courseBreadcrumb').textContent = courseName;
+
+                if (file) {
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('fileBreadcrumb').textContent = file.name;
+                    document.getElementById('fileDescription').textContent = file.description || file.originalName || 'No description available for this file.';
+                    document.title = file.name + ' - Tsharok';
+
+                    // Update file info
+                    const ext = file.extension || file.originalName?.split('.').pop() || '';
+                    document.getElementById('fileType').textContent = getFileTypeName(ext, file.type);
+                    document.getElementById('fileTypeIcon').innerHTML = `<i class="fas ${getFileTypeIcon(ext, file.type)} text-2xl"></i>`;
+                    document.getElementById('fileExtension').textContent = ext.toUpperCase() || '-';
+                    document.getElementById('uploadDate').textContent = formatDate(file.date);
+                    document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                    document.getElementById('uploadedBy').textContent = file.uploadedBy || 'Student';
+
+                    // Update view count
+                    file.views = (file.views || 0) + 1;
+                    files[currentFileId] = file;
+                    localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                    document.getElementById('viewCount').textContent = file.views;
+
+                    currentRating = file.rating || 0;
+                    updateRatingDisplay();
+
+                    // Display file content
+                    displayFileContent(file);
+                } else {
+                    document.getElementById('fileName').textContent = params.fileName;
+                    document.getElementById('fileBreadcrumb').textContent = params.fileName;
+                    document.getElementById('fileDescription').textContent = 'File content preview';
+                }
+
+                loadComments();
+                loadUserName();
+                updateAverageRating();
+                checkFileOwnership();
+            }
+
+            // Display file content based on type
+            function displayFileContent(file) {
+                const placeholder = document.getElementById('contentPlaceholder');
+                const imagePreview = document.getElementById('imagePreview');
+                const videoPreview = document.getElementById('videoPreview');
+                const pdfPreview = document.getElementById('pdfPreview');
+                const docPreview = document.getElementById('docPreview');
+
+                // Hide all previews first
+                placeholder.classList.add('hidden');
+                imagePreview.classList.add('hidden');
+                videoPreview.classList.add('hidden');
+                pdfPreview.classList.add('hidden');
+                docPreview.classList.add('hidden');
+
+                console.log('Displaying file:', file); // Debug log
+
+                if (!file.fileData) {
+                    // No file data, show message about file size
+                    console.log('No file data found - file may be too large for browser storage');
+                    placeholder.innerHTML = `
+                    <div class="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas ${file.type === 'video' ? 'fa-video' : 'fa-file-alt'} text-4xl text-gray-400"></i>
+                    </div>
+                    <p class="text-xl font-semibold text-gray-600 mb-2">${file.type === 'video' ? 'Video' : 'File'} Content</p>
+                    <p class="text-gray-500 mb-4">File is too large to preview in browser</p>
+                    <p class="text-sm text-gray-400">(Browser storage limit: ~5MB)</p>
+                    <p class="text-sm text-gray-400 mt-2">Original file: ${file.originalName || 'Unknown'}</p>
+                `;
+                    placeholder.classList.remove('hidden');
+                    return;
+                }
+
+                // Get extension from file or from originalName
+                let ext = file.extension?.toLowerCase() || '';
+                if (!ext && file.originalName) {
+                    ext = file.originalName.split('.').pop().toLowerCase();
+                }
+
+                console.log('File extension:', ext); // Debug log
+                console.log('File type:', file.type); // Debug log
+
+                // Check by file type first (document or video)
+                if (file.type === 'video') {
+                    // Video files
+                    videoPreview.src = file.fileData;
+                    videoPreview.load(); // Force reload the video
+                    videoPreview.classList.remove('hidden');
+                    console.log('Showing video preview');
+                }
+                // Image files
+                else if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
+                    imagePreview.src = file.fileData;
+                    imagePreview.classList.remove('hidden');
+                    console.log('Showing image preview');
+                }
+                // Video files by extension
+                else if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'wmv', 'flv'].includes(ext)) {
+                    videoPreview.src = file.fileData;
+                    videoPreview.load();
+                    videoPreview.classList.remove('hidden');
+                    console.log('Showing video preview by extension');
+                }
+                // PDF files
+                else if (ext === 'pdf') {
+                    pdfPreview.src = file.fileData;
+                    pdfPreview.classList.remove('hidden');
+                    console.log('Showing PDF preview');
+                }
+                // Document files (docx, doc, etc.)
+                else if (['docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt'].includes(ext)) {
+                    docPreview.classList.remove('hidden');
+                    console.log('Showing document preview');
+                }
+                // Unknown type - show placeholder
+                else {
+                    placeholder.classList.remove('hidden');
+                    console.log('Unknown file type, showing placeholder');
+                }
+            }
+
+            // Update rating display
+            function updateRatingDisplay() {
+                const stars = document.querySelectorAll('#ratingStars i');
+                stars.forEach((star, index) => {
+                    if (index < currentRating) {
+                        star.className = 'fas fa-star text-lg text-yellow-400 cursor-pointer hover:text-yellow-500';
+                    } else {
+                        star.className = 'far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400';
+                    }
+                });
+            }
+
+            // Calculate and display average rating from all comments and ratings
+            function updateAverageRating() {
+                const comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
+                const ratings = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_ratings`) || '[]');
+
+                // Combine ratings from comments and separate ratings
+                let allRatings = [];
+
+                // Add comment ratings
+                comments.forEach(c => {
+                    if (c.rating) allRatings.push(c.rating);
+                });
+
+                // Add separate ratings
+                ratings.forEach(r => {
+                    if (r.rating) allRatings.push(r.rating);
+                });
+
+                if (allRatings.length === 0) {
+                    document.getElementById('avgRatingValue').textContent = '0.0';
+                    document.getElementById('totalRatings').textContent = '0';
+                    updateAvgStars(0);
+                    return;
+                }
+
+                // Calculate average
+                const totalRating = allRatings.reduce((sum, rating) => sum + rating, 0);
+                const avgRating = totalRating / allRatings.length;
+
+                // Update display
+                document.getElementById('avgRatingValue').textContent = avgRating.toFixed(1);
+                document.getElementById('totalRatings').textContent = allRatings.length;
+                updateAvgStars(avgRating);
+            }
+
+            // Update average rating stars display
+            function updateAvgStars(rating) {
+                const stars = document.querySelectorAll('#avgRatingStars i');
+                stars.forEach((star, index) => {
+                    if (index < Math.floor(rating)) {
+                        star.className = 'fas fa-star text-lg text-yellow-400';
+                    } else if (index < rating) {
+                        star.className = 'fas fa-star-half-alt text-lg text-yellow-400';
+                    } else {
+                        star.className = 'far fa-star text-lg text-gray-300';
+                    }
+                });
+            }
+
+            // Set rating
+            function setRating(rating) {
+                currentRating = rating;
+                updateRatingDisplay();
+
+                // Save rating to file
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                if (files[currentFileId]) {
+                    files[currentFileId].rating = rating;
+                    localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                }
+
+                // Also save as a rating entry for average calculation
+                let ratings = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_ratings`) || '[]');
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                const userId = userData.id || 'anonymous';
+
+                // Check if user already rated, update their rating
+                const existingIndex = ratings.findIndex(r => r.userId === userId);
+                if (existingIndex >= 0) {
+                    ratings[existingIndex].rating = rating;
+                } else {
+                    ratings.push({ userId, rating, date: new Date().toISOString() });
+                }
+                localStorage.setItem(`file_${currentCourseId}_${currentFileId}_ratings`, JSON.stringify(ratings));
+
+                updateAverageRating();
+                showToast('Rating saved!', 'success');
+            }
+
+            // Set comment rating
+            function setCommentRating(rating) {
+                commentRating = rating;
+                const stars = document.querySelectorAll('#commentRating i');
+                const errorEl = document.getElementById('commentRatingError');
+
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.className = 'fas fa-star text-lg text-yellow-400 cursor-pointer hover:text-yellow-500 transition';
+                    } else {
+                        star.className = 'far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition';
+                    }
+                });
+
+                // Hide error when rating is selected
+                if (rating > 0) {
+                    errorEl.classList.add('hidden');
+                }
+            }
+
+            // Load comments
+            function loadComments() {
+                const comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
+                const container = document.getElementById('commentsList');
+                document.getElementById('commentCount').textContent = `(${comments.length})`;
+
+                if (comments.length === 0) {
+                    container.innerHTML = `
+                    <div class="text-center py-6 text-gray-400">
+                        <i class="fas fa-comment-slash text-3xl mb-2"></i>
+                        <p>No comments yet. Be the first to comment!</p>
+                    </div>
+                `;
+                    return;
+                }
+
+                let html = '';
+                comments.forEach((comment, index) => {
+                    html += getCommentHTML(comment, index);
+                });
+                container.innerHTML = html;
+            }
+
+            // Get comment HTML
+            function getCommentHTML(comment, index) {
+                const starsHTML = Array(5).fill(0).map((_, i) =>
+                    `<i class="${i < (comment.rating || 0) ? 'fas' : 'far'} fa-star text-xs"></i>`
+                ).join('');
+
+                const initials = (comment.author || 'S').charAt(0).toUpperCase();
+                const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                const randomColor = colors[Math.abs(comment.author?.charCodeAt(0) || 0) % colors.length];
+                const likes = comment.likes || 0;
+                const isLiked = comment.likedByMe ? 'fas text-red-500' : 'far text-gray-400';
+
+                // Ensure replies array exists
+                const replies = comment.replies || [];
+                const replyCount = replies.length;
+
+                // Generate replies HTML
+                let repliesHTML = '';
+                if (replyCount > 0) {
+                    repliesHTML = replies.map((reply, replyIndex) => getReplyHTML(reply, index, replyIndex)).join('');
+                }
+
+                return `
+                <div class="bg-gray-50 rounded-xl p-4" data-comment-index="${index}">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 ${randomColor} rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-sm font-bold">${initials}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-semibold text-gray-800 text-sm">${comment.author || 'Student'}</span>
+                                <div class="flex text-yellow-400">${starsHTML}</div>
+                                <span class="text-gray-400 text-xs">${comment.date || 'Just now'}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mt-1">${comment.text}</p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <button onclick="toggleLike(${index})" class="flex items-center gap-1 text-sm hover:scale-110 transition">
+                                    <i class="${isLiked} fa-heart"></i>
+                                    <span class="text-gray-500">${likes}</span>
+                                </button>
+                                <button onclick="toggleReplyForm(${index})" class="flex items-center gap-1 text-sm text-gray-500 hover:text-primary transition">
+                                    <i class="far fa-comment"></i>
+                                    <span>Reply</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Reply Input Form (Hidden by default) -->
+                            <div id="replyForm-${index}" class="hidden mt-3 pl-4 border-l-2 border-gray-300">
+                                <div class="flex items-start gap-2">
+                                    <textarea id="replyInput-${index}" placeholder="Write a reply..." class="flex-1 p-2 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm" rows="2"></textarea>
+                                </div>
+                                <div class="flex justify-end gap-2 mt-2">
+                                    <button onclick="toggleReplyForm(${index})" class="px-3 py-1 text-gray-600 hover:text-gray-800 text-sm">
+                                        Cancel
+                                    </button>
+                                    <button onclick="addReply(${index})" class="bg-primary text-white px-3 py-1 rounded-lg hover:bg-primary-dark text-sm transition">
+                                        <i class="fas fa-paper-plane mr-1"></i>Reply
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Replies Section -->
+                            ${replyCount > 0 ? `
+                                <div class="mt-3">
+                                    <button onclick="toggleReplies(${index})" class="flex items-center gap-1 text-sm text-primary hover:text-primary-dark font-medium transition">
+                                        <i id="replyToggleIcon-${index}" class="fas fa-chevron-down text-xs"></i>
+                                        <span id="replyToggleText-${index}">View ${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}</span>
+                                    </button>
+                                    <div id="repliesContainer-${index}" class="hidden mt-2 pl-4 border-l-2 border-gray-300 space-y-2">
+                                        ${repliesHTML}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+
+            // Get reply HTML
+            function getReplyHTML(reply, commentIndex, replyIndex) {
+                const initials = (reply.author || 'S').charAt(0).toUpperCase();
+                const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                const randomColor = colors[Math.abs(reply.author?.charCodeAt(0) || 0) % colors.length];
+
+                return `
+                <div class="flex items-start gap-2 bg-white rounded-lg p-3">
+                    <div class="w-6 h-6 ${randomColor} rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-white text-xs font-bold">${initials}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold text-gray-800 text-xs">${reply.author || 'Student'}</span>
+                            <span class="text-gray-400 text-xs">${reply.date || 'Just now'}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-1">${reply.text}</p>
+                    </div>
+                </div>
+            `;
+            }
+
+            // Toggle reply form visibility
+            function toggleReplyForm(commentIndex) {
+                const replyForm = document.getElementById(`replyForm-${commentIndex}`);
+                const replyInput = document.getElementById(`replyInput-${commentIndex}`);
+
+                if (replyForm.classList.contains('hidden')) {
+                    replyForm.classList.remove('hidden');
+                    replyInput.focus();
+                } else {
+                    replyForm.classList.add('hidden');
+                    replyInput.value = '';
+                }
+            }
+
+            // Add reply to a comment
+            function addReply(commentIndex) {
+                const replyInput = document.getElementById(`replyInput-${commentIndex}`);
+                const text = replyInput.value.trim();
+
+                if (!text) {
+                    showToast('Please enter a reply', 'error');
+                    return;
+                }
+
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                const authorName = userData.fullName || userData.name || userData.username || 'Student';
+
+                const reply = {
+                    author: authorName,
+                    text: text,
+                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                };
+
+                let comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
+
+                if (comments[commentIndex]) {
+                    // Ensure replies array exists
+                    if (!comments[commentIndex].replies) {
+                        comments[commentIndex].replies = [];
+                    }
+
+                    // Add reply to the beginning of replies array
+                    comments[commentIndex].replies.unshift(reply);
+
+                    // Save to localStorage
+                    localStorage.setItem(`file_${currentCourseId}_${currentFileId}_comments`, JSON.stringify(comments));
+
+                    // Clear input and hide form
+                    replyInput.value = '';
+                    toggleReplyForm(commentIndex);
+
+                    // Reload comments to show the new reply
+                    loadComments();
+
+                    showToast('Reply added!', 'success');
+                }
+            }
+
+            // Toggle replies visibility
+            function toggleReplies(commentIndex) {
+                const repliesContainer = document.getElementById(`repliesContainer-${commentIndex}`);
+                const toggleIcon = document.getElementById(`replyToggleIcon-${commentIndex}`);
+                const toggleText = document.getElementById(`replyToggleText-${commentIndex}`);
+
+                const comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
+                const replyCount = comments[commentIndex]?.replies?.length || 0;
+
+                if (repliesContainer.classList.contains('hidden')) {
+                    // Show replies
+                    repliesContainer.classList.remove('hidden');
+                    toggleIcon.classList.remove('fa-chevron-down');
+                    toggleIcon.classList.add('fa-chevron-up');
+                    toggleText.textContent = 'Hide replies';
+                } else {
+                    // Hide replies
+                    repliesContainer.classList.add('hidden');
+                    toggleIcon.classList.remove('fa-chevron-up');
+                    toggleIcon.classList.add('fa-chevron-down');
+                    toggleText.textContent = `View ${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}`;
+                }
+            }
+
+            // Toggle like on comment
+            function toggleLike(commentIndex) {
+                let comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
+                if (comments[commentIndex]) {
+                    const comment = comments[commentIndex];
+                    if (comment.likedByMe) {
+                        comment.likes = (comment.likes || 1) - 1;
+                        comment.likedByMe = false;
+                    } else {
+                        comment.likes = (comment.likes || 0) + 1;
+                        comment.likedByMe = true;
+
+                        // Move liked comment to top
+                        comments.splice(commentIndex, 1);
+                        comments.unshift(comment);
+                    }
+                    localStorage.setItem(`file_${currentCourseId}_${currentFileId}_comments`, JSON.stringify(comments));
+                    loadComments();
+                }
+            }
+
+            // Add comment
+            function addComment() {
+                const input = document.getElementById('commentInput');
+                const text = input.value.trim();
+                const errorEl = document.getElementById('commentRatingError');
+
+                if (!text) {
+                    showToast('Please enter a comment', 'error');
+                    return;
+                }
+
+                // Require at least 1 star (minimum 1-3 required)
+                if (commentRating < 1 || commentRating > 5) {
+                    errorEl.classList.remove('hidden');
+                    showToast('Please rate at least 1 star to comment', 'error');
+                    return;
+                }
+
+                errorEl.classList.add('hidden');
+
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                const authorName = userData.fullName || userData.name || userData.username || 'Student';
+                const comment = {
+                    author: authorName,
+                    text: text,
+                    rating: commentRating,
+                    likes: 0,
+                    likedByMe: false,
+                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                };
+
+                let comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
+                comments.unshift(comment);
+                localStorage.setItem(`file_${currentCourseId}_${currentFileId}_comments`, JSON.stringify(comments));
+
+                // Update average rating
+                updateAverageRating();
+
+                input.value = '';
+                commentRating = 0;
+                setCommentRating(0);
+                loadComments();
+                showToast('Comment added!', 'success');
+            }
+
+            // Download file
+            function downloadFile() {
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                const file = files[currentFileId];
+
+                if (file && file.fileData) {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = file.fileData;
+                    link.download = file.originalName || file.name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast('Download started!', 'success');
+                } else {
+                    showToast('No file data available for download', 'error');
+                }
+            }
+
+            // Share file
+            function shareFile() {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('Link copied to clipboard!', 'success');
+                }).catch(() => {
+                    showToast('Failed to copy link', 'error');
+                });
+            }
+
+            // Go back
+            function goBack() {
+                window.location.href = `course.html?id=${currentCourseId}`;
+            }
+
+            // Load user name
+            function loadUserName() {
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                if (userData.name) {
+                    document.getElementById('userName').textContent = userData.name;
+                }
+            }
+
+            // Show toast notification
+            function showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    info: 'bg-gray-800'
+                };
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    info: 'fa-info-circle'
+                };
+
+                const toast = document.createElement('div');
+                toast.className = `${colors[type]} text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-y-2 opacity-0`;
+                toast.innerHTML = `<i class="fas ${icons[type]}"></i><span>${message}</span>`;
+                container.appendChild(toast);
+
+                // Animate in
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                }, 10);
+
+                // Remove after delay
+                setTimeout(() => {
+                    toast.classList.add('translate-y-2', 'opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // Check if current user is the file creator
+            function checkFileOwnership() {
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                const file = files[currentFileId];
+                const userData = JSON.parse(localStorage.getItem('user') || '{}');
+
+                // Show edit button if:
+                // 1. User is the creator (by name or id)
+                // 2. File has no uploader info (legacy files)
+                // 3. User is logged in and file was recently uploaded (same session)
+                const isOwner = file && (
+                    file.uploadedBy === userData.name ||
+                    file.uploaderId === userData.id ||
+                    !file.uploadedBy ||
+                    !file.uploaderId
+                );
+
+                // Always show edit button for now (since we're in demo mode)
+                // In production, you'd check proper authentication
+                if (file) {
+                    document.getElementById('editDescBtn').classList.remove('hidden');
+                }
+            }
+
+            // Toggle edit description mode
+            function toggleEditDescription() {
+                const descEl = document.getElementById('fileDescription');
+                const formEl = document.getElementById('editDescForm');
+                const inputEl = document.getElementById('descriptionInput');
+
+                descEl.classList.add('hidden');
+                formEl.classList.remove('hidden');
+                inputEl.value = descEl.textContent.trim() === 'No description available for this file.' ? '' : descEl.textContent.trim();
+                inputEl.focus();
+            }
+
+            // Cancel edit description
+            function cancelEditDescription() {
+                document.getElementById('fileDescription').classList.remove('hidden');
+                document.getElementById('editDescForm').classList.add('hidden');
+            }
+
+            // Save description
+            function saveDescription() {
+                const inputEl = document.getElementById('descriptionInput');
+                const descEl = document.getElementById('fileDescription');
+                const newDesc = inputEl.value.trim();
+
+                // Update in localStorage
+                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                if (files[currentFileId]) {
+                    files[currentFileId].description = newDesc || 'No description available for this file.';
+                    localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                }
+
+                // Update display
+                descEl.textContent = newDesc || 'No description available for this file.';
+                cancelEditDescription();
+                showToast('Description saved!', 'success');
+            }
+
+            // Language toggle
+            function toggleLanguage() {
+                const currentLang = document.documentElement.lang;
+                if (currentLang === 'en') {
+                    document.documentElement.lang = 'ar';
+                    document.documentElement.dir = 'rtl';
+                } else {
+                    document.documentElement.lang = 'en';
+                    document.documentElement.dir = 'ltr';
+                }
+            }
+
+            // ========== PROFILE MENU FUNCTIONALITY ==========
+
+            function toggleProfileMenu() {
+                const menu = document.getElementById('profileMenu');
+                menu.classList.toggle('hidden');
+            }
+
+            // Close profile menu when clicking outside
+            document.addEventListener('click', function (event) {
+                const menu = document.getElementById('profileMenu');
+                const button = document.getElementById('profileButton');
+
+                if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', loadFile);
+        </script>
+    </div><!-- End of bg-shapes-container -->
+</body>
+
+</html>

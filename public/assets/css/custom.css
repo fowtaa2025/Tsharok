@@ -1,0 +1,347 @@
+/* Custom CSS for Tsharok LMS */
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4F46E5;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4338CA;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-left {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+.animate-slide-right {
+    animation: slideInRight 0.6s ease-out;
+}
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Card hover effects */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Button ripple effect */
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Input focus effects */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+}
+
+/* Loading spinner */
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #4F46E5;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Glass morphism effect */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Pulse animation for notifications */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom radio button styling */
+input[type="radio"]:checked + div {
+    border-color: #4F46E5;
+    background-color: #EEF2FF;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Print styles */
+@media print {
+    nav, footer, .no-print {
+        display: none !important;
+    }
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+    /* Dark mode styles can be added here */
+}
+
+/* ===================================
+   AESTHETIC BACKGROUND SHAPES
+   =================================== */
+
+/* Base styling for all background shapes */
+.bg-shape {
+    position: absolute;
+    opacity: 0.08;
+    z-index: 0;
+}
+
+/* Circle Shape */
+.bg-circle {
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(135deg, #3498DB, #2C3E50);
+    border-radius: 50%;
+    top: -80px;
+    left: -80px;
+    animation: float 20s infinite ease-in-out;
+}
+
+/* Triangle Shape */
+.bg-triangle {
+    width: 0;
+    height: 0;
+    border-left: 200px solid transparent;
+    border-right: 200px solid transparent;
+    border-bottom: 350px solid rgba(52, 152, 219, 0.3);
+    top: 10%;
+    right: 5%;
+    animation: float 18s infinite ease-in-out reverse;
+}
+
+/* Hexagon Shape */
+.bg-hexagon {
+    width: 200px;
+    height: 115px;
+    background: linear-gradient(135deg, #34495E, #3498DB);
+    position: absolute;
+    bottom: 100px;
+    left: 15%;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: float 16s infinite ease-in-out;
+}
+
+/* Diamond Shape */
+.bg-diamond {
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(135deg, #2C3E50, #3498DB);
+    transform: rotate(45deg);
+    top: 50%;
+    left: 5%;
+    animation: rotate 25s infinite linear;
+}
+
+/* Rounded Rectangle */
+.bg-rounded-rect {
+    width: 300px;
+    height: 180px;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(44, 62, 80, 0.3));
+    border-radius: 50px;
+    bottom: -50px;
+    right: 10%;
+    animation: float 15s infinite ease-in-out reverse;
+}
+
+/* Star-like Shape using clip-path */
+.bg-star {
+    width: 180px;
+    height: 180px;
+    background: linear-gradient(135deg, #3498DB, #34495E);
+    top: 30%;
+    left: 50%;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: rotate 30s infinite linear reverse;
+}
+
+/* Ellipse Shape */
+.bg-ellipse {
+    width: 400px;
+    height: 200px;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(44, 62, 80, 0.25));
+    border-radius: 50%;
+    top: -50px;
+    right: 20%;
+    animation: float 22s infinite ease-in-out;
+}
+
+/* Organic Blob Shape */
+.bg-blob {
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(135deg, #34495E, #3498DB);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    bottom: 20%;
+    right: -50px;
+    animation: morph 20s infinite ease-in-out;
+}
+
+/* Background shapes container */
+.bg-shapes-container {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animation keyframes for background shapes */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+    }
+    50% {
+        transform: translateY(-30px) translateX(30px);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes morph {
+    0%, 100% {
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+    50% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+}
+
+/* Diagonal lines pattern */
+.diagonal-lines {
+    background: linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.03) 50%, transparent 50%, transparent 95%, rgba(0,0,0,0.03) 95%);
+    background-size: 50px 50px;
+}

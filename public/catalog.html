@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Catalog - Tsharok</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- Axios for AJAX requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <i class="fas fa-graduation-cap text-3xl text-indigo-600"></i>
+                        <span class="ml-2 text-2xl font-bold text-gray-900">Tsharok</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 hover:text-indigo-600 transition">Home</a>
+                    <a href="catalog.html" class="text-indigo-600 font-semibold">Catalog</a>
+                    <a href="login.html" class="text-gray-700 hover:text-indigo-600 transition">Login</a>
+                    <a href="register.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        Sign Up
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold mb-4">
+                <i class="fas fa-book-open mr-3"></i>Course Catalog
+            </h1>
+            <p class="text-xl text-indigo-100">Explore our comprehensive collection of courses</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-search mr-2"></i>Search Courses
+                    </label>
+                    <input 
+                        type="text" 
+                        id="course-search"
+                        placeholder="Search by name, code, or description..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Major Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-filter mr-2"></i>Major
+                    </label>
+                    <select 
+                        id="major-filter"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    >
+                        <option value="">All Majors</option>
+                    </select>
+                </div>
+
+                <!-- Level Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-layer-group mr-2"></i>Level
+                    </label>
+                    <select 
+                        id="level-filter"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    >
+                        <option value="">All Levels</option>
+                        <option value="1">Level 1</option>
+                        <option value="2">Level 2</option>
+                        <option value="3">Level 3</option>
+                        <option value="4">Level 4</option>
+                        <option value="5">Level 5</option>
+                        <option value="6">Level 6</option>
+                        <option value="7">Level 7</option>
+                        <option value="8">Level 8</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Sort Options -->
+            <div class="mt-4 flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center space-x-4">
+                    <label class="text-sm font-medium text-gray-700">Sort by:</label>
+                    <select 
+                        id="sort-filter"
+                        class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                    >
+                        <option value="created_at">Newest First</option>
+                        <option value="course_name">Name (A-Z)</option>
+                        <option value="enrollment_count">Most Popular</option>
+                        <option value="level">Level</option>
+                    </select>
+                    <button 
+                        id="clear-filters"
+                        class="px-4 py-1 text-sm text-gray-600 hover:text-indigo-600 border border-gray-300 rounded-lg hover:border-indigo-500 transition"
+                        title="Clear all filters"
+                    >
+                        <i class="fas fa-times mr-1"></i>Clear Filters
+                    </button>
+                </div>
+                <div id="course-count" class="text-sm text-gray-600">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading courses...
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+            <p class="text-gray-600">Loading courses...</p>
+        </div>
+
+        <!-- Course Grid -->
+        <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Courses will be loaded here -->
+        </div>
+
+        <!-- Load More Button -->
+        <div id="load-more-container" class="text-center hidden">
+            <button 
+                id="load-more-btn"
+                class="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition"
+            >
+                <i class="fas fa-plus-circle mr-2"></i>Load More Courses
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <p>&copy; 2025 Tsharok LMS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/axios-config.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/courses.js"></script>
+    <script src="assets/js/catalog-integration.js"></script>
+    <script>
+        let currentOffset = 0;
+        const limit = 12;
+        let currentFilters = {};
+        let hasMore = true;
+
+        // Load initial courses with Axios
+        async function loadCourses(append = false) {
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('courses-grid');
+            const courseCount = document.getElementById('course-count');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            
+            // Show loading state
+            if (!append) {
+                loading.classList.remove('hidden');
+                grid.innerHTML = '';
+                currentOffset = 0;
+            } else {
+                // Disable load more button during loading
+                if (loadMoreBtn) {
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+                }
+            }
+
+            try {
+                // Prepare filters
+                const filters = {
+                    ...currentFilters,
+                    limit: limit,
+                    offset: currentOffset
+                };
+
+                // Fetch courses using Axios with caching
+                const data = await fetchCoursesWithCache(filters);
+                
+                // Prefetch next page for better performance
+                if (!append && data.pagination.hasMore) {
+                    setTimeout(() => {
+                        prefetchNextPage(currentOffset, filters);
+                    }, 1000);
+                }
+                
+                // Hide loading
+                loading.classList.add('hidden');
+                
+                // Display courses
+                if (append) {
+                    const existingHTML = grid.innerHTML;
+                    grid.innerHTML = existingHTML + data.courses.map(course => createCourseCard(course)).join('');
+                } else {
+                    displayCourses(data.courses, 'courses-grid');
+                }
+                
+                // Update count with animation
+                const showingCount = Math.min(currentOffset + data.courses.length, data.pagination.total);
+                courseCount.innerHTML = `
+                    <i class="fas fa-book mr-2"></i>
+                    Showing <span class="font-semibold text-indigo-600">${showingCount}</span> of <span class="font-semibold">${data.pagination.total}</span> courses
+                `;
+                
+                // Handle load more button
+                hasMore = data.pagination.hasMore;
+                const loadMoreContainer = document.getElementById('load-more-container');
+                
+                if (hasMore && data.courses.length > 0) {
+                    loadMoreContainer.classList.remove('hidden');
+                    if (loadMoreBtn) {
+                        loadMoreBtn.disabled = false;
+                        loadMoreBtn.innerHTML = '<i class="fas fa-plus-circle mr-2"></i>Load More Courses';
+                    }
+                } else {
+                    loadMoreContainer.classList.add('hidden');
+                }
+                
+                // Show success message on first load
+                if (!append && data.courses.length > 0) {
+                    console.log(`✅ Loaded ${data.courses.length} courses successfully`);
+                }
+                
+                // Handle empty state
+                if (data.courses.length === 0 && !append) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-16">
+                            <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">No courses found</h3>
+                            <p class="text-gray-500">Try adjusting your filters or search terms</p>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                loading.classList.add('hidden');
+                
+                // Re-enable load more button
+                if (loadMoreBtn) {
+                    loadMoreBtn.disabled = false;
+                    loadMoreBtn.innerHTML = '<i class="fas fa-plus-circle mr-2"></i>Load More Courses';
+                }
+                
+                // Show error message
+                console.error('Failed to load courses:', error);
+                showMessage('Failed to load courses: ' + error.message, 'error');
+                
+                // Show error UI
+                if (!append) {
+                    grid.innerHTML = `
+                        <div class="col-span-full">
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
+                                <i class="fas fa-exclamation-circle text-5xl text-red-500 mb-4"></i>
+                                <h3 class="text-xl font-semibold text-red-900 mb-2">Failed to Load Courses</h3>
+                                <p class="text-red-700 mb-4">${error.message}</p>
+                                <button 
+                                    onclick="loadCourses()"
+                                    class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
+                                >
+                                    <i class="fas fa-redo mr-2"></i>Try Again
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Setup filters with enhanced functionality
+        function setupFilters() {
+            // Search with debounce
+            let searchTimeout;
+            const searchInput = document.getElementById('course-search');
+            
+            searchInput.addEventListener('input', function() {
+                const searchIcon = this.previousElementSibling;
+                clearTimeout(searchTimeout);
+                
+                // Show typing indicator
+                const value = this.value.trim();
+                
+                searchTimeout = setTimeout(() => {
+                    if (value !== currentFilters.search) {
+                        currentFilters.search = value;
+                        console.log('🔍 Searching for:', value || 'all courses');
+                        loadCourses();
+                    }
+                }, 500);
+            });
+
+            // Major filter with loading state
+            const majorFilter = document.getElementById('major-filter');
+            setupMajorFilter('major-filter', 'courses-grid');
+            
+            majorFilter.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                currentFilters.major = this.value;
+                console.log('📚 Filter by major:', selectedOption.text);
+                loadCourses();
+            });
+
+            // Level filter
+            document.getElementById('level-filter').addEventListener('change', function() {
+                currentFilters.level = this.value;
+                const levelText = this.value ? `Level ${this.value}` : 'All Levels';
+                console.log('📊 Filter by level:', levelText);
+                loadCourses();
+            });
+
+            // Sort filter
+            document.getElementById('sort-filter').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                currentFilters.sort = this.value;
+                console.log('🔄 Sort by:', selectedOption.text);
+                loadCourses();
+            });
+
+            // Load more button
+            document.getElementById('load-more-btn').addEventListener('click', function() {
+                currentOffset += limit;
+                loadCourses(true);
+            });
+
+            // Clear filters button (optional)
+            const clearBtn = document.getElementById('clear-filters');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    currentFilters = {};
+                    searchInput.value = '';
+                    majorFilter.value = '';
+                    document.getElementById('level-filter').value = '';
+                    document.getElementById('sort-filter').value = 'created_at';
+                    loadCourses();
+                    showMessage('Filters cleared', 'info');
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎓 Tsharok Catalog Loading...');
+            setupFilters();
+            loadCourses();
+            
+            // Log performance stats after 5 seconds
+            setTimeout(() => {
+                const stats = catalogPerformanceMonitor.getSummary();
+                console.log('📊 Performance Stats:', stats);
+            }, 5000);
+        });
+        
+        // Expose utility functions for debugging
+        window.debugCatalog = {
+            clearCache: () => catalogCache.clear(),
+            getStats: () => catalogPerformanceMonitor.getSummary(),
+            loadParallel: loadCatalogDataParallel,
+            currentFilters: () => currentFilters
+        };
+    </script>
+</body>
+</html>

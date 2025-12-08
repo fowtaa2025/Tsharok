@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Material - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/animations.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#7C3AED',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+        html { font-family: 'Inter', sans-serif; }
+        
+        .comment-item:hover {
+            background-color: #F9FAFB;
+        }
+        
+        .rating-star {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .rating-star:hover {
+            transform: scale(1.1);
+        }
+        
+        .pdf-viewer {
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Page Background Container -->
+    <div class="bg-shapes-container min-h-screen">
+    <!-- Background Shapes -->
+    <div class="bg-shape bg-circle"></div>
+    <div class="bg-shape bg-rounded-rect"></div>
+    
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-50 relative">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebar-toggle" class="mr-4 text-gray-600 hover:text-primary lg:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <a href="../index.html" class="flex items-center">
+                        <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="text-gray-600 hover:text-primary relative">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=4F46E5&color=fff" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span class="hidden md:block font-medium">Jane Smith</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+        <div class="p-6">
+            <div class="mb-8">
+                <h3 class="font-semibold text-gray-900 text-sm uppercase text-gray-500 mb-3">Course Menu</h3>
+                <nav class="space-y-2">
+                    <a href="course-materials.html" class="flex items-center space-x-3 px-4 py-3 bg-indigo-50 text-primary rounded-lg">
+                        <i class="fas fa-file-alt w-5"></i>
+                        <span class="font-medium">Materials</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-users w-5"></i>
+                        <span>Students</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-clipboard-check w-5"></i>
+                        <span>Assignments</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-comment-dots w-5"></i>
+                        <span>Discussions</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Grades</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="border-t pt-6">
+                <a href="student.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="fas fa-arrow-left w-5"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 pt-16">
+        <div class="p-6 lg:p-8">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-sm text-gray-600 mb-6">
+                <a href="student.html" class="hover:text-primary">Dashboard</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <a href="course-materials.html" class="hover:text-primary">Course Materials</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-gray-900">Lecture 1: Programming Basics</span>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Main Content Area -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Material Header -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                        <i class="fas fa-book-open mr-1"></i>Lecture
+                                    </span>
+                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                        Week 1
+                                    </span>
+                                </div>
+                                <h1 class="text-3xl font-bold text-gray-900 mb-3">Lecture 1: Programming Basics</h1>
+                                <p class="text-gray-600 mb-4">Introduction to programming concepts, variables, and data types. This lecture covers the fundamental building blocks of programming.</p>
+                                
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                                    <div class="flex items-center gap-2">
+                                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=7C3AED&color=fff&size=32" alt="Instructor" class="w-8 h-8 rounded-full">
+                                        <span>Dr. John Doe</span>
+                                    </div>
+                                    <span><i class="fas fa-calendar mr-1"></i>Jan 15, 2025</span>
+                                    <span><i class="fas fa-clock mr-1"></i>2 hours ago</span>
+                                    <span><i class="fas fa-eye mr-1"></i>128 views</span>
+                                    <span><i class="fas fa-download mr-1"></i>45 downloads</span>
+                                </div>
+                            </div>
+                            
+                            <button id="bookmarkBtn" class="text-gray-400 hover:text-yellow-500 transition ml-4">
+                                <i class="fas fa-bookmark text-2xl"></i>
+                            </button>
+                        </div>
+
+                        <!-- Rating -->
+                        <div class="flex items-center gap-4 pt-4 border-t">
+                            <div class="flex items-center gap-2">
+                                <div class="flex">
+                                    <i class="fas fa-star text-yellow-500"></i>
+                                    <i class="fas fa-star text-yellow-500"></i>
+                                    <i class="fas fa-star text-yellow-500"></i>
+                                    <i class="fas fa-star text-yellow-500"></i>
+                                    <i class="fas fa-star text-yellow-500"></i>
+                                </div>
+                                <span class="font-semibold text-gray-900">4.8</span>
+                                <span class="text-gray-600">(45 ratings)</span>
+                            </div>
+                            <button id="rateBtn" class="ml-auto text-primary hover:text-indigo-700 font-medium">
+                                <i class="fas fa-star mr-1"></i>Rate this material
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button class="flex flex-col items-center gap-2 p-4 bg-primary text-white rounded-lg hover:bg-indigo-700 transition">
+                                <i class="fas fa-eye text-2xl"></i>
+                                <span class="text-sm font-medium">View</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-2 p-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                                <i class="fas fa-download text-2xl"></i>
+                                <span class="text-sm font-medium">Download</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-2 p-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition">
+                                <i class="fas fa-share-alt text-2xl"></i>
+                                <span class="text-sm font-medium">Share</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-2 p-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                <i class="fas fa-flag text-2xl"></i>
+                                <span class="text-sm font-medium">Report</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Document Viewer -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                            Document Preview
+                        </h2>
+                        <div class="pdf-viewer bg-gray-100 h-96 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i>
+                                <p class="text-gray-700 font-medium mb-2">Lecture_1_Programming_Basics.pdf</p>
+                                <p class="text-gray-600 text-sm mb-4">2.5 MB • 24 pages</p>
+                                <button class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-medium">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Open in Full Screen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tags & Topics -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">Tags & Topics</h2>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-indigo-100 text-primary px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:bg-indigo-200 transition">
+                                Programming
+                            </span>
+                            <span class="bg-indigo-100 text-primary px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:bg-indigo-200 transition">
+                                Variables
+                            </span>
+                            <span class="bg-indigo-100 text-primary px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:bg-indigo-200 transition">
+                                Data Types
+                            </span>
+                            <span class="bg-indigo-100 text-primary px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:bg-indigo-200 transition">
+                                Basics
+                            </span>
+                            <span class="bg-indigo-100 text-primary px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:bg-indigo-200 transition">
+                                Introduction
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center justify-between">
+                            <span><i class="fas fa-comments text-primary mr-2"></i>Comments (12)</span>
+                            <button class="text-sm text-primary hover:text-indigo-700 font-medium">
+                                Sort by Latest
+                            </button>
+                        </h2>
+
+                        <!-- Add Comment -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <div class="flex gap-3">
+                                <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=4F46E5&color=fff&size=40" alt="User" class="w-10 h-10 rounded-full">
+                                <div class="flex-1">
+                                    <textarea 
+                                        id="commentInput"
+                                        rows="3" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                                        placeholder="Add a comment..."
+                                    ></textarea>
+                                    <div class="flex justify-end mt-2">
+                                        <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition font-medium">
+                                            <i class="fas fa-paper-plane mr-2"></i>Post Comment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comments List -->
+                        <div class="space-y-4">
+                            <!-- Comment 1 -->
+                            <div class="comment-item p-4 rounded-lg transition">
+                                <div class="flex gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Ahmed+Ali&background=10B981&color=fff&size=40" alt="User" class="w-10 h-10 rounded-full">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div>
+                                                <span class="font-semibold text-gray-900">Ahmed Ali</span>
+                                                <span class="text-sm text-gray-500 ml-2">2 hours ago</span>
+                                            </div>
+                                            <button class="text-gray-400 hover:text-gray-600">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-gray-700 mb-3">This is a great introduction! The examples are very clear and easy to follow. Thank you for sharing this content.</p>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <button class="text-gray-600 hover:text-primary flex items-center gap-1">
+                                                <i class="far fa-thumbs-up"></i>
+                                                <span>12</span>
+                                            </button>
+                                            <button class="text-gray-600 hover:text-primary">
+                                                <i class="fas fa-reply mr-1"></i>Reply
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Comment 2 -->
+                            <div class="comment-item p-4 rounded-lg transition">
+                                <div class="flex gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Sara+Mohammed&background=EF4444&color=fff&size=40" alt="User" class="w-10 h-10 rounded-full">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div>
+                                                <span class="font-semibold text-gray-900">Sara Mohammed</span>
+                                                <span class="text-sm text-gray-500 ml-2">5 hours ago</span>
+                                            </div>
+                                            <button class="text-gray-400 hover:text-gray-600">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-gray-700 mb-3">Could you provide more examples on data type conversions? That would be really helpful!</p>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <button class="text-gray-600 hover:text-primary flex items-center gap-1">
+                                                <i class="far fa-thumbs-up"></i>
+                                                <span>8</span>
+                                            </button>
+                                            <button class="text-gray-600 hover:text-primary">
+                                                <i class="fas fa-reply mr-1"></i>Reply
+                                            </button>
+                                        </div>
+
+                                        <!-- Reply -->
+                                        <div class="mt-4 ml-8 p-4 bg-gray-50 rounded-lg">
+                                            <div class="flex gap-3">
+                                                <img src="https://ui-avatars.com/api/?name=John+Doe&background=7C3AED&color=fff&size=32" alt="Instructor" class="w-8 h-8 rounded-full">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2 mb-2">
+                                                        <span class="font-semibold text-gray-900">Dr. John Doe</span>
+                                                        <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">Instructor</span>
+                                                        <span class="text-sm text-gray-500">3 hours ago</span>
+                                                    </div>
+                                                    <p class="text-gray-700 mb-2">Great question! I'll add a supplementary document with more examples on type conversion this week.</p>
+                                                    <button class="text-gray-600 hover:text-primary text-sm flex items-center gap-1">
+                                                        <i class="far fa-thumbs-up"></i>
+                                                        <span>5</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Comment 3 -->
+                            <div class="comment-item p-4 rounded-lg transition">
+                                <div class="flex gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Omar+Hassan&background=F59E0B&color=fff&size=40" alt="User" class="w-10 h-10 rounded-full">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div>
+                                                <span class="font-semibold text-gray-900">Omar Hassan</span>
+                                                <span class="text-sm text-gray-500 ml-2">1 day ago</span>
+                                            </div>
+                                            <button class="text-gray-400 hover:text-gray-600">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-gray-700 mb-3">Very informative lecture. The slide design is also very professional!</p>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <button class="text-gray-600 hover:text-primary flex items-center gap-1">
+                                                <i class="far fa-thumbs-up"></i>
+                                                <span>15</span>
+                                            </button>
+                                            <button class="text-gray-600 hover:text-primary">
+                                                <i class="fas fa-reply mr-1"></i>Reply
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Load More -->
+                        <div class="text-center mt-6">
+                            <button class="text-primary hover:text-indigo-700 font-medium">
+                                <i class="fas fa-chevron-down mr-2"></i>Load More Comments
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Course Info -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="font-bold text-gray-900 mb-4">Course Information</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Course</span>
+                                <span class="font-medium text-gray-900">CS101</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Instructor</span>
+                                <span class="font-medium text-gray-900">Dr. John Doe</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Semester</span>
+                                <span class="font-medium text-gray-900">Spring 2025</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">File Size</span>
+                                <span class="font-medium text-gray-900">2.5 MB</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Pages</span>
+                                <span class="font-medium text-gray-900">24</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Materials -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="font-bold text-gray-900 mb-4">Related Materials</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                                <div class="bg-red-100 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-video text-red-600"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-gray-900 text-sm truncate">Video: Variables Tutorial</p>
+                                    <p class="text-xs text-gray-500">24:15 mins</p>
+                                </div>
+                            </a>
+
+                            <a href="#" class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                                <div class="bg-purple-100 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clipboard-check text-purple-600"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-gray-900 text-sm truncate">Assignment: Hello World</p>
+                                    <p class="text-xs text-gray-500">Due Jan 28</p>
+                                </div>
+                            </a>
+
+                            <a href="#" class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                                <div class="bg-green-100 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-question-circle text-green-600"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-gray-900 text-sm truncate">Quiz: Programming Basics</p>
+                                    <p class="text-xs text-gray-500">10 questions</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Study Progress -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="font-bold text-gray-900 mb-4">Your Progress</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Course Progress</span>
+                                    <span class="text-sm font-bold text-primary">50%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-primary h-2 rounded-full" style="width: 50%"></div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-center">
+                                <div class="bg-green-50 rounded-lg p-3">
+                                    <p class="text-2xl font-bold text-green-600">12</p>
+                                    <p class="text-xs text-green-700">Completed</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-3">
+                                    <p class="text-2xl font-bold text-yellow-600">12</p>
+                                    <p class="text-xs text-yellow-700">Remaining</p>
+                                </div>
+                            </div>
+
+                            <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-indigo-700 transition font-medium text-sm">
+                                <i class="fas fa-check-circle mr-2"></i>Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-gradient-to-r from-primary to-secondary rounded-xl shadow-md p-6 text-white">
+                        <h3 class="font-bold mb-4">Need Help?</h3>
+                        <p class="text-sm text-indigo-100 mb-4">Have questions about this material? Reach out to your instructor or classmates.</p>
+                        <button class="w-full bg-white text-primary py-2 rounded-lg hover:bg-indigo-50 transition font-medium text-sm">
+                            <i class="fas fa-envelope mr-2"></i>Contact Instructor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md mx-4">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Rate this Material</h3>
+            <div class="mb-6 text-center">
+                <div class="flex items-center justify-center gap-2 mb-4" id="ratingStars">
+                    <button class="rating-star text-4xl text-gray-300 hover:text-yellow-500 transition" data-rating="1">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="rating-star text-4xl text-gray-300 hover:text-yellow-500 transition" data-rating="2">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="rating-star text-4xl text-gray-300 hover:text-yellow-500 transition" data-rating="3">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="rating-star text-4xl text-gray-300 hover:text-yellow-500 transition" data-rating="4">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="rating-star text-4xl text-gray-300 hover:text-yellow-500 transition" data-rating="5">
+                        <i class="fas fa-star"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600">Click to rate</p>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Your Feedback (Optional)</label>
+                <textarea 
+                    id="ratingFeedback"
+                    rows="3" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                    placeholder="Share your thoughts..."
+                ></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button id="cancelRating" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                <button id="submitRating" class="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-indigo-700 transition">Submit Rating</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/session.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/js/background-styles.js"></script>
+    <script src="../assets/js/material-view.js"></script>
+    <script>
+        // Require authentication for this page
+        if (typeof requireAuth !== 'undefined') {
+            requireAuth(['student', 'instructor']);
+        }
+    </script>
+    </div><!-- End of bg-shapes-container -->
+</body>
+</html>
+

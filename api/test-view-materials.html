@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<!--
+    View Materials API Testing Tool
+    
+    PURPOSE: Interactive testing interface for the view-materials.php endpoint
+    
+    HOW TO USE:
+    1. Open this file in a web browser
+    2. Enter a course ID (default is 1)
+    3. Configure filters, sorting, and pagination as needed
+    4. Click "Test API" to see the results
+    5. View the JSON response and statistics
+    
+    REQUIREMENTS:
+    - PHP server must be running
+    - MySQL database must be configured
+    - Course with materials must exist in the database
+    
+    ENDPOINT TESTED: view-materials.php
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test View Materials API - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#7C3AED',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-xl shadow-md p-8 mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    <i class="fas fa-flask text-primary mr-2"></i>
+                    Test View Materials API
+                </h1>
+                <p class="text-gray-600 mb-6">Test the view-materials.php endpoint with different parameters</p>
+
+                <!-- Test Form -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Course ID <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="courseId" value="1" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type Filter</label>
+                            <select id="typeFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">All Types</option>
+                                <option value="lecture">Lecture</option>
+                                <option value="video">Video</option>
+                                <option value="assignment">Assignment</option>
+                                <option value="document">Document</option>
+                                <option value="quiz">Quiz</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                            <input type="text" id="searchTerm" placeholder="Search materials..." 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                            <select id="sortBy" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="upload_date">Upload Date</option>
+                                <option value="title">Title</option>
+                                <option value="type">Type</option>
+                                <option value="created_at">Created At</option>
+                                <option value="updated_at">Updated At</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
+                            <select id="sortOrder" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="DESC">Descending</option>
+                                <option value="ASC">Ascending</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Limit</label>
+                            <input type="number" id="limit" placeholder="Leave empty for all" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Offset</label>
+                            <input type="number" id="offset" value="0" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="groupByType" class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-2 text-sm font-medium text-gray-700">Group by Type</span>
+                        </label>
+
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="showUnapproved" class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-2 text-sm font-medium text-gray-700">Show Unapproved (Instructor Only)</span>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="testAPI()" class="flex-1 bg-primary text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-medium">
+                            <i class="fas fa-play mr-2"></i>Test API
+                        </button>
+                        <button onclick="resetForm()" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-medium">
+                            <i class="fas fa-redo mr-2"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request URL Display -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-6" id="requestUrlContainer" style="display: none;">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-link text-primary mr-2"></i>Request URL
+                </h2>
+                <div class="bg-gray-100 rounded-lg p-4 font-mono text-sm break-all" id="requestUrl"></div>
+            </div>
+
+            <!-- Results Display -->
+            <div class="bg-white rounded-xl shadow-md p-8" id="resultsContainer" style="display: none;">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-code text-primary mr-2"></i>API Response
+                    </h2>
+                    <button onclick="copyResponse()" class="text-primary hover:text-indigo-700 font-medium text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copy
+                    </button>
+                </div>
+                <pre id="results" class="bg-gray-900 text-green-400 rounded-lg p-4 overflow-x-auto text-sm"></pre>
+                
+                <div class="mt-6" id="statsContainer" style="display: none;">
+                    <h3 class="font-bold text-gray-900 mb-3">Quick Stats</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-blue-600" id="statTotal">0</p>
+                            <p class="text-sm text-gray-600">Total Materials</p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-green-600" id="statReturned">0</p>
+                            <p class="text-sm text-gray-600">Returned</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-purple-600" id="statAvgRating">N/A</p>
+                            <p class="text-sm text-gray-600">Avg Rating</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-yellow-600" id="statResponseTime">0ms</p>
+                            <p class="text-sm text-gray-600">Response Time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastResponse = null;
+        let responseTime = 0;
+
+        async function testAPI() {
+            const courseId = document.getElementById('courseId').value;
+            
+            if (!courseId) {
+                alert('Course ID is required');
+                return;
+            }
+
+            // Build query parameters
+            const params = new URLSearchParams({ course_id: courseId });
+            
+            const typeFilter = document.getElementById('typeFilter').value;
+            if (typeFilter) params.append('type', typeFilter);
+            
+            const searchTerm = document.getElementById('searchTerm').value;
+            if (searchTerm) params.append('search', searchTerm);
+            
+            const sortBy = document.getElementById('sortBy').value;
+            if (sortBy) params.append('sort_by', sortBy);
+            
+            const sortOrder = document.getElementById('sortOrder').value;
+            if (sortOrder) params.append('sort_order', sortOrder);
+            
+            const limit = document.getElementById('limit').value;
+            if (limit) params.append('limit', limit);
+            
+            const offset = document.getElementById('offset').value;
+            if (offset) params.append('offset', offset);
+            
+            if (document.getElementById('groupByType').checked) {
+                params.append('group_by_type', 'true');
+            }
+            
+            if (document.getElementById('showUnapproved').checked) {
+                params.append('show_unapproved', 'true');
+            }
+
+            const url = `view-materials.php?${params.toString()}`;
+            
+            // Display request URL
+            document.getElementById('requestUrl').textContent = url;
+            document.getElementById('requestUrlContainer').style.display = 'block';
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch(url);
+                const endTime = performance.now();
+                responseTime = Math.round(endTime - startTime);
+                
+                const data = await response.json();
+                lastResponse = data;
+                
+                // Display results
+                document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('resultsContainer').style.display = 'block';
+                
+                // Display stats if successful
+                if (data.success) {
+                    displayStats(data.data);
+                } else {
+                    document.getElementById('statsContainer').style.display = 'none';
+                }
+                
+                // Scroll to results
+                document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                document.getElementById('results').textContent = `Error: ${error.message}`;
+                document.getElementById('resultsContainer').style.display = 'block';
+                document.getElementById('statsContainer').style.display = 'none';
+            }
+        }
+
+        function displayStats(data) {
+            document.getElementById('statTotal').textContent = data.total_count || 0;
+            document.getElementById('statReturned').textContent = data.returned_count || 0;
+            
+            // Calculate average rating
+            let totalRating = 0;
+            let ratingCount = 0;
+            
+            if (data.materials && Array.isArray(data.materials)) {
+                data.materials.forEach(material => {
+                    if (material.statistics && material.statistics.avg_rating) {
+                        totalRating += material.statistics.avg_rating;
+                        ratingCount++;
+                    }
+                });
+            }
+            
+            const avgRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : 'N/A';
+            document.getElementById('statAvgRating').textContent = avgRating;
+            document.getElementById('statResponseTime').textContent = responseTime + 'ms';
+            
+            document.getElementById('statsContainer').style.display = 'block';
+        }
+
+        function copyResponse() {
+            if (lastResponse) {
+                navigator.clipboard.writeText(JSON.stringify(lastResponse, null, 2))
+                    .then(() => {
+                        const btn = event.target.closest('button');
+                        const originalHTML = btn.innerHTML;
+                        btn.innerHTML = '<i class="fas fa-check mr-1"></i>Copied!';
+                        setTimeout(() => {
+                            btn.innerHTML = originalHTML;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        alert('Failed to copy: ' + err);
+                    });
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('courseId').value = '1';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('searchTerm').value = '';
+            document.getElementById('sortBy').value = 'upload_date';
+            document.getElementById('sortOrder').value = 'DESC';
+            document.getElementById('limit').value = '';
+            document.getElementById('offset').value = '0';
+            document.getElementById('groupByType').checked = false;
+            document.getElementById('showUnapproved').checked = false;
+            document.getElementById('requestUrlContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+

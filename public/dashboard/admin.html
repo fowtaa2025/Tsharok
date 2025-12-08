@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/animations.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body class="min-h-screen">
+    <!-- Page Background Container -->
+    <div class="bg-shapes-container min-h-screen">
+    <!-- Background Shapes -->
+    <div class="bg-shape bg-circle"></div>
+    <div class="bg-shape bg-rounded-rect"></div>
+    
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center">
+                        <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                    </a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-700">
+                        <i class="fas fa-user-shield mr-1"></i>
+                        <span data-user-name>Admin</span>
+                    </span>
+                    <button onclick="logout()" class="text-red-600 hover:text-red-700">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">
+                <i class="fas fa-tachometer-alt text-indigo-600 mr-2"></i>
+                Admin Dashboard
+            </h1>
+            <p class="text-gray-600 mt-2">System administration and management</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Users -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Users</p>
+                        <p class="text-3xl font-bold text-gray-900" id="totalUsers">-</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <i class="fas fa-users text-blue-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Courses -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Courses</p>
+                        <p class="text-3xl font-bold text-gray-900" id="totalCourses">-</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <i class="fas fa-book text-green-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Enrollments -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Enrollments</p>
+                        <p class="text-3xl font-bold text-gray-900" id="totalEnrollments">-</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-full">
+                        <i class="fas fa-user-graduate text-purple-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Reviews -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Reviews</p>
+                        <p class="text-3xl font-bold text-gray-900" id="totalReviews">-</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <a href="./moderation.html" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition border-2 border-red-200">
+                <i class="fas fa-shield-alt text-4xl text-red-600 mb-3"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Content Moderation</h3>
+                <p class="text-gray-600">Review and approve pending content</p>
+                <span class="inline-block mt-2 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                    <span id="pendingContentBadge">0</span> Pending
+                </span>
+            </a>
+
+            <a href="./student.html" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <i class="fas fa-user-graduate text-4xl text-indigo-600 mb-3"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Student View</h3>
+                <p class="text-gray-600">Access student dashboard</p>
+            </a>
+
+            <a href="../catalog.html" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <i class="fas fa-th text-4xl text-purple-600 mb-3"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Course Catalog</h3>
+                <p class="text-gray-600">Browse all courses</p>
+            </a>
+        </div>
+
+        <!-- Management Sections -->
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Recent Users -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-users text-indigo-600 mr-2"></i>
+                        Recent Users
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-center py-8">
+                        <i class="fas fa-construction text-4xl text-gray-300 mb-3"></i><br>
+                        User management coming soon
+                    </p>
+                </div>
+            </div>
+
+            <!-- System Activity -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-chart-line text-green-600 mr-2"></i>
+                        System Activity
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-center py-8">
+                        <i class="fas fa-construction text-4xl text-gray-300 mb-3"></i><br>
+                        Activity logs coming soon
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/session.js"></script>
+    <script src="../assets/js/background-styles.js"></script>
+    <script>
+        // Require admin authentication
+        requireAuth(['admin']).then(authenticated => {
+            if (authenticated) {
+                loadAdminStats();
+            }
+        });
+
+        // Load admin statistics
+        async function loadAdminStats() {
+            try {
+                // Load moderation stats
+                const response = await fetch('/api/moderation-stats.php');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const stats = data.data.stats;
+                        document.getElementById('pendingContentBadge').textContent = stats.pending || 0;
+                    }
+                }
+                
+                // Placeholder for other stats - will be implemented with actual API
+                document.getElementById('totalUsers').textContent = '-';
+                document.getElementById('totalCourses').textContent = '-';
+                document.getElementById('totalEnrollments').textContent = '-';
+                document.getElementById('totalReviews').textContent = '-';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+    </script>
+    </div><!-- End of bg-shapes-container -->
+</body>
+</html>
+

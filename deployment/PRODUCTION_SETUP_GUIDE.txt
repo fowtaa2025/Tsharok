@@ -1,0 +1,408 @@
+===============================================================================
+TSHAROK LMS - PRODUCTION SETUP GUIDE
+===============================================================================
+
+This guide will walk you through deploying Tsharok LMS to a production server.
+
+===============================================================================
+PREREQUISITES
+===============================================================================
+
+Server Requirements:
+□ PHP 7.4 or higher
+□ MySQL 5.7 or higher (or MariaDB 10.3+)
+□ Apache/Nginx web server
+□ HTTPS/SSL certificate
+□ Minimum 2GB RAM
+□ Minimum 10GB disk space
+
+PHP Extensions Required:
+□ PDO
+□ pdo_mysql
+□ mbstring
+□ openssl
+□ json
+□ curl
+□ fileinfo
+□ gd (for image processing)
+
+===============================================================================
+STEP 1: PREPARE THE SERVER
+===============================================================================
+
+1. Create Database:
+   -------------------------------------------
+   mysql -u root -p
+   CREATE DATABASE tsharok CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'tsharok_user'@'localhost' IDENTIFIED BY 'secure_password';
+   GRANT ALL PRIVILEGES ON tsharok.* TO 'tsharok_user'@'localhost';
+   FLUSH PRIVILEGES;
+   EXIT;
+
+2. Create Directory Structure:
+   -------------------------------------------
+   mkdir -p /var/www/tsharok
+   cd /var/www/tsharok
+
+3. Set Permissions:
+   -------------------------------------------
+   chown -R www-data:www-data /var/www/tsharok
+   find /var/www/tsharok -type d -exec chmod 755 {} \;
+   find /var/www/tsharok -type f -exec chmod 644 {} \;
+
+===============================================================================
+STEP 2: DEPLOY APPLICATION
+===============================================================================
+
+1. Upload Deployment Package:
+   -------------------------------------------
+   - Transfer tsharok_deployment_XXXXXX.zip to server
+   - Extract to /var/www/tsharok
+   
+   unzip tsharok_deployment_XXXXXX.zip -d /var/www/tsharok
+
+2. Set Writable Directories:
+   -------------------------------------------
+   chmod 775 /var/www/tsharok/uploads
+   chmod 775 /var/www/tsharok/uploads/staging
+   chmod 775 /var/www/tsharok/uploads/content
+   chmod 775 /var/www/tsharok/uploads/rejected
+   chmod 775 /var/www/tsharok/logs
+   
+   chown -R www-data:www-data /var/www/tsharok/uploads
+   chown -R www-data:www-data /var/www/tsharok/logs
+
+===============================================================================
+STEP 3: CONFIGURE APPLICATION
+===============================================================================
+
+1. Copy Production Configuration:
+   -------------------------------------------
+   cp deployment/config.production.php config/app.php
+   
+2. Edit config/app.php:
+   -------------------------------------------
+   - Set APP_ENV to 'production'
+   - Set APP_DEBUG to false
+   - Generate secure APP_KEY
+   - Update APP_URL with your domain
+   - Configure database credentials
+   - Set CORS_ALLOWED_ORIGINS
+   - Enable SESSION_COOKIE_SECURE
+   - Configure SMTP settings
+
+3. Update Database Configuration:
+   -------------------------------------------
+   Edit config/database.php:
+   - DB_HOST: localhost (or your DB server)
+   - DB_NAME: tsharok
+   - DB_USER: tsharok_user
+   - DB_PASS: your_secure_password
+
+===============================================================================
+STEP 4: IMPORT DATABASE
+===============================================================================
+
+1. Import Schema:
+   -------------------------------------------
+   mysql -u tsharok_user -p tsharok < database/schema_complete.sql
+
+2. Run Migrations (if any):
+   -------------------------------------------
+   mysql -u tsharok_user -p tsharok < database/migrations/*.sql
+
+3. Create Admin User:
+   -------------------------------------------
+   mysql -u tsharok_user -p tsharok < database/create_admin_user.sql
+
+4. Verify Database:
+   -------------------------------------------
+   mysql -u tsharok_user -p tsharok
+   SHOW TABLES;
+   SELECT COUNT(*) FROM users WHERE role='admin';
+
+===============================================================================
+STEP 5: CONFIGURE WEB SERVER
+===============================================================================
+
+APACHE CONFIGURATION:
+-------------------------------------------
+1. Copy .htaccess:
+   cp deployment/.htaccess.production .htaccess
+
+2. Create Virtual Host:
+   sudo nano /etc/apache2/sites-available/tsharok.conf
+   
+   <VirtualHost *:80>
+       ServerName yourdomain.com
+       ServerAlias www.yourdomain.com
+       DocumentRoot /var/www/tsharok/public
+       
+       <Directory /var/www/tsharok/public>
+           Options -Indexes +FollowSymLinks
+           AllowOverride All
+           Require all granted
+       </Directory>
+       
+       ErrorLog ${APACHE_LOG_DIR}/tsharok_error.log
+       CustomLog ${APACHE_LOG_DIR}/tsharok_access.log combined
+   </VirtualHost>
+
+3. Enable Site:
+   sudo a2ensite tsharok.conf
+   sudo a2enmod rewrite headers expires deflate
+   sudo systemctl restart apache2
+
+
+NGINX CONFIGURATION:
+-------------------------------------------
+1. Create Server Block:
+   sudo nano /etc/nginx/sites-available/tsharok
+   
+   server {
+       listen 80;
+       server_name yourdomain.com www.yourdomain.com;
+       root /var/www/tsharok/public;
+       index index.html index.php;
+       
+       # Security headers
+       add_header X-Frame-Options "DENY";
+       add_header X-Content-Type-Options "nosniff";
+       add_header X-XSS-Protection "1; mode=block";
+       
+       # Disable access to sensitive files
+       location ~ /\. {
+           deny all;
+       }
+       
+       location ~ /(config|includes|database) {
+           deny all;
+       }
+       
+       # PHP processing
+       location ~ \.php$ {
+           fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+           fastcgi_index index.php;
+           include fastcgi_params;
+           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+       }
+       
+       # Static files caching
+       location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+           expires 1y;
+           add_header Cache-Control "public, immutable";
+       }
+   }
+
+2. Enable Site:
+   sudo ln -s /etc/nginx/sites-available/tsharok /etc/nginx/sites-enabled/
+   sudo nginx -t
+   sudo systemctl restart nginx
+
+===============================================================================
+STEP 6: ENABLE HTTPS/SSL
+===============================================================================
+
+Using Let's Encrypt (Recommended):
+-------------------------------------------
+1. Install Certbot:
+   sudo apt install certbot python3-certbot-apache  # For Apache
+   # OR
+   sudo apt install certbot python3-certbot-nginx   # For Nginx
+
+2. Obtain Certificate:
+   sudo certbot --apache -d yourdomain.com -d www.yourdomain.com
+   # OR
+   sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+3. Auto-renewal:
+   sudo certbot renew --dry-run
+
+4. Update config/app.php:
+   - Set SESSION_COOKIE_SECURE to true
+   - Set FORCE_HTTPS to true
+
+===============================================================================
+STEP 7: SET UP SCHEDULED TASKS
+===============================================================================
+
+1. Create Cron Jobs:
+   -------------------------------------------
+   sudo crontab -e -u www-data
+   
+   # Daily database backup at 2 AM
+   0 2 * * * cd /var/www/tsharok && php cleanup-scripts.php all >> /var/www/tsharok/logs/cron.log 2>&1
+   
+   # Weekly database cleanup
+   0 3 * * 0 cd /var/www/tsharok && /var/www/tsharok/database/backup-full.sh >> /var/www/tsharok/logs/backup.log 2>&1
+   
+   # Clean expired sessions daily
+   0 4 * * * cd /var/www/tsharok && php cleanup-scripts.php sessions
+
+===============================================================================
+STEP 8: SECURITY HARDENING
+===============================================================================
+
+1. Disable PHP Functions (php.ini):
+   -------------------------------------------
+   disable_functions = exec,passthru,shell_exec,system,proc_open,popen
+
+2. Configure Firewall:
+   -------------------------------------------
+   sudo ufw allow 22/tcp     # SSH
+   sudo ufw allow 80/tcp     # HTTP
+   sudo ufw allow 443/tcp    # HTTPS
+   sudo ufw enable
+
+3. Fail2Ban (Brute Force Protection):
+   -------------------------------------------
+   sudo apt install fail2ban
+   sudo systemctl enable fail2ban
+
+4. Secure File Permissions:
+   -------------------------------------------
+   chmod 400 config/app.php
+   chmod 400 config/database.php
+   chmod 600 .htaccess
+
+===============================================================================
+STEP 9: TESTING & VERIFICATION
+===============================================================================
+
+1. Test Application:
+   -------------------------------------------
+   □ Visit https://yourdomain.com
+   □ Test user registration
+   □ Test user login
+   □ Test admin login
+   □ Test content upload
+   □ Test moderation workflow
+   □ Test course enrollment
+   □ Test search functionality
+
+2. Verify Security:
+   -------------------------------------------
+   □ HTTPS is working
+   □ Security headers are set
+   □ Database access is restricted
+   □ Error messages don't leak info
+   □ Rate limiting is working
+   □ File uploads are restricted
+
+3. Check Logs:
+   -------------------------------------------
+   tail -f /var/www/tsharok/logs/*.log
+   tail -f /var/log/apache2/tsharok_error.log  # Apache
+   tail -f /var/log/nginx/error.log            # Nginx
+
+===============================================================================
+STEP 10: MONITORING & MAINTENANCE
+===============================================================================
+
+1. Set Up Monitoring:
+   -------------------------------------------
+   - Use tools like Uptime Robot, Pingdom
+   - Monitor server resources (CPU, RAM, disk)
+   - Set up error alerting
+   - Monitor backup success
+
+2. Regular Maintenance:
+   -------------------------------------------
+   □ Weekly: Review error logs
+   □ Weekly: Check backup integrity
+   □ Monthly: Update dependencies
+   □ Monthly: Review user accounts
+   □ Quarterly: Security audit
+   □ Quarterly: Performance optimization
+
+3. Backup Strategy:
+   -------------------------------------------
+   □ Daily database backups
+   □ Weekly full system backups
+   □ Store backups off-site
+   □ Test restoration monthly
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+Issue: 500 Internal Server Error
+Solution:
+- Check error logs: tail -f logs/error.log
+- Verify file permissions
+- Check PHP error log
+- Verify database connection
+
+Issue: Cannot upload files
+Solution:
+- Check uploads/ directory permissions (775)
+- Verify PHP upload settings (upload_max_filesize)
+- Check disk space
+- Review error logs
+
+Issue: Database connection failed
+Solution:
+- Verify credentials in config/database.php
+- Check MySQL is running: sudo systemctl status mysql
+- Verify database user permissions
+- Check firewall settings
+
+Issue: HTTPS redirect loop
+Solution:
+- Check .htaccess HTTPS redirect rules
+- Verify SSL certificate is valid
+- Check web server configuration
+- Clear browser cache
+
+===============================================================================
+SUPPORT & RESOURCES
+===============================================================================
+
+Documentation:
+- DEPLOYMENT_CHECKLIST.php
+- PROJECT_COMPLETE.php
+- Database backup instructions: database/BACKUP-INSTRUCTIONS.sql
+
+Logs Location:
+- Application logs: /var/www/tsharok/logs/
+- Apache logs: /var/log/apache2/
+- Nginx logs: /var/log/nginx/
+- MySQL logs: /var/log/mysql/
+
+Backup Location:
+- /var/www/tsharok/database/backups/
+
+===============================================================================
+POST-DEPLOYMENT CHECKLIST
+===============================================================================
+
+□ All tests passed
+□ HTTPS is enabled
+□ Backups are scheduled
+□ Monitoring is active
+□ Error logging is working
+□ Email notifications work
+□ Security headers are set
+□ Firewall is configured
+□ Fail2Ban is active
+□ Documentation is updated
+□ Team is trained
+□ Emergency contacts are documented
+
+===============================================================================
+CONGRATULATIONS!
+===============================================================================
+
+Your Tsharok LMS is now live and ready to serve students and educators!
+
+Remember to:
+- Monitor the system regularly
+- Keep backups current
+- Review logs for issues
+- Update security patches
+- Respond to user feedback
+
+Good luck with your LMS deployment!
+
+===============================================================================
+

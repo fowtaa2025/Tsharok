@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Reference - Axios Catalog Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Quick Reference Card</h1>
+            <p class="text-gray-600">Axios Catalog Integration - Tsharok LMS</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <a href="catalog.html" class="bg-indigo-600 text-white p-4 rounded-lg text-center hover:bg-indigo-700 transition">
+                <i class="fas fa-book text-2xl mb-2"></i>
+                <div class="font-semibold">Live Catalog</div>
+            </a>
+            <a href="catalog-demo.html" class="bg-blue-600 text-white p-4 rounded-lg text-center hover:bg-blue-700 transition">
+                <i class="fas fa-flask text-2xl mb-2"></i>
+                <div class="font-semibold">Demo</div>
+            </a>
+            <a href="axios-integration-guide.html" class="bg-green-600 text-white p-4 rounded-lg text-center hover:bg-green-700 transition">
+                <i class="fas fa-book-open text-2xl mb-2"></i>
+                <div class="font-semibold">Full Guide</div>
+            </a>
+            <a href="implementation-summary.html" class="bg-purple-600 text-white p-4 rounded-lg text-center hover:bg-purple-700 transition">
+                <i class="fas fa-list text-2xl mb-2"></i>
+                <div class="font-semibold">Summary</div>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Core API Functions -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4 text-indigo-600">
+                    <i class="fas fa-code mr-2"></i>Core API Functions
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="border-l-4 border-indigo-500 pl-3">
+                        <code class="font-mono text-indigo-600">fetchCourses(filters)</code>
+                        <p class="text-gray-600 text-xs mt-1">Get courses with filters</p>
+                    </div>
+                    <div class="border-l-4 border-indigo-500 pl-3">
+                        <code class="font-mono text-indigo-600">fetchCourseDetails(id)</code>
+                        <p class="text-gray-600 text-xs mt-1">Get single course details</p>
+                    </div>
+                    <div class="border-l-4 border-indigo-500 pl-3">
+                        <code class="font-mono text-indigo-600">fetchMajors()</code>
+                        <p class="text-gray-600 text-xs mt-1">Get all majors</p>
+                    </div>
+                    <div class="border-l-4 border-indigo-500 pl-3">
+                        <code class="font-mono text-indigo-600">enrollInCourse(id)</code>
+                        <p class="text-gray-600 text-xs mt-1">Enroll in a course</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Features -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4 text-green-600">
+                    <i class="fas fa-bolt mr-2"></i>Advanced Features
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="border-l-4 border-green-500 pl-3">
+                        <code class="font-mono text-green-600">fetchCoursesWithCache()</code>
+                        <p class="text-gray-600 text-xs mt-1">Cached version (5-min TTL)</p>
+                    </div>
+                    <div class="border-l-4 border-green-500 pl-3">
+                        <code class="font-mono text-green-600">loadCatalogDataParallel()</code>
+                        <p class="text-gray-600 text-xs mt-1">Load multiple resources</p>
+                    </div>
+                    <div class="border-l-4 border-green-500 pl-3">
+                        <code class="font-mono text-green-600">batchLoadCourseDetails(ids)</code>
+                        <p class="text-gray-600 text-xs mt-1">Batch load details</p>
+                    </div>
+                    <div class="border-l-4 border-green-500 pl-3">
+                        <code class="font-mono text-green-600">prefetchNextPage(offset, filters)</code>
+                        <p class="text-gray-600 text-xs mt-1">Preload next page</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cache Management -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4 text-purple-600">
+                    <i class="fas fa-database mr-2"></i>Cache Management
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="border-l-4 border-purple-500 pl-3">
+                        <code class="font-mono text-purple-600">catalogCache.clear()</code>
+                        <p class="text-gray-600 text-xs mt-1">Clear all cached data</p>
+                    </div>
+                    <div class="border-l-4 border-purple-500 pl-3">
+                        <code class="font-mono text-purple-600">catalogCache.has(key)</code>
+                        <p class="text-gray-600 text-xs mt-1">Check if key is cached</p>
+                    </div>
+                    <div class="border-l-4 border-purple-500 pl-3">
+                        <code class="font-mono text-purple-600">catalogCache.get(key)</code>
+                        <p class="text-gray-600 text-xs mt-1">Get cached value</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Monitoring -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4 text-orange-600">
+                    <i class="fas fa-chart-line mr-2"></i>Performance
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="border-l-4 border-orange-500 pl-3">
+                        <code class="font-mono text-orange-600">catalogPerformanceMonitor.getSummary()</code>
+                        <p class="text-gray-600 text-xs mt-1">Get performance stats</p>
+                    </div>
+                    <div class="border-l-4 border-orange-500 pl-3">
+                        <code class="font-mono text-orange-600">debugCatalog.getStats()</code>
+                        <p class="text-gray-600 text-xs mt-1">Quick stats access</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UI Helpers -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4 text-blue-600">
+                    <i class="fas fa-palette mr-2"></i>UI Helpers
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="border-l-4 border-blue-500 pl-3">
+                        <code class="font-mono text-blue-600">showMessage(msg, type)</code>
+                        <p class="text-gray-600 text-xs mt-1">Toast notification</p>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-3">
+                        <code class="font-mono text-blue-600">displayCourses(courses, id)</code>
+                        <p class="text-gray-600 text-xs mt-1">Render course grid</p>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-3">
+                        <code class="font-mono text-blue-600">setLoading(id, bool)</code>
+                        <p class="text-gray-600 text-xs mt-1">Toggle loading state</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Debug Commands -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-4 text-red-600">
+                    <i class="fas fa-bug mr-2"></i>Debug Commands
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="border-l-4 border-red-500 pl-3">
+                        <code class="font-mono text-red-600">debugCatalog.clearCache()</code>
+                        <p class="text-gray-600 text-xs mt-1">Clear cache</p>
+                    </div>
+                    <div class="border-l-4 border-red-500 pl-3">
+                        <code class="font-mono text-red-600">debugCatalog.currentFilters()</code>
+                        <p class="text-gray-600 text-xs mt-1">View active filters</p>
+                    </div>
+                    <div class="border-l-4 border-red-500 pl-3">
+                        <code class="font-mono text-red-600">await debugCatalog.loadParallel()</code>
+                        <p class="text-gray-600 text-xs mt-1">Test parallel loading</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Usage Example -->
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-900">
+                <i class="fas fa-lightbulb mr-2"></i>Quick Example
+            </h2>
+            <pre class="bg-gray-900 text-green-400 p-4 rounded text-sm overflow-x-auto"><code>// Load courses with caching and filters
+async function loadCourses() {
+    try {
+        const data = await fetchCoursesWithCache({
+            search: 'programming',
+            major: 1,
+            level: 3,
+            limit: 12
+        });
+        
+        displayCourses(data.courses, 'courses-grid');
+        
+        // Prefetch next page
+        if (data.pagination.hasMore) {
+            prefetchNextPage(12, { search: 'programming' });
+        }
+        
+    } catch (error) {
+        showMessage(error.message, 'error');
+    }
+}
+
+// Check performance
+console.log(catalogPerformanceMonitor.getSummary());</code></pre>
+        </div>
+
+        <!-- Filter Options -->
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-900">
+                <i class="fas fa-filter mr-2"></i>Available Filters
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <strong class="text-indigo-600">search</strong>
+                    <p class="text-gray-600 text-xs">Search term</p>
+                </div>
+                <div>
+                    <strong class="text-indigo-600">major</strong>
+                    <p class="text-gray-600 text-xs">Major ID (1-N)</p>
+                </div>
+                <div>
+                    <strong class="text-indigo-600">level</strong>
+                    <p class="text-gray-600 text-xs">Level (1-8)</p>
+                </div>
+                <div>
+                    <strong class="text-indigo-600">limit</strong>
+                    <p class="text-gray-600 text-xs">Results per page</p>
+                </div>
+                <div>
+                    <strong class="text-indigo-600">offset</strong>
+                    <p class="text-gray-600 text-xs">Pagination offset</p>
+                </div>
+                <div>
+                    <strong class="text-indigo-600">sort</strong>
+                    <p class="text-gray-600 text-xs">Sort field</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Files Overview -->
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-900">
+                <i class="fas fa-folder mr-2"></i>Files Overview
+            </h2>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span class="font-mono text-indigo-600">axios-config.js</span>
+                    <span class="text-gray-600">Axios setup & interceptors</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span class="font-mono text-indigo-600">courses.js</span>
+                    <span class="text-gray-600">Core API functions</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span class="font-mono text-indigo-600">catalog-integration.js</span>
+                    <span class="text-gray-600">Advanced features</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span class="font-mono text-indigo-600">catalog.html</span>
+                    <span class="text-gray-600">Main catalog page</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="bg-gray-800 text-white text-center py-6 mt-8">
+        <p class="text-gray-400">Tsharok LMS - Axios Integration Quick Reference</p>
+    </footer>
+
+</body>
+</html>
+

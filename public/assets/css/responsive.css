@@ -1,0 +1,349 @@
+/**
+ * Responsive Enhancements
+ * Mobile-first responsive utilities
+ * Tsharok LMS
+ */
+
+/* ============================================ */
+/* Mobile Navigation Enhancements */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    /* Mobile Menu */
+    #mobile-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+    
+    #mobile-menu.active {
+        max-height: 500px;
+    }
+    
+    /* Navigation adjustments */
+    nav {
+        position: sticky;
+        top: 0;
+    }
+    
+    /* Hero text adjustments */
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    /* Card grid adjustments */
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* ============================================ */
+/* Tablet Breakpoint */
+/* ============================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Two column layouts */
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Dashboard adjustments */
+    .dashboard-sidebar {
+        width: 200px;
+    }
+}
+
+/* ============================================ */
+/* Touch Device Enhancements */
+/* ============================================ */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    button,
+    a.btn,
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 16px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .hover-lift:hover {
+        transform: none;
+    }
+    
+    /* Add active state instead */
+    .hover-lift:active {
+        transform: translateY(-2px);
+    }
+}
+
+/* ============================================ */
+/* Landscape Mobile */
+/* ============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Reduce padding in landscape */
+    section {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Compact navigation */
+    nav {
+        height: 48px;
+    }
+}
+
+/* ============================================ */
+/* Small Mobile Devices */
+/* ============================================ */
+
+@media (max-width: 375px) {
+    /* Further reduce font sizes */
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Compact buttons */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Single column forms */
+    .form-row {
+        flex-direction: column;
+    }
+}
+
+/* ============================================ */
+/* Large Desktop */
+/* ============================================ */
+
+@media (min-width: 1441px) {
+    /* Wider containers */
+    .container {
+        max-width: 1400px;
+    }
+    
+    /* Four column grids */
+    .card-grid-xl {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ============================================ */
+/* Print Styles */
+/* ============================================ */
+
+@media print {
+    /* Hide non-essential elements */
+    nav,
+    .btn,
+    .no-print,
+    footer {
+        display: none !important;
+    }
+    
+    /* Optimize for print */
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+    
+    /* Show links */
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* ============================================ */
+/* Accessibility - High Contrast Mode */
+/* ============================================ */
+
+@media (prefers-contrast: high) {
+    /* Increase contrast */
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .btn {
+        border: 2px solid currentColor;
+    }
+    
+    .card {
+        border: 2px solid #333;
+    }
+}
+
+/* ============================================ */
+/* Reduced Data Mode */
+/* ============================================ */
+
+@media (prefers-reduced-data: reduce) {
+    /* Reduce image quality */
+    img {
+        image-rendering: optimizeSpeed;
+    }
+    
+    /* Remove background images */
+    .bg-image {
+        background-image: none !important;
+    }
+}
+
+/* ============================================ */
+/* Dark Mode Support */
+/* ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-gray-50: #1F2937;
+        --color-gray-100: #111827;
+        --color-gray-900: #F9FAFB;
+    }
+    
+    body {
+        background-color: #111827;
+        color: #F9FAFB;
+    }
+    
+    .card {
+        background-color: #1F2937;
+        border: 1px solid #374151;
+    }
+    
+    nav {
+        background-color: #1F2937;
+        border-bottom: 1px solid #374151;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        background-color: #374151;
+        border-color: #4B5563;
+        color: #F9FAFB;
+    }
+}
+
+/* ============================================ */
+/* Flexbox Utilities for Responsive Layouts */
+/* ============================================ */
+
+.flex-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .flex-responsive {
+        flex-direction: column;
+    }
+}
+
+/* ============================================ */
+/* Grid Responsive Utilities */
+/* ============================================ */
+
+.grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .grid-responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================ */
+/* Table Responsive */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    .table-responsive {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-responsive table {
+        min-width: 600px;
+    }
+}
+
+/* ============================================ */
+/* Modal Responsive */
+/* ============================================ */
+
+@media (max-width: 640px) {
+    .modal-content {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        max-height: 100vh;
+    }
+}
+
+/* ============================================ */
+/* Dashboard Responsive */
+/* ============================================ */
+
+@media (max-width: 1024px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+    
+    .dashboard-sidebar {
+        width: 100%;
+        position: static;
+    }
+}
+
+/* ============================================ */
+/* Form Responsive */
+/* ============================================ */
+
+@media (max-width: 640px) {
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .form-row > * {
+        width: 100%;
+    }
+}
+
+/* ============================================ */
+/* Safe Areas (for notched devices) */
+/* ============================================ */
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    nav {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
+

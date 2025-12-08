@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTL & Multilingual Test - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .test-section {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .test-title {
+            background: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">🌍 RTL & Multilingual Test</h1>
+            <p class="text-gray-600 mb-6">Test the language toggle and RTL layout functionality</p>
+            
+            <div class="flex gap-4 mb-8">
+                <button onclick="toggleLanguage()" id="languageToggle" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 flex items-center gap-2">
+                    <i class="fas fa-globe"></i>
+                    <span>Toggle Language</span>
+                </button>
+                <button onclick="setLanguage('en')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                    Set English
+                </button>
+                <button onclick="setLanguage('ar')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                    Set Arabic
+                </button>
+            </div>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <p class="text-sm">
+                    <strong>Current Language:</strong> <span id="currentLang"></span><br>
+                    <strong>Direction:</strong> <span id="currentDir"></span><br>
+                    <strong>Font Family:</strong> <span id="currentFont"></span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Test 1: Navigation -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 1: Navigation</h2>
+            </div>
+            <nav class="flex items-center justify-between bg-gray-100 p-4 rounded">
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-indigo-600" data-i18n="nav.home">Home</a>
+                    <a href="#" class="hover:text-indigo-600" data-i18n="nav.courses">Courses</a>
+                    <a href="#" class="hover:text-indigo-600" data-i18n="nav.about">About</a>
+                </div>
+                <div class="flex gap-2">
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded" data-i18n="nav.login">Login</button>
+                    <button class="bg-purple-600 text-white px-4 py-2 rounded" data-i18n="nav.signup">Sign Up</button>
+                </div>
+            </nav>
+        </div>
+        
+        <!-- Test 2: Form Elements -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 2: Form Elements (RTL)</h2>
+            </div>
+            <form class="space-y-4">
+                <div>
+                    <label class="block mb-2" data-i18n="auth.email">Email</label>
+                    <input type="email" data-i18n="auth.email" placeholder="Email" class="w-full px-4 py-2 border rounded">
+                </div>
+                <div>
+                    <label class="block mb-2" data-i18n="auth.password">Password</label>
+                    <input type="password" data-i18n="auth.password" placeholder="Password" class="w-full px-4 py-2 border rounded">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="mr-2">
+                    <label for="remember" data-i18n="auth.remember_me">Remember Me</label>
+                </div>
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded" data-i18n="auth.login_button">Login</button>
+            </form>
+        </div>
+        
+        <!-- Test 3: Search Bar -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 3: Search Bar (Icon Position)</h2>
+            </div>
+            <div class="relative">
+                <input 
+                    type="text" 
+                    data-i18n="home.search_placeholder"
+                    placeholder="Search..."
+                    class="w-full px-4 py-3 pl-12 pr-12 border rounded-lg"
+                >
+                <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+                <button class="absolute right-2 top-2 bg-indigo-600 text-white px-4 py-1 rounded" data-i18n="common.search">
+                    Search
+                </button>
+            </div>
+        </div>
+        
+        <!-- Test 4: Course Card -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 4: Course Card</h2>
+            </div>
+            <div class="border rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-sm">Computer Science</span>
+                    <span class="text-sm text-gray-500">
+                        <i class="far fa-clock mr-1"></i>
+                        <span class="ltr-numbers">12</span> <span data-i18n="course.weeks">weeks</span>
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Programming Fundamentals</h3>
+                <p class="text-gray-600 mb-3">Learn the basics of programming</p>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="text-sm text-gray-600 ml-2 ltr-numbers">4.5</span>
+                    </div>
+                    <span class="text-sm text-gray-500">
+                        <i class="fas fa-users mr-1"></i>
+                        <span class="ltr-numbers">150</span> <span data-i18n="course.students">students</span>
+                    </span>
+                </div>
+                <button class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700" data-i18n="course.view_details">
+                    View Details
+                </button>
+            </div>
+        </div>
+        
+        <!-- Test 5: Filter Sidebar -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 5: Filter Sidebar</h2>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold" data-i18n="search.filters">Filters</h3>
+                    <button class="text-sm text-indigo-600" data-i18n="search.clear_all">Clear All</button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block mb-2 font-semibold" data-i18n="filters.category">Category</label>
+                        <select class="w-full px-3 py-2 border rounded">
+                            <option data-i18n="filters.all_categories">All Categories</option>
+                            <option>Computer Science</option>
+                            <option>Mathematics</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-semibold" data-i18n="filters.level">Level</label>
+                        <select class="w-full px-3 py-2 border rounded">
+                            <option data-i18n="filters.all_levels">All Levels</option>
+                            <option data-i18n="filters.beginner">Beginner</option>
+                            <option data-i18n="filters.intermediate">Intermediate</option>
+                            <option data-i18n="filters.advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <button class="w-full bg-indigo-600 text-white py-2 rounded" data-i18n="search.apply_filters">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test 6: Pagination -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 6: Pagination (Arrow Direction)</h2>
+            </div>
+            <div class="flex items-center justify-center gap-2">
+                <button class="px-4 py-2 border rounded hover:bg-gray-100">
+                    <i class="fas fa-chevron-left mr-2"></i>
+                    <span data-i18n="pagination.previous">Previous</span>
+                </button>
+                <button class="px-4 py-2 bg-indigo-600 text-white rounded">1</button>
+                <button class="px-4 py-2 border rounded hover:bg-gray-100">2</button>
+                <button class="px-4 py-2 border rounded hover:bg-gray-100">3</button>
+                <button class="px-4 py-2 border rounded hover:bg-gray-100">
+                    <span data-i18n="pagination.next">Next</span>
+                    <i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Test 7: Alert/Toast -->
+        <div class="test-section bg-white">
+            <div class="test-title">
+                <h2 class="text-xl font-bold">Test 7: Alerts (Text Alignment)</h2>
+            </div>
+            <div class="space-y-3">
+                <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                        <span data-i18n="common.success">Success</span>
+                    </div>
+                </div>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
+                        <span data-i18n="common.error">Error</span>
+                    </div>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                        <span data-i18n="common.info">Information</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Results -->
+        <div class="bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg p-8 text-center">
+            <h2 class="text-3xl font-bold mb-4">✅ Test Complete!</h2>
+            <p class="text-lg mb-4">
+                If you can see content changing from English to Arabic when you toggle the language,<br>
+                and the layout flips from LTR to RTL, then the multilingual system is working correctly!
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="index.html" class="bg-white text-indigo-600 px-6 py-3 rounded-lg hover:bg-gray-100">
+                    Go to Homepage
+                </a>
+                <a href="search-results.html" class="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-gray-100">
+                    Go to Search
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/js/i18n.js"></script>
+    <script>
+        // Update current status display
+        function updateStatus() {
+            const lang = getCurrentLanguage();
+            const dir = document.documentElement.dir;
+            const font = window.getComputedStyle(document.body).fontFamily;
+            
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+            document.getElementById('currentDir').textContent = dir.toUpperCase();
+            document.getElementById('currentFont').textContent = font.split(',')[0];
+        }
+        
+        // Listen for language changes
+        window.addEventListener('languageChanged', updateStatus);
+        
+        // Initial update
+        updateStatus();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Tsharok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2C3E50',
+                        secondary: '#34495E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+        }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 1.75rem; }
+        h3 { font-size: 1.25rem; }
+        p, span, a, button, input, textarea, select { font-size: 1rem; }
+        .text-xs { font-size: 0.875rem; }
+        .text-sm { font-size: 0.9375rem; }
+        .text-base { font-size: 1rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.375rem; }
+        .text-2xl { font-size: 1.625rem; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Page Background Container -->
+    <div class="bg-shapes-container min-h-screen">
+    <!-- Background Shapes -->
+    <div class="bg-shape bg-circle"></div>
+    <div class="bg-shape bg-rounded-rect"></div>
+    
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 shadow-sm relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Left Side - Logo -->
+                <div class="flex items-center">
+                    <a href="student.html" class="flex items-center">
+                        <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                    </a>
+                </div>
+
+                <!-- Right Side - User Info -->
+                <div class="flex items-center space-x-4">
+                    <a href="student.html" class="text-gray-700 hover:text-primary">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span>Back to Dashboard</span>
+                    </a>
+                    <span class="text-gray-700 font-medium" data-user-name>student name</span>
+                    <div id="profileButton" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                        <span id="profileInitial">S</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-6xl mx-auto px-6 py-8">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+            <p class="text-gray-600 mt-2">Manage your account information and preferences</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Left Column - Profile Card -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <!-- Profile Picture -->
+                    <div class="text-center mb-6">
+                        <div class="relative inline-block">
+                            <div id="profileImageDisplay" class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-4xl text-gray-700 mx-auto mb-4">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <button onclick="document.getElementById('profileImageInput').click()" 
+                                    class="absolute bottom-2 right-2 w-10 h-10 bg-primary text-white rounded-full hover:bg-secondary transition flex items-center justify-center">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                            <input type="file" id="profileImageInput" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900" data-user-name>Student Name</h3>
+                        <p class="text-gray-500" data-user-email>student@email.com</p>
+                        <span class="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                            <i class="fas fa-graduation-cap mr-1"></i>
+                            <span data-user-role>Student</span>
+                        </span>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="border-t pt-4">
+                        <h4 class="font-semibold text-gray-900 mb-3">Quick Stats</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Enrolled Courses</span>
+                                <span class="font-semibold text-primary">5</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Completed</span>
+                                <span class="font-semibold text-green-600">12</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Member Since</span>
+                                <span class="font-semibold text-gray-900">Jan 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+                    <h4 class="font-semibold text-gray-900 mb-4">Account Actions</h4>
+                    <div class="space-y-2">
+                        <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center">
+                            <i class="fas fa-key w-5 mr-3 text-gray-600"></i>
+                            <span>Change Password</span>
+                        </button>
+                        <button class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center">
+                            <i class="fas fa-trash w-5 mr-3"></i>
+                            <span>Delete Account</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Profile Form -->
+            <div class="lg:col-span-2">
+                <!-- Personal Information -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">Personal Information</h2>
+                        <button id="editButton" onclick="toggleEdit()" class="px-4 py-2 text-primary hover:bg-blue-50 rounded-lg transition">
+                            <i class="fas fa-edit mr-2"></i>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+
+                    <form id="profileForm" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- First Name -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    First Name <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="firstName"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                    value="John"
+                                    disabled
+                                    required
+                                >
+                            </div>
+
+                            <!-- Last Name -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Last Name <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="lastName"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                    value="Doe"
+                                    disabled
+                                    required
+                                >
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Email <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="email"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                    value="john.doe@email.com"
+                                    disabled
+                                    required
+                                >
+                            </div>
+
+                            <!-- Username -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Username <span class="text-red-500">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="username"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                    value="johndoe"
+                                    disabled
+                                    required
+                                >
+                            </div>
+
+                            <!-- Phone -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Phone Number
+                                </label>
+                                <input 
+                                    type="tel" 
+                                    id="phone"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                    value="+1234567890"
+                                    disabled
+                                >
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Date of Birth
+                                </label>
+                                <input 
+                                    type="date" 
+                                    id="dob"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                    value="2000-01-01"
+                                    disabled
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Bio
+                            </label>
+                            <textarea 
+                                id="bio"
+                                rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-gray-50"
+                                disabled
+                                placeholder="Tell us about yourself..."
+                            >Passionate computer science student interested in web development and artificial intelligence.</textarea>
+                        </div>
+
+                        <!-- Save/Cancel Buttons -->
+                        <div id="formActions" class="hidden flex gap-4">
+                            <button 
+                                type="submit"
+                                class="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
+                            >
+                                <i class="fas fa-save mr-2"></i>
+                                Save Changes
+                            </button>
+                            <button 
+                                type="button"
+                                onclick="cancelEdit()"
+                                class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Academic Information -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Academic Information</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Student ID -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Student ID
+                            </label>
+                            <input 
+                                type="text" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                                value="STU-2024-001"
+                                disabled
+                            >
+                        </div>
+
+                        <!-- Major -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Major
+                            </label>
+                            <input 
+                                type="text" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                                value="Computer Science"
+                                disabled
+                            >
+                        </div>
+
+                        <!-- Year -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Year
+                            </label>
+                            <input 
+                                type="text" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                                value="3rd Year"
+                                disabled
+                            >
+                        </div>
+
+                        <!-- GPA -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                GPA
+                            </label>
+                            <input 
+                                type="text" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                                value="3.8"
+                                disabled
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/session.js"></script>
+    <script src="../assets/js/background-styles.js"></script>
+    <script>
+        // Require authentication
+        requireAuth(['student', 'admin']).then(authenticated => {
+            if (authenticated) {
+                loadProfileData();
+            }
+        });
+
+        async function loadProfileData() {
+            const user = getCurrentUser();
+            if (user) {
+                // Update profile display
+                updateProfileDisplay(user);
+                
+                // Populate form fields
+                document.getElementById('firstName').value = user.firstName || '';
+                document.getElementById('lastName').value = user.lastName || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('username').value = user.username || '';
+                
+                // Update profile initial
+                const initial = (user.fullName || user.name || 'S').charAt(0).toUpperCase();
+                const profileInitial = document.getElementById('profileInitial');
+                if (profileInitial) profileInitial.textContent = initial;
+            }
+        }
+
+        // Toggle edit mode
+        function toggleEdit() {
+            const form = document.getElementById('profileForm');
+            const inputs = form.querySelectorAll('input, textarea');
+            const editButton = document.getElementById('editButton');
+            const formActions = document.getElementById('formActions');
+            
+            inputs.forEach(input => {
+                if (input.id !== 'email') { // Email usually can't be changed
+                    input.disabled = !input.disabled;
+                    input.classList.toggle('bg-gray-50');
+                    input.classList.toggle('bg-white');
+                }
+            });
+            
+            formActions.classList.toggle('hidden');
+            
+            if (editButton.querySelector('span').textContent === 'Edit') {
+                editButton.querySelector('span').textContent = 'Editing...';
+                editButton.classList.add('bg-blue-100');
+            } else {
+                editButton.querySelector('span').textContent = 'Edit';
+                editButton.classList.remove('bg-blue-100');
+            }
+        }
+
+        function cancelEdit() {
+            toggleEdit();
+            loadProfileData(); // Reload original data
+        }
+
+        // Handle form submission
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                username: document.getElementById('username').value,
+                phone: document.getElementById('phone').value,
+                dob: document.getElementById('dob').value,
+                bio: document.getElementById('bio').value
+            };
+            
+            try {
+                // Here you would call your API to update profile
+                // const response = await fetch('/api/update-profile.php', {...});
+                
+                // For now, just show success message
+                showNotification('Profile updated successfully!', 'success');
+                toggleEdit();
+                
+                // Update localStorage
+                const user = getCurrentUser();
+                if (user) {
+                    user.firstName = formData.firstName;
+                    user.lastName = formData.lastName;
+                    user.username = formData.username;
+                    user.fullName = `${formData.firstName} ${formData.lastName}`;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    sessionStorage.setItem('user', JSON.stringify(user));
+                }
+            } catch (error) {
+                showNotification('Failed to update profile. Please try again.', 'error');
+            }
+        });
+
+        // Handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    showNotification('Image size should be less than 5MB', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const display = document.getElementById('profileImageDisplay');
+                    display.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-full">`;
+                    showNotification('Profile picture updated!', 'success');
+                    
+                    // Here you would upload to server
+                    // uploadProfileImage(file);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+    </div><!-- End of bg-shapes-container -->
+</body>
+</html>
+
