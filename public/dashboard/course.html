@@ -981,7 +981,7 @@
                     const formData = new FormData();
                     formData.append('file', file);
                     formData.append('courseId', currentCourseId);
-                    formData.append('fileName', name);
+                    formData.append('title', name);  // API expects 'title' not 'fileName'
                     formData.append('description', description);
 
                     // Upload to R2 via Cloudflare Pages Function
@@ -995,7 +995,7 @@
 
                     const result = await response.json();
 
-                    if (result.success || response.ok) {
+                    if (result.success && result.file) {
                         // File uploaded to R2 successfully!
                         // Now save metadata to localStorage
                         let files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
@@ -1007,8 +1007,8 @@
                             rating: 0,
                             date: new Date().toISOString(),
                             originalName: file.name,
-                            r2Url: result.files.original.url,  // R2 URL
-                            r2Key: result.files.original.r2_key,  // R2 key
+                            r2Url: result.file.url,  // R2 URL from API
+                            r2Key: result.file.key,  // R2 key from API
                             mimeType: file.type,
                             extension: extension,
                             size: file.size,
