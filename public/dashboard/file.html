@@ -35,7 +35,7 @@
             background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
         }
     </style>
-<script src="student_chatbot.js"></script>
+    <script src="student_chatbot.js"></script>
 </head>
 
 <body class="min-h-screen">
@@ -525,56 +525,62 @@
             }
 
             // Load file data
-            function loadFile() {
+            async function loadFile() {
                 const params = getParams();
                 currentFileId = params.fileId;
                 currentCourseId = params.courseId;
 
-                // Get file data from localStorage
-                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
-                const file = files[currentFileId];
+                try {
+                    // Fetch file from database API
+                    const response = await fetch(`/api/content?id=${currentFileId}`);
+                    const result = await response.json();
 
-                // Update breadcrumb with actual course name
-                document.getElementById('courseBreadcrumb').href = `course.html?id=${currentCourseId}`;
-                const courseName = getCourseName(currentCourseId);
-                document.getElementById('courseBreadcrumb').textContent = courseName;
+                    if (!result.success || !result.file) {
+                        console.error('Failed to load file');
+                        document.getElementById('fileName').textContent = params.fileName;
+                        document.getElementById('fileBreadcrumb').textContent = params.fileName;
+                        return;
+                    }
 
-                if (file) {
-                    document.getElementById('fileName').textContent = file.name;
-                    document.getElementById('fileBreadcrumb').textContent = file.name;
-                    document.getElementById('fileDescription').textContent = file.description || file.originalName || 'No description available for this file.';
-                    document.title = file.name + ' - Tsharok';
+                    const file = result.file;
+
+                    // Update breadcrumb with actual course name
+                    document.getElementById('courseBreadcrumb').href = `course.html?id=${currentCourseId}`;
+                    const courseName = getCourseName(currentCourseId);
+                    document.getElementById('courseBreadcrumb').textContent = courseName;
 
                     // Update file info
-                    const ext = file.extension || file.originalName?.split('.').pop() || '';
+                    document.getElementById('fileName').textContent = file.title;
+                    document.getElementById('fileBreadcrumb').textContent = file.title;
+                    document.getElementById('fileDescription').textContent = file.description || 'No description available for this file.';
+                    document.title = file.title + ' - Tsharok';
+
+                    // Update file info
+                    const ext = file.file_key ? file.file_key.split('.').pop() : '';
                     document.getElementById('fileType').textContent = getFileTypeName(ext, file.type);
                     document.getElementById('fileTypeIcon').innerHTML = `<i class="fas ${getFileTypeIcon(ext, file.type)} text-2xl"></i>`;
                     document.getElementById('fileExtension').textContent = ext.toUpperCase() || '-';
-                    document.getElementById('uploadDate').textContent = formatDate(file.date);
-                    document.getElementById('fileSize').textContent = formatFileSize(file.size);
-                    document.getElementById('uploadedBy').textContent = file.uploadedBy || 'Student';
-
-                    // Update view count
-                    file.views = (file.views || 0) + 1;
-                    files[currentFileId] = file;
-                    localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
-                    document.getElementById('viewCount').textContent = file.views;
-
-                    currentRating = file.rating || 0;
-                    updateRatingDisplay();
+                    document.getElementById('uploadDate').textContent = formatDate(file.upload_date);
+                    document.getElementById('fileSize').textContent = formatFileSize(file.file_size);
+                    document.getElementById('uploadedBy').textContent = file.uploader_name || 'Student';
 
                     // Display file content
-                    displayFileContent(file);
-                } else {
+                    displayFileContent({
+                        r2Url: file.file_url,
+                        type: file.type,
+                        extension: ext,
+                        name: file.title
+                    });
+
+                    loadComments();
+                    loadUserName();
+                    updateAverageRating();
+                    checkFileOwnership();
+                } catch (error) {
+                    console.error('Error loading file:', error);
                     document.getElementById('fileName').textContent = params.fileName;
                     document.getElementById('fileBreadcrumb').textContent = params.fileName;
-                    document.getElementById('fileDescription').textContent = 'File content preview';
                 }
-
-                loadComments();
-                loadUserName();
-                updateAverageRating();
-                checkFileOwnership();
             }
 
             // Display file content based on type
@@ -671,38 +677,25 @@
             }
 
             // Calculate and display average rating from all comments and ratings
-            function updateAverageRating() {
-                const comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
-                const ratings = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_ratings`) || '[]');
+            async function updateAverageRating() {
+                try {
+                    const response = await fetch(`/api/ratings?contentId=${currentFileId}`);
+                    const result = await response.json();
 
-                // Combine ratings from comments and separate ratings
-                let allRatings = [];
+                    if (!result.success) {
+                        console.error('Failed to load ratings');
+                        return;
+                    }
 
-                // Add comment ratings
-                comments.forEach(c => {
-                    if (c.rating) allRatings.push(c.rating);
-                });
+                    const avgRating = result.average || 0;
+                    const count = result.count || 0;
 
-                // Add separate ratings
-                ratings.forEach(r => {
-                    if (r.rating) allRatings.push(r.rating);
-                });
-
-                if (allRatings.length === 0) {
-                    document.getElementById('avgRatingValue').textContent = '0.0';
-                    document.getElementById('totalRatings').textContent = '0';
-                    updateAvgStars(0);
-                    return;
+                    document.getElementById('avgRatingValue').textContent = avgRating.toFixed(1);
+                    document.getElementById('totalRatings').textContent = count;
+                    updateAvgStars(avgRating);
+                } catch (error) {
+                    console.error('Error loading ratings:', error);
                 }
-
-                // Calculate average
-                const totalRating = allRatings.reduce((sum, rating) => sum + rating, 0);
-                const avgRating = totalRating / allRatings.length;
-
-                // Update display
-                document.getElementById('avgRatingValue').textContent = avgRating.toFixed(1);
-                document.getElementById('totalRatings').textContent = allRatings.length;
-                updateAvgStars(avgRating);
             }
 
             // Update average rating stars display
@@ -770,26 +763,45 @@
             }
 
             // Load comments
-            function loadComments() {
-                const comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
-                const container = document.getElementById('commentsList');
-                document.getElementById('commentCount').textContent = `(${comments.length})`;
+            async function loadComments() {
+                try {
+                    const response = await fetch(`/api/comments?contentId=${currentFileId}`);
+                    const result = await response.json();
 
-                if (comments.length === 0) {
-                    container.innerHTML = `
-                    <div class="text-center py-6 text-gray-400">
-                        <i class="fas fa-comment-slash text-3xl mb-2"></i>
-                        <p>No comments yet. Be the first to comment!</p>
-                    </div>
-                `;
-                    return;
+                    if (!result.success) {
+                        console.error('Failed to load comments');
+                        return;
+                    }
+
+                    const comments = result.comments || [];
+                    const container = document.getElementById('commentsList');
+                    document.getElementById('commentCount').textContent = `(${comments.length})`;
+
+                    if (comments.length === 0) {
+                        container.innerHTML = `
+                        <div class="text-center py-6 text-gray-400">
+                            <i class="fas fa-comment-slash text-3xl mb-2"></i>
+                            <p>No comments yet. Be the first to comment!</p>
+                        </div>
+                    `;
+                        return;
+                    }
+
+                    let html = '';
+                    comments.forEach((comment, index) => {
+                        html += getCommentHTML({
+                            author: comment.user_name,
+                            text: comment.text,
+                            date: formatDate(comment.created_at),
+                            rating: 0,
+                            likes: 0,
+                            replies: []
+                        }, index);
+                    });
+                    container.innerHTML = html;
+                } catch (error) {
+                    console.error('Error loading comments:', error);
                 }
-
-                let html = '';
-                comments.forEach((comment, index) => {
-                    html += getCommentHTML(comment, index);
-                });
-                container.innerHTML = html;
             }
 
             // Get comment HTML
@@ -1211,80 +1223,82 @@
             document.addEventListener('DOMContentLoaded', loadFile);
         </script>
     </div><!-- End of bg-shapes-container -->
-<!-- Mobile Floating Chatbot Button -->
-<div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50">
-    <button onclick="toggleMobileChatbot()"
-        class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
-        <i class="fas fa-robot text-2xl"></i>
-    </button>
-</div>
+    <!-- Mobile Floating Chatbot Button -->
+    <div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleMobileChatbot()"
+            class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
+            <i class="fas fa-robot text-2xl"></i>
+        </button>
+    </div>
 
-<!-- Mobile Chatbot Window (expandable) -->
-<div id="mobileChatbotWindow" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50" onclick="closeMobileChatbot()">
-    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
-        onclick="event.stopPropagation()">
-        <!-- Header -->
-        <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-3xl flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                    <i class="fas fa-robot text-xl text-blue-600"></i>
-                </div>
-                <div class="text-white">
-                    <div class="font-bold">Tsharok Assistant</div>
-                    <div class="text-xs opacity-90">Always here to help</div>
-                </div>
-            </div>
-            <button onclick="closeMobileChatbot()" class="text-white hover:bg-white/20 rounded-full p-2 transition">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-
-        <!-- Messages Area -->
-        <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="mobileChatbotMessages">
-            <div class="flex gap-2 mb-3">
-                <div
-                    class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-robot text-white text-sm"></i>
-                </div>
-                <div class="flex-1">
-                    <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
-                        <p class="text-gray-800 text-sm">
-                            👋 Hello! I'm your Tsharok Assistant. How can I help you today?
-                        </p>
+    <!-- Mobile Chatbot Window (expandable) -->
+    <div id="mobileChatbotWindow" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+        onclick="closeMobileChatbot()">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
+            onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-3xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-robot text-xl text-blue-600"></i>
                     </div>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                        <button onclick="sendQuickReplyMobile('How do I add a course?')"
-                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
-                            Add Course
-                        </button>
-                        <button onclick="sendQuickReplyMobile('Show my schedule')"
-                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
-                            My Schedule
-                        </button>
-                        <button onclick="sendQuickReplyMobile('Help with assignments')"
-                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
-                            Assignments
-                        </button>
+                    <div class="text-white">
+                        <div class="font-bold">Tsharok Assistant</div>
+                        <div class="text-xs opacity-90">Always here to help</div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Input Box -->
-        <div class="p-4 bg-white border-t border-gray-200">
-            <div class="flex gap-2 items-center">
-                <input type="text"
-                    class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
-                    id="mobileChatbotInput" placeholder="Type your message..."
-                    onkeypress="handleChatKeyPressMobile(event)">
-                <button onclick="sendMessageMobile()"
-                    class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
-                    <i class="fas fa-paper-plane"></i>
+                <button onclick="closeMobileChatbot()" class="text-white hover:bg-white/20 rounded-full p-2 transition">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="mobileChatbotMessages">
+                <div class="flex gap-2 mb-3">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
+                            <p class="text-gray-800 text-sm">
+                                👋 Hello! I'm your Tsharok Assistant. How can I help you today?
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <button onclick="sendQuickReplyMobile('How do I add a course?')"
+                                class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                Add Course
+                            </button>
+                            <button onclick="sendQuickReplyMobile('Show my schedule')"
+                                class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                My Schedule
+                            </button>
+                            <button onclick="sendQuickReplyMobile('Help with assignments')"
+                                class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                Assignments
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Box -->
+            <div class="p-4 bg-white border-t border-gray-200">
+                <div class="flex gap-2 items-center">
+                    <input type="text"
+                        class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
+                        id="mobileChatbotInput" placeholder="Type your message..."
+                        onkeypress="handleChatKeyPressMobile(event)">
+                    <button onclick="sendMessageMobile()"
+                        class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </body>
 
 </html>
