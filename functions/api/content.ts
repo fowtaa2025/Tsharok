@@ -27,7 +27,40 @@ export async function onRequestGet(context: any) {
         const url = new URL(request.url);
         const courseId = url.searchParams.get('courseId');
         const type = url.searchParams.get('type'); // 'video' or 'document'
+        const id = url.searchParams.get('id'); // Get single file by ID
 
+        // If ID is provided, return single file
+        if (id) {
+            const file = await env.DB.prepare(`
+                SELECT 
+                    c.id,
+                    c.title,
+                    c.type,
+                    c.file_url,
+                    c.file_key,
+                    c.description,
+                    c.file_size,
+                    c.mime_type,
+                    c.upload_date,
+                    c.is_approved,
+                    u.first_name || ' ' || u.last_name as uploader_name,
+                    u.user_id as uploader_id
+                FROM content c
+                LEFT JOIN users u ON c.uploader_id = u.user_id
+                WHERE c.id = ?
+            `).bind(id).first();
+
+            if (!file) {
+                return jsonError('File not found', 404);
+            }
+
+            return jsonResponse({
+                success: true,
+                file: file
+            });
+        }
+
+        // Otherwise, return list of files
         let query = `
             SELECT 
                 c.id,
