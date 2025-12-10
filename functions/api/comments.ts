@@ -34,7 +34,8 @@ export async function onRequestGet(context: any) {
             return jsonError('contentId is required', 400);
         }
 
-        const result = await env.DB.prepare(`
+        // Get comments with user info
+        const comments = await env.DB.prepare(`
             SELECT 
                 c.id,
                 c.content as text,
@@ -48,10 +49,39 @@ export async function onRequestGet(context: any) {
             ORDER BY c.created_at DESC
         `).bind(contentId).all();
 
+        // For each comment, get likes count and replies
+        const commentsWithDetails = await Promise.all(
+            (comments.results || []).map(async (comment: any) => {
+                // Get likes count
+                const likesResult = await env.DB.prepare(`
+                    SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?
+                `).bind(comment.id).first();
+
+                // Get replies
+                const repliesResult = await env.DB.prepare(`
+                    SELECT 
+                        r.id,
+                        r.content as text,
+                        r.created_at,
+                        u.first_name || ' ' || u.last_name as author
+                    FROM comment_replies r
+                    LEFT JOIN users u ON r.user_id = u.user_id
+                    WHERE r.comment_id = ?
+                    ORDER BY r.created_at ASC
+                `).bind(comment.id).all();
+
+                return {
+                    ...comment,
+                    likes: likesResult?.count || 0,
+                    replies: repliesResult.results || []
+                };
+            })
+        );
+
         return jsonResponse({
             success: true,
-            comments: result.results || [],
-            count: result.results?.length || 0
+            comments: commentsWithDetails,
+            count: commentsWithDetails.length
         });
 
     } catch (error: any) {
