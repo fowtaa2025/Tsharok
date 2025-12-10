@@ -1,21 +1,44 @@
 // Session Management JavaScript
 
 /**
- * Check if user is authenticated
+ * Check if user is authenticated using JWT token
  */
 async function checkAuth() {
     try {
-        const response = await fetch('/api/check-auth.php', {
+        // Check for JWT token in localStorage
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+
+        if (!token || !userStr) {
+            return { authenticated: false };
+        }
+
+        // Verify token with API
+        const response = await fetch('/api/auth', {
             method: 'GET',
-            credentials: 'include'
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
+
+        if (!response.ok) {
+            // Token is invalid, clear storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('isLoggedIn');
+            return { authenticated: false };
+        }
 
         const result = await response.json();
 
-        if (result.success && result.data.authenticated) {
+        if (result.success && result.user) {
+            // Update user data in localStorage
+            localStorage.setItem('user', JSON.stringify(result.user));
+            sessionStorage.setItem('user', JSON.stringify(result.user));
+
             return {
                 authenticated: true,
-                user: result.data.user
+                user: result.user
             };
         }
 
@@ -24,15 +47,16 @@ async function checkAuth() {
     } catch (error) {
         console.error('Auth check error:', error);
 
-        // Fallback to localStorage for client-side testing
-        const localUser = localStorage.getItem('user');
-        if (localUser) {
+        // Fallback to localStorage for offline mode
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+
+        if (token && userStr) {
             try {
-                const user = JSON.parse(localUser);
-                if (user && user.id) {
-                    console.log('Using localStorage user for testing');
-                    // Also store in sessionStorage for this session
-                    sessionStorage.setItem('user', localUser);
+                const user = JSON.parse(userStr);
+                if (user && (user.userId || user.id)) {
+                    console.log('Using localStorage user (offline mode)');
+                    sessionStorage.setItem('user', userStr);
                     return { authenticated: true, user: user };
                 }
             } catch (e) {
@@ -48,37 +72,18 @@ async function checkAuth() {
  * Logout user
  */
 async function logout(redirectUrl = '/index.html') {
-    try {
-        const response = await fetch('/api/logout.php', {
-            method: 'POST',
-            credentials: 'include'
-        });
+    // Clear all auth data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isLoggedIn');
+    sessionStorage.clear();
 
-        const result = await response.json();
-
-        // Clear session storage
-        sessionStorage.clear();
-        localStorage.removeItem('user');
-
-        // Redirect to specified URL
-        if (redirectUrl) {
-            window.location.href = redirectUrl;
-        }
-
-        return result.success;
-
-    } catch (error) {
-        console.error('Logout error:', error);
-        // Clear local data even on error
-        sessionStorage.clear();
-        localStorage.removeItem('user');
-
-        // Force redirect even on error
-        if (redirectUrl) {
-            window.location.href = redirectUrl;
-        }
-        return false;
+    // Redirect to specified URL
+    if (redirectUrl) {
+        window.location.href = redirectUrl;
     }
+
+    return true;
 }
 
 /**
