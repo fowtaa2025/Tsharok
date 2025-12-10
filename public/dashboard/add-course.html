@@ -606,14 +606,20 @@
                 ]
             };
 
-            // Get added courses from localStorage
+            // Get added courses from localStorage (user-specific)
             function getAddedCourses() {
-                return JSON.parse(localStorage.getItem('addedCourses') || '[]');
+                const user = getCurrentUser();
+                const userId = user?.userId || user?.id || 'guest';
+                const storageKey = `addedCourses_${userId}`;
+                return JSON.parse(localStorage.getItem(storageKey) || '[]');
             }
 
-            // Save added courses to localStorage
+            // Save added courses to localStorage (user-specific)
             function saveAddedCourses(courses) {
-                localStorage.setItem('addedCourses', JSON.stringify(courses));
+                const user = getCurrentUser();
+                const userId = user?.userId || user?.id || 'guest';
+                const storageKey = `addedCourses_${userId}`;
+                localStorage.setItem(storageKey, JSON.stringify(courses));
             }
 
             // Get course ratings from localStorage
