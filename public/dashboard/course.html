@@ -729,90 +729,124 @@
             }
 
             // Load files for this course
-            function loadFiles() {
-                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
-                console.log('Loading files for course', currentCourseId, ':', files);
-                const sortedFiles = sortFiles(files, currentSortOption);
+            async function loadFiles() {
+                try {
+                    // Fetch files from database API instead of localStorage
+                    const response = await fetch(`/api/content?courseId=${currentCourseId}`);
+                    const result = await response.json();
 
-                const docsGrid = document.getElementById('documentsGrid');
-                const videoGrid = document.getElementById('videoGrid');
-
-                let docsHTML = '';
-                let videoHTML = '';
-
-                sortedFiles.forEach((file) => {
-                    // Format the date
-                    const index = file.originalIndex || 0; // Get original index for file linking
-                    const uploadDate = file.date ? new Date(file.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
-
-                    // Calculate average rating from comments and ratings
-                    const avgRating = calculateFileRating(currentCourseId, index);
-
-                    // Get file type icon and color
-                    const fileIcon = file.type === 'video' ? 'fa-play-circle' : getFileIcon(file.extension);
-                    const iconBg = file.type === 'video' ? 'from-red-500 to-pink-500' : 'from-indigo-500 to-purple-500';
-
-                    const cardHTML = `
-                    <a href="file.html?courseId=${currentCourseId}&fileId=${index}&name=${encodeURIComponent(file.name)}" class="file-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer block h-48">
-                        <div class="h-24 bg-gradient-to-br ${iconBg} flex items-center justify-center relative">
-                            <i class="fas ${fileIcon} text-4xl text-white/90"></i>
-                            <div class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1">
-                                <span class="text-white text-xs font-semibold">${file.extension?.toUpperCase() || 'FILE'}</span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <p class="text-sm font-semibold text-gray-800 truncate mb-2">${file.name}</p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-1">
-                                    <i class="fas fa-star text-amber-400 text-xs"></i>
-                                    <span class="text-xs font-bold text-amber-600">${avgRating}</span>
-                                </div>
-                                <span class="text-xs text-gray-400">${uploadDate}</span>
-                            </div>
-                            <div class="mt-2 flex items-center gap-1 text-gray-400">
-                                <i class="fas fa-user text-xs"></i>
-                                <span class="text-xs truncate">${file.uploadedBy || 'Student'}</span>
-                            </div>
-                        </div>
-                    </a>
-                `;
-
-                    if (file.type === 'video') {
-                        videoHTML += cardHTML;
-                    } else {
-                        docsHTML += cardHTML;
+                    if (!result.success) {
+                        console.error('Failed to load files:', result.error);
+                        return;
                     }
-                });
 
-                docsGrid.innerHTML = docsHTML;
-                videoGrid.innerHTML = videoHTML;
+                    const files = result.files || [];
+                    console.log('Loading files for course', currentCourseId, ':', files);
 
-                // If no files, show empty state message
-                if (files.length === 0 || docsHTML === '') {
-                    docsGrid.innerHTML = `
-                    <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
-                        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                            <i class="fas fa-file-alt text-4xl text-indigo-400"></i>
+                    // Convert database format to frontend format
+                    const formattedFiles = files.map((file, index) => ({
+                        id: file.id,
+                        name: file.title,
+                        description: file.description || '',
+                        type: file.type,
+                        rating: 0, // Will be calculated from ratings table later
+                        date: file.upload_date,
+                        originalName: file.title,
+                        r2Url: file.file_url,
+                        r2Key: file.file_key,
+                        mimeType: file.mime_type,
+                        extension: file.file_key ? file.file_key.split('.').pop() : 'file',
+                        size: file.file_size,
+                        uploadedBy: file.uploader_name || 'Student',
+                        uploaderId: file.uploader_id,
+                        storageType: 'r2',
+                        originalIndex: index
+                    }));
+
+                    const sortedFiles = sortFiles(formattedFiles, currentSortOption);
+
+                    const docsGrid = document.getElementById('documentsGrid');
+                    const videoGrid = document.getElementById('videoGrid');
+
+                    let docsHTML = '';
+                    let videoHTML = '';
+
+                    sortedFiles.forEach((file) => {
+                        // Format the date
+                        const index = file.originalIndex || 0;
+                        const uploadDate = file.date ? new Date(file.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+
+                        // Calculate average rating from comments and ratings
+                        const avgRating = calculateFileRating(currentCourseId, index);
+
+                        // Get file type icon and color
+                        const fileIcon = file.type === 'video' ? 'fa-play-circle' : getFileIcon(file.extension);
+                        const iconBg = file.type === 'video' ? 'from-red-500 to-pink-500' : 'from-indigo-500 to-purple-500';
+
+                        const cardHTML = `
+                        <a href="file.html?courseId=${currentCourseId}&fileId=${file.id}&name=${encodeURIComponent(file.name)}" class="file-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer block h-48">
+                            <div class="h-24 bg-gradient-to-br ${iconBg} flex items-center justify-center relative">
+                                <i class="fas ${fileIcon} text-4xl text-white/90"></i>
+                                <div class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1">
+                                    <span class="text-white text-xs font-semibold">${file.extension?.toUpperCase() || 'FILE'}</span>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <p class="text-sm font-semibold text-gray-800 truncate mb-2">${file.name}</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-star text-amber-400 text-xs"></i>
+                                        <span class="text-xs font-bold text-amber-600">${avgRating}</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">${uploadDate}</span>
+                                </div>
+                                <div class="mt-2 flex items-center gap-1 text-gray-400">
+                                    <i class="fas fa-user text-xs"></i>
+                                    <span class="text-xs truncate">${file.uploadedBy || 'Student'}</span>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+
+                        if (file.type === 'video') {
+                            videoHTML += cardHTML;
+                        } else {
+                            docsHTML += cardHTML;
+                        }
+                    });
+
+                    docsGrid.innerHTML = docsHTML;
+                    videoGrid.innerHTML = videoHTML;
+
+                    // If no files, show empty state message
+                    if (formattedFiles.length === 0 || docsHTML === '') {
+                        docsGrid.innerHTML = `
+                        <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                                <i class="fas fa-file-alt text-4xl text-indigo-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No documents yet</h3>
+                            <p class="text-gray-500">Click "Add Document" to share study materials with your classmates</p>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No documents yet</h3>
-                        <p class="text-gray-500">Click "Add Document" to share study materials with your classmates</p>
-                    </div>
-                `;
-                }
-                if (files.length === 0 || videoHTML === '') {
-                    videoGrid.innerHTML = `
-                    <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
-                        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
-                            <i class="fas fa-video text-4xl text-red-400"></i>
+                    `;
+                    }
+                    if (formattedFiles.length === 0 || videoHTML === '') {
+                        videoGrid.innerHTML = `
+                        <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
+                                <i class="fas fa-video text-4xl text-red-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No videos yet</h3>
+                            <p class="text-gray-500">Click "Add Video" to share educational videos with your classmates</p>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No videos yet</h3>
-                        <p class="text-gray-500">Click "Add Video" to share educational videos with your classmates</p>
-                    </div>
-                `;
-                }
+                    `;
+                    }
 
-                // Calculate and display overall course rating
-                calculateOverallCourseRating();
+                    // Update overall course rating
+                    calculateOverallCourseRating();
+                } catch (error) {
+                    console.error('Error loading files:', error);
+                }
             }
 
             // Switch between tabs
