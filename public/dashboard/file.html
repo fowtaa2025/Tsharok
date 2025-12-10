@@ -717,29 +717,37 @@
                 currentRating = rating;
                 updateRatingDisplay();
 
-                // Save rating to file
-                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
-                if (files[currentFileId]) {
-                    files[currentFileId].rating = rating;
-                    localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showToast('Please login to rate', 'error');
+                    return;
                 }
 
-                // Also save as a rating entry for average calculation
-                let ratings = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_ratings`) || '[]');
-                const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                const userId = userData.id || 'anonymous';
-
-                // Check if user already rated, update their rating
-                const existingIndex = ratings.findIndex(r => r.userId === userId);
-                if (existingIndex >= 0) {
-                    ratings[existingIndex].rating = rating;
-                } else {
-                    ratings.push({ userId, rating, date: new Date().toISOString() });
-                }
-                localStorage.setItem(`file_${currentCourseId}_${currentFileId}_ratings`, JSON.stringify(ratings));
-
-                updateAverageRating();
-                showToast('Rating saved!', 'success');
+                // Post rating to database
+                fetch('/api/ratings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        contentId: currentFileId,
+                        score: rating
+                    })
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            updateAverageRating();
+                            showToast('Rating saved!', 'success');
+                        } else {
+                            throw new Error(result.error || 'Failed to save rating');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error saving rating:', error);
+                        showToast(error.message || 'Failed to save rating', 'error');
+                    });
             }
 
             // Set comment rating
@@ -1019,38 +1027,65 @@
                     return;
                 }
 
-                // Require at least 1 star (minimum 1-3 required)
-                if (commentRating < 1 || commentRating > 5) {
-                    errorEl.classList.remove('hidden');
-                    showToast('Please rate at least 1 star to comment', 'error');
+                if (commentRating < 1) {
+                    document.getElementById('commentRatingError').classList.remove('hidden');
                     return;
                 }
 
-                errorEl.classList.add('hidden');
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showToast('Please login to comment', 'error');
+                    return;
+                }
 
-                const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                const authorName = userData.fullName || userData.name || userData.username || 'Student';
-                const comment = {
-                    author: authorName,
-                    text: text,
-                    rating: commentRating,
-                    likes: 0,
-                    likedByMe: false,
-                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-                };
+                // Post comment to database
+                fetch('/api/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        contentId: currentFileId,
+                        text: text
+                    })
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // Also post rating
+                            return fetch('/api/ratings', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({
+                                    contentId: currentFileId,
+                                    score: commentRating
+                                })
+                            });
+                        } else {
+                            throw new Error(result.error || 'Failed to post comment');
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        // Clear input
+                        document.getElementById('commentInput').value = '';
+                        commentRating = 0;
+                        setCommentRating(0);
 
-                let comments = JSON.parse(localStorage.getItem(`file_${currentCourseId}_${currentFileId}_comments`) || '[]');
-                comments.unshift(comment);
-                localStorage.setItem(`file_${currentCourseId}_${currentFileId}_comments`, JSON.stringify(comments));
+                        // Reload comments and ratings
+                        loadComments();
+                        updateAverageRating();
 
-                // Update average rating
-                updateAverageRating();
-
-                input.value = '';
-                commentRating = 0;
-                setCommentRating(0);
-                loadComments();
-                showToast('Comment added!', 'success');
+                        showToast('Comment posted successfully!', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error posting comment:', error);
+                        showToast(error.message || 'Failed to post comment', 'error');
+                    });
             }
 
             // Download file
