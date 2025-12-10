@@ -150,6 +150,17 @@ export async function onRequestPost(context: any) {
                 return jsonError('All fields are required', 400);
             }
 
+            // Validate email domain - must be @uqu.edu.sa
+            if (!email.toLowerCase().endsWith('@uqu.edu.sa')) {
+                return jsonError('Only UQU students can register. Please use your @uqu.edu.sa email address.', 400);
+            }
+
+            // Validate email format
+            const emailRegex = /^[a-zA-Z0-9._-]+@uqu\.edu\.sa$/;
+            if (!emailRegex.test(email.toLowerCase())) {
+                return jsonError('Invalid email format', 400);
+            }
+
             // Check if user exists
             const existing = await env.DB.prepare(
                 'SELECT user_id FROM users WHERE email = ?'
