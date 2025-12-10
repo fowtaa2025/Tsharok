@@ -988,12 +988,15 @@
                     const response = await fetch('/api/upload', {
                         method: 'POST',
                         headers: {
-                            'Authorization': `Bearer ${token}`
                         },
                         body: formData
                     });
 
+                    console.log('Upload response status:', response.status);
+                    console.log('Upload response ok:', response.ok);
+
                     const result = await response.json();
+                    console.log('Upload result:', result);
 
                     if (result.success && result.file) {
                         // File uploaded to R2 successfully!
@@ -1038,12 +1041,16 @@
                                 '✅ Document uploaded to cloud storage!'
                         );
                     } else {
-                        throw new Error(result.message || 'Upload failed');
+                        // Show detailed error
+                        const errorMsg = result.error || result.message || 'Upload failed - Unknown error';
+                        console.error('Upload failed:', errorMsg);
+                        throw new Error(errorMsg);
                     }
 
                 } catch (error) {
                     console.error('Upload error:', error);
-                    alert('Upload failed: ' + error.message + '\n\nPlease make sure:\n1. Local server is running\n2. R2 is configured correctly');
+                    const errorMessage = error.message || 'Unknown error occurred';
+                    alert(`Upload failed: ${errorMessage}\n\nPlease check:\n1. You are logged in\n2. File type is allowed\n3. File size is under 100MB\n\nCheck browser console for details.`);
                     uploadBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>Upload';
                     uploadBtn.disabled = false;
                 }
