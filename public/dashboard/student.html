@@ -662,7 +662,13 @@
             function loadMyCourses() {
                 const container = document.getElementById('my-courses-container');
                 const noCoursesMsg = document.getElementById('no-courses-message');
-                const addedCourseIds = JSON.parse(localStorage.getItem('addedCourses') || '[]');
+
+                // Get current user to make storage user-specific
+                const user = getCurrentUser();
+                const userId = user?.userId || user?.id || 'guest';
+                const storageKey = `addedCourses_${userId}`;
+
+                const addedCourseIds = JSON.parse(localStorage.getItem(storageKey) || '[]');
 
                 if (addedCourseIds.length === 0) {
                     container.innerHTML = '';
@@ -689,8 +695,15 @@
             // Load notifications for courses the student has added
             function loadNotifications() {
                 const container = document.getElementById('notificationsContainer');
-                const addedCourseIds = JSON.parse(localStorage.getItem('addedCourses') || '[]');
-                const allNotifications = JSON.parse(localStorage.getItem('course_notifications') || '[]');
+
+                // Get current user to make storage user-specific
+                const user = getCurrentUser();
+                const userId = user?.userId || user?.id || 'guest';
+                const coursesKey = `addedCourses_${userId}`;
+                const notificationsKey = `course_notifications_${userId}`;
+
+                const addedCourseIds = JSON.parse(localStorage.getItem(coursesKey) || '[]');
+                const allNotifications = JSON.parse(localStorage.getItem(notificationsKey) || '[]');
 
                 // Filter notifications to only show those for courses the student has added
                 const myNotifications = allNotifications.filter(n => addedCourseIds.includes(n.courseId));
