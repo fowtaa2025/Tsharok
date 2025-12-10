@@ -91,7 +91,9 @@ export async function onRequestPost(context: any) {
         });
 
         // 7. Save to database
-        const courseId = formData.get('courseId') || null;
+        // Note: courseId is optional since courses are managed in localStorage on frontend
+        // We set it to NULL to avoid foreign key constraint errors
+        const courseId = null;  // Don't use formData courseId to avoid FK constraint
         const title = formData.get('title') || file.name;
         const description = formData.get('description') || null;
 
@@ -115,7 +117,7 @@ export async function onRequestPost(context: any) {
             `${env.R2_PUBLIC_URL}/${key}`,
             key,
             user.userId,
-            courseId,
+            courseId,  // NULL to avoid FK constraint
             file.size,
             file.type,
             description
