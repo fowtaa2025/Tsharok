@@ -1,5 +1,6 @@
 -- Seed Data for Tsharok D1 Database
 -- Initial data for testing
+-- Password for all users: "Test123!" (SHA-256 hashed)
 
 -- Insert Majors
 INSERT INTO majors (name, description) VALUES
@@ -12,18 +13,24 @@ INSERT INTO majors (name, description) VALUES
 ('Network Engineering', 'Design and implementation of computer networks'),
 ('Mathematics', 'Study of numbers, structures, and patterns');
 
--- Insert Sample Admin User (password: Admin123!)
--- Note: This is a bcrypt hash of "Admin123!" - you should change this in production
+-- Insert Sample Admin User
+-- Email: admin@tsharok.com
+-- Password: Test123!
+-- SHA-256 hash of "Test123!"
 INSERT INTO users (username, email, password_hash, first_name, last_name, role, major_id, is_active) VALUES
-('admin', 'admin@tsharok.com', '$2y$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyKcvY4v9YoS', 'Admin', 'User', 'admin', 1, 1);
+('admin', 'admin@tsharok.com', '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', 'Admin', 'User', 'admin', 1, 1);
 
--- Insert Sample Student User (password: Student123!)
+-- Insert Sample Student User
+-- Email: student@uqu.edu.sa
+-- Password: Test123!
 INSERT INTO users (username, email, password_hash, first_name, last_name, role, major_id, is_active) VALUES
-('student1', 's4123456@uqu.edu.sa', '$2y$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyKcvY4v9YoS', 'Ahmed', 'Bamarouf', 'student', 1, 1);
+('student1', 'student@uqu.edu.sa', '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', 'Ahmed', 'Bamarouf', 'student', 1, 1);
 
--- Insert Sample Instructor User (password: Instructor123!)
+-- Insert Sample Instructor User
+-- Email: instructor@uqu.edu.sa
+-- Password: Test123!
 INSERT INTO users (username, email, password_hash, first_name, last_name, role, major_id, is_active) VALUES
-('instructor1', 'instructor@uqu.edu.sa', '$2y$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyKcvY4v9YoS', 'Dr. Mohammed', 'Ali', 'instructor', 1, 1);
+('instructor1', 'instructor@uqu.edu.sa', '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', 'Dr. Mohammed', 'Ali', 'instructor', 1, 1);
 
 -- Insert Sample Courses
 INSERT INTO courses (course_code, title, description, instructor_id, category, level, is_published) VALUES
