@@ -389,84 +389,18 @@
 
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            const remember = document.getElementById('rememberMe').checked;
             const button = document.getElementById('loginButton');
 
             button.disabled = true;
             button.textContent = 'Logging in...';
 
             try {
-                const response = await fetch('api/login.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include', // Important: include cookies
-                    body: JSON.stringify({
-                        identifier: email,
-                        password: password,
-                        remember: remember
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Store user data in localStorage
-                    if (data.data && data.data.user) {
-                        localStorage.setItem('user', JSON.stringify(data.data.user));
-                        localStorage.setItem('sessionToken', data.data.user.sessionToken);
-                        localStorage.setItem('isLoggedIn', 'true');
-                    }
-
-                    showMessage('loginMessage', 'Login successful! Redirecting...', false);
-
-                    // Wait a bit longer to ensure session is established
-                    setTimeout(() => {
-                        // Check user role and redirect accordingly
-                        if (data.data && data.data.user) {
-                            if (data.data.user.role === 'admin') {
-                                window.location.href = 'dashboard/admin.html';
-                            } else {
-                                window.location.href = 'dashboard/student.html';
-                            }
-                        } else {
-                            window.location.href = 'dashboard/student.html';
-                        }
-                    }, 1500);
-                } else {
-                    showMessage('loginMessage', data.message || 'Login failed. Please try again.', true);
-                    button.disabled = false;
-                    button.textContent = 'Continue';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                showMessage('loginMessage', 'An error occurred. Please try again.', true);
-                button.disabled = false;
-                button.textContent = 'Continue';
-            }
-        });
-
-        // Handle Register Form Submission
-        document.getElementById('registerFormElement')?.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const fullName = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const button = document.getElementById('registerButton');
-
-            button.disabled = true;
-            button.textContent = 'Creating account...';
-
-            try {
-                const response = await fetch('api/register.php', {
+                const response = await fetch('/api/auth', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        full_name: fullName,
                         email: email,
                         password: password
                     })
@@ -475,20 +409,79 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showMessage('registerMessage', data.message || 'Registration successful! Please check your email to verify your account.', false);
+                    // Store JWT token and user data
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('isLoggedIn', 'true');
+
+                    showMessage('loginMessage', 'Login successful! Redirecting...', false);
+
+                    setTimeout(() => {
+                        // Redirect based on role
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'dashboard/admin.html';
+                        } else {
+                            window.location.href = 'dashboard/student.html';
+                        }
+                    }, 1500);
+                } else {
+                    showMessage('loginMessage', data.error || 'Login failed. Please try again.', true);
+                    button.disabled = false;
+                    button.textContent = 'Login';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('loginMessage', 'An error occurred. Please try again.', true);
+                button.disabled = false;
+                button.textContent = 'Login';
+            }
+        });
+
+        // Handle Register Form Submission
+        document.getElementById('registerFormElement')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const firstName = document.getElementById('registerFirstName').value;
+            const lastName = document.getElementById('registerLastName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const button = document.getElementById('registerButton');
+
+            button.disabled = true;
+            button.textContent = 'Creating account...';
+
+            try {
+                const response = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'register',
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('registerMessage', 'Registration successful! You can now log in.', false);
                     setTimeout(() => {
                         switchTab('login');
                         document.getElementById('loginEmail').value = email;
                     }, 2000);
                 } else {
-                    showMessage('registerMessage', data.message || 'Registration failed. Please try again.', true);
+                    showMessage('registerMessage', data.error || 'Registration failed. Please try again.', true);
                     button.disabled = false;
-                    button.textContent = 'Continue';
+                    button.textContent = 'Create Account';
                 }
             } catch (error) {
                 showMessage('registerMessage', 'An error occurred. Please try again.', true);
                 button.disabled = false;
-                button.textContent = 'Continue';
+                button.textContent = 'Create Account';
             }
         });
 
