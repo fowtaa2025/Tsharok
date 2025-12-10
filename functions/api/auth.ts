@@ -1,7 +1,5 @@
 // Authentication API - Login and Register
-// Uses D1 database and JWT tokens
-
-import { SignJWT, jwtVerify } from 'jose';
+// Uses D1 database and JWT tokens with Web Crypto API
 
 interface Env {
     DB: D1Database;
@@ -37,30 +35,99 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
     return passwordHash === hash;
 }
 
-// Generate JWT token
-async function generateToken(user: any, secret: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const secretKey = encoder.encode(secret);
-
-    const token = await new SignJWT({
-        userId: user.user_id,
-        email: user.email,
-        role: user.role
-    })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('24h')
-        .setIssuedAt()
-        .sign(secretKey);
-
-    return token;
+// Base64 URL encoding helper
+function base64UrlEncode(str: string): string {
+    return btoa(str)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
 }
 
-// Verify JWT token
+// Generate JWT token using Web Crypto API
+async function generateToken(user: any, secret: string): Promise<string> {
+    const header = {
+        alg: 'HS256',
+        typ: 'JWT'
+    };
+
+    const now = Math.floor(Date.now() / 1000);
+    const payload = {
+        userId: user.user_id,
+        email: user.email,
+        role: user.role,
+        iat: now,
+        exp: now + (24 * 60 * 60) // 24 hours
+    };
+
+    const encodedHeader = base64UrlEncode(JSON.stringify(header));
+    const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+    const data = `${encodedHeader}.${encodedPayload}`;
+
+    // Create signature using HMAC SHA-256
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(secret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+    );
+
+    const signature = await crypto.subtle.sign(
+        'HMAC',
+        key,
+        encoder.encode(data)
+    );
+
+    const encodedSignature = base64UrlEncode(
+        String.fromCharCode(...new Uint8Array(signature))
+    );
+
+    return `${data}.${encodedSignature}`;
+}
+
+// Verify JWT token using Web Crypto API
 export async function verifyToken(token: string, secret: string): Promise<any> {
     try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+
+        const [encodedHeader, encodedPayload, encodedSignature] = parts;
+        const data = `${encodedHeader}.${encodedPayload}`;
+
+        // Verify signature
         const encoder = new TextEncoder();
-        const secretKey = encoder.encode(secret);
-        const { payload } = await jwtVerify(token, secretKey);
+        const key = await crypto.subtle.importKey(
+            'raw',
+            encoder.encode(secret),
+            { name: 'HMAC', hash: 'SHA-256' },
+            false,
+            ['verify']
+        );
+
+        const signature = Uint8Array.from(
+            atob(encodedSignature.replace(/-/g, '+').replace(/_/g, '/')),
+            c => c.charCodeAt(0)
+        );
+
+        const isValid = await crypto.subtle.verify(
+            'HMAC',
+            key,
+            signature,
+            encoder.encode(data)
+        );
+
+        if (!isValid) return null;
+
+        // Decode and verify payload
+        const payload = JSON.parse(
+            atob(encodedPayload.replace(/-/g, '+').replace(/_/g, '/'))
+        );
+
+        // Check expiration
+        const now = Math.floor(Date.now() / 1000);
+        if (payload.exp && payload.exp < now) return null;
+
         return payload;
     } catch {
         return null;
