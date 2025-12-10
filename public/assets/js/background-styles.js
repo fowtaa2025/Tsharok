@@ -98,13 +98,13 @@ const BackgroundStyles = {
     },
 
     // Initialize and apply the selected style
-    init: function() {
+    init: function () {
         const selectedStyle = parseInt(localStorage.getItem('selectedBackgroundStyle')) || 1;
         this.applyStyle(selectedStyle);
     },
 
     // Apply a specific style
-    applyStyle: function(styleNum) {
+    applyStyle: function (styleNum) {
         const style = this.styles[styleNum];
         if (!style) return;
 
@@ -119,10 +119,10 @@ const BackgroundStyles = {
         document.head.appendChild(styleTag);
 
         // Find and update the hero section / main container
-        const heroSection = document.querySelector('.hero-content')?.parentElement || 
-                           document.querySelector('.bg-shapes-container') ||
-                           document.querySelector('main');
-        
+        const heroSection = document.querySelector('.hero-content')?.parentElement ||
+            document.querySelector('.bg-shapes-container') ||
+            document.querySelector('main');
+
         if (heroSection) {
             // Remove all existing bg-edu classes
             Object.values(this.styles).forEach(s => {
@@ -130,13 +130,13 @@ const BackgroundStyles = {
             });
             // Remove old shape classes
             heroSection.classList.remove('bg-shapes-container');
-            
+
             // Add new class
             heroSection.classList.add(style.containerClass);
-            
-            // Hide old background shapes
+
+            // Completely remove old background shapes (not just hide)
             const oldShapes = heroSection.querySelectorAll('.bg-shape');
-            oldShapes.forEach(shape => shape.style.display = 'none');
+            oldShapes.forEach(shape => shape.remove());
         }
 
         // Save selection
@@ -145,7 +145,7 @@ const BackgroundStyles = {
     },
 
     // Get current style info
-    getCurrentStyle: function() {
+    getCurrentStyle: function () {
         const styleNum = parseInt(localStorage.getItem('selectedBackgroundStyle')) || 1;
         return {
             number: styleNum,
@@ -155,7 +155,7 @@ const BackgroundStyles = {
 };
 
 // Auto-initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     BackgroundStyles.init();
 });
 

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation 4: 3D Cube Rotation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .cube-container {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            animation: rotateCube 20s infinite linear;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .front {
+            transform: rotateY(0deg) translateZ(100px);
+        }
+
+        .back {
+            transform: rotateY(180deg) translateZ(100px);
+        }
+
+        .right {
+            transform: rotateY(90deg) translateZ(100px);
+        }
+
+        .left {
+            transform: rotateY(-90deg) translateZ(100px);
+        }
+
+        .top {
+            transform: rotateX(90deg) translateZ(100px);
+        }
+
+        .bottom {
+            transform: rotateX(-90deg) translateZ(100px);
+        }
+
+        @keyframes rotateCube {
+            from {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+
+            to {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        .cube-1 {
+            top: 10%;
+            left: 10%;
+            animation-duration: 15s;
+        }
+
+        .cube-2 {
+            top: 20%;
+            right: 15%;
+            animation-duration: 20s;
+            animation-direction: reverse;
+        }
+
+        .cube-3 {
+            bottom: 15%;
+            left: 20%;
+            animation-duration: 18s;
+        }
+
+        .cube-4 {
+            bottom: 20%;
+            right: 10%;
+            animation-duration: 22s;
+            animation-direction: reverse;
+        }
+
+        .zoom-in {
+            animation: zoomIn 1.2s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Multiple rotating cubes -->
+    <div class="cube-container cube-1">
+        <div class="cube-face front"></div>
+        <div class="cube-face back"></div>
+        <div class="cube-face right"></div>
+        <div class="cube-face left"></div>
+        <div class="cube-face top"></div>
+        <div class="cube-face bottom"></div>
+    </div>
+
+    <div class="cube-container cube-2">
+        <div class="cube-face front"></div>
+        <div class="cube-face back"></div>
+        <div class="cube-face right"></div>
+        <div class="cube-face left"></div>
+        <div class="cube-face top"></div>
+        <div class="cube-face bottom"></div>
+    </div>
+
+    <div class="cube-container cube-3">
+        <div class="cube-face front"></div>
+        <div class="cube-face back"></div>
+        <div class="cube-face right"></div>
+        <div class="cube-face left"></div>
+        <div class="cube-face top"></div>
+        <div class="cube-face bottom"></div>
+    </div>
+
+    <div class="cube-container cube-4">
+        <div class="cube-face front"></div>
+        <div class="cube-face back"></div>
+        <div class="cube-face right"></div>
+        <div class="cube-face left"></div>
+        <div class="cube-face top"></div>
+        <div class="cube-face bottom"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center">
+        <div class="text-center px-6 zoom-in">
+            <div class="mb-6">
+                <span
+                    class="inline-block px-6 py-2 bg-white bg-opacity-20 backdrop-blur-lg rounded-full text-white font-semibold text-sm">
+                    🎲 Animation 4: 3D Cube Rotation
+                </span>
+            </div>
+            <h1 class="text-8xl font-black text-white mb-6">Tsharok</h1>
+            <p class="text-3xl text-white text-opacity-90 mb-8 max-w-3xl mx-auto">
+                Multi-Dimensional Learning Experience
+            </p>
+            <div class="flex gap-4 justify-center">
+                <a href="register.html"
+                    class="px-10 py-4 bg-white text-purple-900 rounded-full font-bold text-lg hover:scale-110 transition-transform shadow-2xl">
+                    Explore 3D Learning
+                </a>
+            </div>
+
+            <div class="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+                <div class="text-center">
+                    <div class="text-5xl font-black text-white mb-2">360°</div>
+                    <div class="text-white text-opacity-80">Complete View</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-black text-white mb-2">24/7</div>
+                    <div class="text-white text-opacity-80">Always On</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-black text-white mb-2">∞</div>
+                    <div class="text-white text-opacity-80">Unlimited</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Advanced Animated Designs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .design-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .design-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .design-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .design-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Style 16: Floating Particles */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(100px, -100px);
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: particle-float 4s infinite;
+        }
+
+        .particle:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            left: 30%;
+            animation-delay: 1s;
+        }
+
+        .particle:nth-child(3) {
+            left: 50%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(4) {
+            left: 70%;
+            animation-delay: 0.5s;
+        }
+
+        .particle:nth-child(5) {
+            left: 90%;
+            animation-delay: 1.5s;
+        }
+
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Style 17: Morphing Gradients */
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .morphing-gradient {
+            background: linear-gradient(270deg, #ff6b6b, #4ecdc4, #45b7d1, #f7b731);
+            background-size: 800% 800%;
+            animation: gradient-shift 8s ease infinite;
+        }
+
+        @keyframes card-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .pulse-card {
+            animation: card-pulse 2s ease-in-out infinite;
+        }
+
+        /* Style 18: 3D Flip Cards */
+        .flip-container {
+            perspective: 1000px;
+        }
+
+        .flipper {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .flip-container:hover .flipper {
+            transform: rotateY(180deg);
+        }
+
+        .front,
+        .back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes rotate-border {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .rotating-border {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rotating-border::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, #ff6b6b, transparent 30%);
+            animation: rotate-border 3s linear infinite;
+        }
+
+        .rotating-border::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: white;
+            border-radius: 14px;
+            z-index: 1;
+        }
+
+        /* Style 19: Wave Animation */
+        @keyframes wave {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-25%) translateY(-10px);
+            }
+
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .wave-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
+            animation: wave 10s linear infinite;
+        }
+
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1) rotate(10deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .bounce-card {
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Style 20: Glowing Neon */
+        @keyframes neon-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 255, 255, 0.5),
+                    0 0 40px rgba(0, 255, 255, 0.3),
+                    0 0 60px rgba(0, 255, 255, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(255, 0, 255, 0.5),
+                    0 0 60px rgba(255, 0, 255, 0.3),
+                    0 0 90px rgba(255, 0, 255, 0.1);
+            }
+        }
+
+        .neon-card {
+            animation: neon-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes text-glow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 40px rgba(255, 0, 255, 0.5);
+            }
+        }
+
+        .glowing-text {
+            animation: text-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-in {
+            animation: slide-in 0.5s ease-out forwards;
+        }
+
+        .slide-in:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .slide-in:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .slide-in:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .file-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="design-container">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-black text-white mb-4">✨ 5 Advanced Animated Designs</h1>
+            <p class="text-xl text-white/90">Styles 16-20: Complex Animations & Effects!</p>
+            <p class="text-sm text-white/70 mt-2">Hover, watch, and be amazed! 🎭</p>
+        </div>
+
+        <!-- Style 16: Floating Particles -->
+        <div class="design-card">
+            <h2 class="design-title">Style 16: Floating Particles ✨</h2>
+
+            <div
+                style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px; padding: 40px; color: white; position: relative; overflow: hidden;">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+
+                <div class="flex justify-between items-start relative z-10">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-book text-4xl floating-icon"></i>
+                            <div>
+                                <h3 class="text-3xl font-bold">Calculus (1)</h3>
+                                <p class="text-white/90">Course Materials</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-white/90 max-w-2xl">
+                            Introduction to limits, derivatives, and their applications in solving real-world problems.
+                        </p>
+                    </div>
+                    <div class="rating-badge floating-icon" style="background: rgba(255,215,0,0.9);">
+                        <span>Knowledge Rating</span>
+                        <span class="text-2xl">3.0★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-4 justify-center">
+                <button class="px-6 py-3 rounded-full font-semibold pulse-card"
+                    style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                    <i class="fas fa-file-alt mr-2"></i>Documents
+                </button>
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: #fff; color: #667eea; border: 2px solid #667eea;">
+                    <i class="fas fa-video mr-2"></i>Videos
+                </button>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bounce-card"
+                    style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(102,126,234,0.2);">
+                    <div class="file-icon floating-icon"
+                        style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2" style="color: #667eea;">Chapter 1 Notes</h4>
+                    <div class="flex items-center justify-between text-sm text-gray-600">
+                        <span>⭐ 4.5</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+
+                <div class="bounce-card"
+                    style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(102,126,234,0.2); animation-delay: 0.2s;">
+                    <div class="file-icon floating-icon"
+                        style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2" style="color: #667eea;">Derivatives Guide</h4>
+                    <div class="flex items-center justify-between text-sm text-gray-600">
+                        <span>⭐ 5.0</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+
+                <div class="bounce-card"
+                    style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(102,126,234,0.2); animation-delay: 0.4s;">
+                    <div class="file-icon floating-icon"
+                        style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2" style="color: #667eea;">Practice Problems</h4>
+                    <div class="flex items-center justify-between text-sm text-gray-600">
+                        <span>⭐ 4.8</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 17: Morphing Gradients -->
+        <div class="design-card">
+            <h2 class="design-title">Style 17: Morphing Gradients 🌈</h2>
+
+            <div class="morphing-gradient" style="border-radius: 20px; padding: 40px; color: white;">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-book text-4xl"></i>
+                            <div>
+                                <h3 class="text-3xl font-bold">Calculus (1)</h3>
+                                <p class="text-white/90">Course Materials</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-white/90 max-w-2xl">
+                            Introduction to limits, derivatives, and their applications in solving real-world problems.
+                        </p>
+                    </div>
+                    <div class="rating-badge pulse-card" style="background: #fff; color: #000;">
+                        <span>Knowledge Rating</span>
+                        <span class="text-2xl">3.0★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-4 justify-center">
+                <button class="px-6 py-3 rounded-full font-semibold morphing-gradient"
+                    style="color: white; border: 2px solid white;">
+                    <i class="fas fa-file-alt mr-2"></i>Documents
+                </button>
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: #fff; color: #ff6b6b; border: 2px solid #ff6b6b;">
+                    <i class="fas fa-video mr-2"></i>Videos
+                </button>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="pulse-card slide-in"
+                    style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+                    <div class="file-icon morphing-gradient" style="color: white;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2" style="color: #ff6b6b;">Chapter 1 Notes</h4>
+                    <div class="flex items-center justify-between text-sm text-gray-600">
+                        <span>⭐ 4.5</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+
+                <div class="pulse-card slide-in"
+                    style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+                    <div class="file-icon morphing-gradient" style="color: white;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2" style="color: #4ecdc4;">Derivatives Guide</h4>
+                    <div class="flex items-center justify-between text-sm text-gray-600">
+                        <span>⭐ 5.0</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+
+                <div class="pulse-card slide-in"
+                    style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+                    <div class="file-icon morphing-gradient" style="color: white;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2" style="color: #45b7d1;">Practice Problems</h4>
+                    <div class="flex items-center justify-between text-sm text-gray-600">
+                        <span>⭐ 4.8</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 18: 3D Flip Cards -->
+        <div class="design-card">
+            <h2 class="design-title">Style 18: 3D Flip Cards 🔄</h2>
+
+            <div
+                style="background: linear-gradient(135deg, #00b4db, #0083b0); border-radius: 20px; padding: 40px; color: white;">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-book text-4xl"></i>
+                            <div>
+                                <h3 class="text-3xl font-bold">Calculus (1)</h3>
+                                <p class="text-white/90">Course Materials</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-white/90 max-w-2xl">
+                            Introduction to limits, derivatives, and their applications in solving real-world problems.
+                        </p>
+                    </div>
+                    <div class="rating-badge" style="background: #fff; color: #0083b0;">
+                        <span>Knowledge Rating</span>
+                        <span class="text-2xl">3.0★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-4 justify-center">
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: linear-gradient(135deg, #00b4db, #0083b0); color: white;">
+                    <i class="fas fa-file-alt mr-2"></i>Documents
+                </button>
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: #fff; color: #00b4db; border: 2px solid #00b4db;">
+                    <i class="fas fa-video mr-2"></i>Videos
+                </button>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flip-container" style="height: 250px;">
+                    <div class="flipper">
+                        <div class="front"
+                            style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(0,180,219,0.2); height: 250px;">
+                            <div class="file-icon"
+                                style="background: linear-gradient(135deg, #00b4db, #0083b0); color: white;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2" style="color: #0083b0;">Chapter 1 Notes</h4>
+                            <div class="flex items-center justify-between text-sm text-gray-600">
+                                <span>⭐ 4.5</span>
+                                <span>Dec 8, 2025</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">
+                                <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                            </p>
+                        </div>
+                        <div class="back"
+                            style="background: linear-gradient(135deg, #00b4db, #0083b0); border-radius: 16px; padding: 24px; color: white; height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <i class="fas fa-download text-5xl mb-4"></i>
+                            <h4 class="font-bold text-xl mb-2">Download Now</h4>
+                            <p class="text-sm text-center">Click to download this PDF file</p>
+                            <button
+                                class="mt-4 px-4 py-2 bg-white text-blue-600 rounded-lg font-semibold">Download</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-container" style="height: 250px;">
+                    <div class="flipper">
+                        <div class="front"
+                            style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(0,180,219,0.2); height: 250px;">
+                            <div class="file-icon"
+                                style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2" style="color: #0083b0;">Derivatives Guide</h4>
+                            <div class="flex items-center justify-between text-sm text-gray-600">
+                                <span>⭐ 5.0</span>
+                                <span>Dec 8, 2025</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">
+                                <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                            </p>
+                        </div>
+                        <div class="back"
+                            style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 16px; padding: 24px; color: white; height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <i class="fas fa-download text-5xl mb-4"></i>
+                            <h4 class="font-bold text-xl mb-2">Download Now</h4>
+                            <p class="text-sm text-center">Click to download this PDF file</p>
+                            <button
+                                class="mt-4 px-4 py-2 bg-white text-purple-600 rounded-lg font-semibold">Download</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-container" style="height: 250px;">
+                    <div class="flipper">
+                        <div class="front"
+                            style="background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 20px rgba(0,180,219,0.2); height: 250px;">
+                            <div class="file-icon"
+                                style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2" style="color: #0083b0;">Practice Problems</h4>
+                            <div class="flex items-center justify-between text-sm text-gray-600">
+                                <span>⭐ 4.8</span>
+                                <span>Dec 8, 2025</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">
+                                <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                            </p>
+                        </div>
+                        <div class="back"
+                            style="background: linear-gradient(135deg, #f093fb, #f5576c); border-radius: 16px; padding: 24px; color: white; height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <i class="fas fa-download text-5xl mb-4"></i>
+                            <h4 class="font-bold text-xl mb-2">Download Now</h4>
+                            <p class="text-sm text-center">Click to download this PDF file</p>
+                            <button
+                                class="mt-4 px-4 py-2 bg-white text-pink-600 rounded-lg font-semibold">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-gray-500 mt-4 text-sm">💡 Hover over cards to flip them!</p>
+        </div>
+
+        <!-- Style 19: Wave Animation -->
+        <div class="design-card">
+            <h2 class="design-title">Style 19: Wave Animation 🌊</h2>
+
+            <div
+                style="background: linear-gradient(135deg, #f093fb, #f5576c); border-radius: 20px; padding: 40px; color: white; position: relative; overflow: hidden;">
+                <div class="wave-bg"></div>
+                <div class="wave-bg" style="animation-delay: -5s; opacity: 0.5;"></div>
+
+                <div class="flex justify-between items-start relative z-10">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-book text-4xl"></i>
+                            <div>
+                                <h3 class="text-3xl font-bold">Calculus (1)</h3>
+                                <p class="text-white/90">Course Materials</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-white/90 max-w-2xl">
+                            Introduction to limits, derivatives, and their applications in solving real-world problems.
+                        </p>
+                    </div>
+                    <div class="rating-badge" style="background: #fff; color: #f5576c;">
+                        <span>Knowledge Rating</span>
+                        <span class="text-2xl">3.0★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-4 justify-center">
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+                    <i class="fas fa-file-alt mr-2"></i>Documents
+                </button>
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: #fff; color: #f5576c; border: 2px solid #f5576c;">
+                    <i class="fas fa-video mr-2"></i>Videos
+                </button>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="rotating-border" style="border-radius: 16px; padding: 24px; position: relative;">
+                    <div style="position: relative; z-index: 2;">
+                        <div class="file-icon"
+                            style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2" style="color: #f5576c;">Chapter 1 Notes</h4>
+                        <div class="flex items-center justify-between text-sm text-gray-600">
+                            <span>⭐ 4.5</span>
+                            <span>Dec 8, 2025</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rotating-border" style="border-radius: 16px; padding: 24px; position: relative;">
+                    <div style="position: relative; z-index: 2;">
+                        <div class="file-icon"
+                            style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2" style="color: #f5576c;">Derivatives Guide</h4>
+                        <div class="flex items-center justify-between text-sm text-gray-600">
+                            <span>⭐ 5.0</span>
+                            <span>Dec 8, 2025</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rotating-border" style="border-radius: 16px; padding: 24px; position: relative;">
+                    <div style="position: relative; z-index: 2;">
+                        <div class="file-icon"
+                            style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white;">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2" style="color: #f5576c;">Practice Problems</h4>
+                        <div class="flex items-center justify-between text-sm text-gray-600">
+                            <span>⭐ 4.8</span>
+                            <span>Dec 8, 2025</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style 20: Glowing Neon -->
+        <div class="design-card" style="background: #000;">
+            <h2 class="design-title glowing-text"
+                style="background: linear-gradient(135deg, #00ffff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                Style 20: Glowing Neon 💫</h2>
+
+            <div
+                style="background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 20px; padding: 40px; color: white; border: 2px solid #00ffff; box-shadow: 0 0 30px rgba(0,255,255,0.5);">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <i class="fas fa-book text-4xl glowing-text" style="color: #00ffff;"></i>
+                            <div>
+                                <h3 class="text-3xl font-bold glowing-text" style="color: #fff;">Calculus (1)</h3>
+                                <p style="color: #00ffff;">Course Materials</p>
+                            </div>
+                        </div>
+                        <p class="text-lg max-w-2xl" style="color: #ccc;">
+                            Introduction to limits, derivatives, and their applications in solving real-world problems.
+                        </p>
+                    </div>
+                    <div class="rating-badge neon-card"
+                        style="background: linear-gradient(135deg, #ff00ff, #00ffff); color: #fff; border: 2px solid #00ffff;">
+                        <span>Knowledge Rating</span>
+                        <span class="text-2xl">3.0★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-4 justify-center">
+                <button class="px-6 py-3 rounded-full font-semibold neon-card"
+                    style="background: linear-gradient(135deg, #00ffff, #ff00ff); color: white; border: 2px solid #00ffff;">
+                    <i class="fas fa-file-alt mr-2"></i>Documents
+                </button>
+                <button class="px-6 py-3 rounded-full font-semibold"
+                    style="background: transparent; color: #00ffff; border: 2px solid #00ffff; box-shadow: 0 0 15px rgba(0,255,255,0.3);">
+                    <i class="fas fa-video mr-2"></i>Videos
+                </button>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="neon-card"
+                    style="background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; padding: 24px; border: 2px solid #00ffff;">
+                    <div class="file-icon"
+                        style="background: linear-gradient(135deg, #00ffff, #ff00ff); color: white; box-shadow: 0 0 20px rgba(0,255,255,0.6);">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2 glowing-text" style="color: #fff;">Chapter 1 Notes</h4>
+                    <div class="flex items-center justify-between text-sm" style="color: #00ffff;">
+                        <span>⭐ 4.5</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm mt-2" style="color: #999;">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+
+                <div class="neon-card"
+                    style="background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; padding: 24px; border: 2px solid #ff00ff; animation-delay: 0.5s;">
+                    <div class="file-icon"
+                        style="background: linear-gradient(135deg, #ff00ff, #00ffff); color: white; box-shadow: 0 0 20px rgba(255,0,255,0.6);">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2 glowing-text" style="color: #fff;">Derivatives Guide</h4>
+                    <div class="flex items-center justify-between text-sm" style="color: #ff00ff;">
+                        <span>⭐ 5.0</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm mt-2" style="color: #999;">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+
+                <div class="neon-card"
+                    style="background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; padding: 24px; border: 2px solid #00ffff; animation-delay: 1s;">
+                    <div class="file-icon"
+                        style="background: linear-gradient(135deg, #00ffff, #ff00ff); color: white; box-shadow: 0 0 20px rgba(0,255,255,0.6);">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2 glowing-text" style="color: #fff;">Practice Problems</h4>
+                    <div class="flex items-center justify-between text-sm" style="color: #00ffff;">
+                        <span>⭐ 4.8</span>
+                        <span>Dec 8, 2025</span>
+                    </div>
+                    <p class="text-sm mt-2" style="color: #999;">
+                        <i class="fas fa-user mr-1"></i>Ahmed Bamarouf
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-white">
+            <p class="text-2xl font-bold mb-4">🎉 20 Designs Total!</p>
+            <p class="text-lg">Complex animations, 3D effects, and dynamic interactions!</p>
+            <p class="text-sm text-white/70 mt-2">Styles 1-20 | Simple → Advanced → Animated</p>
+        </div>
+    </div>
+</body>
+
+</html>

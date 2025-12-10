@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation 2: Morphing Shapes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .morph-shape {
+            position: absolute;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: morph 8s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, #48dbfb, #0abde3);
+            bottom: 10%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(45deg, #ff9ff3, #feca57);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 4s;
+        }
+
+        @keyframes morph {
+
+            0%,
+            100% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+                transform: rotate(0deg) scale(1);
+            }
+
+            25% {
+                border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+                transform: rotate(90deg) scale(1.1);
+            }
+
+            50% {
+                border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+                transform: rotate(180deg) scale(0.9);
+            }
+
+            75% {
+                border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+                transform: rotate(270deg) scale(1.05);
+            }
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="morph-shape shape-1"></div>
+    <div class="morph-shape shape-2"></div>
+    <div class="morph-shape shape-3"></div>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center">
+        <div class="text-center px-6">
+            <div class="mb-6">
+                <span
+                    class="inline-block px-6 py-2 bg-white bg-opacity-20 backdrop-blur-lg rounded-full text-white font-semibold text-sm">
+                    🌀 Animation 2: Morphing Shapes
+                </span>
+            </div>
+            <h1 class="text-8xl font-black text-white mb-6 text-glow">Tsharok</h1>
+            <p class="text-3xl text-white mb-8 max-w-3xl mx-auto">
+                Education That Transforms
+            </p>
+            <div class="flex gap-4 justify-center">
+                <a href="register.html"
+                    class="px-10 py-4 bg-white text-purple-600 rounded-full font-bold text-lg hover:scale-110 transition-transform shadow-2xl">
+                    Get Started
+                </a>
+                <a href="#"
+                    class="px-10 py-4 bg-white bg-opacity-20 backdrop-blur-lg text-white rounded-full font-bold text-lg hover:bg-opacity-30 transition border-2 border-white">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

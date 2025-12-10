@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation 3: Wave Motion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #0f0c29;
+        }
+
+        #wave-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide-up {
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .letter {
+            display: inline-block;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .letter:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .letter:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .letter:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .letter:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .letter:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .letter:nth-child(6) {
+            animation-delay: 0.5s;
+        }
+
+        .letter:nth-child(7) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="wave-canvas"></canvas>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center">
+        <div class="text-center px-6 slide-up">
+            <div class="mb-6">
+                <span
+                    class="inline-block px-6 py-2 bg-white bg-opacity-20 backdrop-blur-lg rounded-full text-white font-semibold text-sm">
+                    🌊 Animation 3: Wave Motion
+                </span>
+            </div>
+            <h1 class="text-8xl font-black text-white mb-6">
+                <span class="letter">T</span><span class="letter">s</span><span class="letter">h</span><span
+                    class="letter">a</span><span class="letter">r</span><span class="letter">o</span><span
+                    class="letter">k</span>
+            </h1>
+            <p class="text-3xl text-white text-opacity-90 mb-8 max-w-3xl mx-auto">
+                Ride the Wave of Knowledge
+            </p>
+            <a href="register.html"
+                class="inline-block px-12 py-5 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-bold text-xl hover:scale-105 transition-transform shadow-2xl">
+                Dive In
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('wave-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let time = 0;
+
+        function drawWave(offset, amplitude, frequency, color, opacity) {
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+
+            for (let x = 0; x < canvas.width; x++) {
+                const y = canvas.height / 2 + Math.sin((x * frequency) + time + offset) * amplitude;
+                ctx.lineTo(x, y);
+            }
+
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+
+            ctx.fillStyle = color;
+            ctx.globalAlpha = opacity;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Multiple waves with different properties
+            drawWave(0, 50, 0.01, '#302b63', 0.3);
+            drawWave(1, 70, 0.008, '#24243e', 0.3);
+            drawWave(2, 40, 0.012, '#0f0c29', 0.3);
+            drawWave(3, 60, 0.009, '#302b63', 0.2);
+
+            time += 0.05;
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+</html>

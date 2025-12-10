@@ -44,6 +44,7 @@
             overflow: hidden;
         }
     </style>
+<script src="student_chatbot.js"></script>
 </head>
 <body class="min-h-screen">
     <!-- Page Background Container -->
@@ -551,6 +552,80 @@
         }
     </script>
     </div><!-- End of bg-shapes-container -->
+<!-- Mobile Floating Chatbot Button -->
+<div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50">
+    <button onclick="toggleMobileChatbot()"
+        class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
+        <i class="fas fa-robot text-2xl"></i>
+    </button>
+</div>
+
+<!-- Mobile Chatbot Window (expandable) -->
+<div id="mobileChatbotWindow" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50" onclick="closeMobileChatbot()">
+    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
+        onclick="event.stopPropagation()">
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-3xl flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                    <i class="fas fa-robot text-xl text-blue-600"></i>
+                </div>
+                <div class="text-white">
+                    <div class="font-bold">Tsharok Assistant</div>
+                    <div class="text-xs opacity-90">Always here to help</div>
+                </div>
+            </div>
+            <button onclick="closeMobileChatbot()" class="text-white hover:bg-white/20 rounded-full p-2 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="mobileChatbotMessages">
+            <div class="flex gap-2 mb-3">
+                <div
+                    class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
+                        <p class="text-gray-800 text-sm">
+                            👋 Hello! I'm your Tsharok Assistant. How can I help you today?
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button onclick="sendQuickReplyMobile('How do I add a course?')"
+                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                            Add Course
+                        </button>
+                        <button onclick="sendQuickReplyMobile('Show my schedule')"
+                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                            My Schedule
+                        </button>
+                        <button onclick="sendQuickReplyMobile('Help with assignments')"
+                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                            Assignments
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="p-4 bg-white border-t border-gray-200">
+            <div class="flex gap-2 items-center">
+                <input type="text"
+                    class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
+                    id="mobileChatbotInput" placeholder="Type your message..."
+                    onkeypress="handleChatKeyPressMobile(event)">
+                <button onclick="sendMessageMobile()"
+                    class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 

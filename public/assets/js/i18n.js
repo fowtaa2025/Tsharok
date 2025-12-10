@@ -14,11 +14,12 @@ const translations = {
             about: 'About',
             login: 'Login',
             signup: 'Sign Up',
+            register: 'Register',
             logout: 'Logout',
             dashboard: 'Dashboard',
             search: 'Search'
         },
-        
+
         // Homepage
         home: {
             hero_title: 'Transform Your Learning Journey with',
@@ -31,7 +32,7 @@ const translations = {
             instructors: 'Instructors',
             success_rate: 'Success Rate'
         },
-        
+
         // Search
         search: {
             title: 'Search Results',
@@ -49,7 +50,7 @@ const translations = {
             active_filters: 'Active Filters',
             search_placeholder: 'Search for courses...'
         },
-        
+
         // Filters
         filters: {
             category: 'Category',
@@ -64,7 +65,7 @@ const translations = {
             semester: 'Semester',
             all_semesters: 'All Semesters'
         },
-        
+
         // Sorting
         sort: {
             relevance: 'Relevance',
@@ -78,7 +79,7 @@ const translations = {
             duration_short: 'Shortest Duration',
             duration_long: 'Longest Duration'
         },
-        
+
         // Course Card
         course: {
             students: 'students',
@@ -89,14 +90,14 @@ const translations = {
             rating: 'Rating',
             no_ratings: 'No ratings yet'
         },
-        
+
         // Pagination
         pagination: {
             previous: 'Previous',
             next: 'Next',
             page: 'Page'
         },
-        
+
         // Auth
         auth: {
             email: 'Email',
@@ -114,7 +115,7 @@ const translations = {
             register: 'Register',
             login_button: 'Login'
         },
-        
+
         // Dashboard
         dashboard: {
             welcome: 'Welcome',
@@ -125,7 +126,7 @@ const translations = {
             upcoming: 'Upcoming',
             calendar: 'Calendar'
         },
-        
+
         // Ratings & Reviews
         reviews: {
             write_review: 'Write Review',
@@ -141,7 +142,7 @@ const translations = {
             based_on: 'Based on',
             reviews: 'reviews'
         },
-        
+
         // Common
         common: {
             loading: 'Loading...',
@@ -162,7 +163,7 @@ const translations = {
             info: 'Information'
         }
     },
-    
+
     ar: {
         // Navigation
         nav: {
@@ -172,11 +173,12 @@ const translations = {
             about: 'من نحن',
             login: 'تسجيل الدخول',
             signup: 'إنشاء حساب',
+            register: 'تسجيل',
             logout: 'تسجيل الخروج',
             dashboard: 'لوحة التحكم',
             search: 'البحث'
         },
-        
+
         // Homepage
         home: {
             hero_title: 'حوّل رحلة التعلم الخاصة بك مع',
@@ -189,7 +191,7 @@ const translations = {
             instructors: 'مدرس',
             success_rate: 'معدل النجاح'
         },
-        
+
         // Search
         search: {
             title: 'نتائج البحث',
@@ -207,7 +209,7 @@ const translations = {
             active_filters: 'الفلاتر النشطة',
             search_placeholder: 'ابحث عن المساقات...'
         },
-        
+
         // Filters
         filters: {
             category: 'التصنيف',
@@ -222,7 +224,7 @@ const translations = {
             semester: 'الفصل الدراسي',
             all_semesters: 'جميع الفصول'
         },
-        
+
         // Sorting
         sort: {
             relevance: 'الأكثر صلة',
@@ -236,7 +238,7 @@ const translations = {
             duration_short: 'الأقصر مدة',
             duration_long: 'الأطول مدة'
         },
-        
+
         // Course Card
         course: {
             students: 'طالب',
@@ -247,14 +249,14 @@ const translations = {
             rating: 'التقييم',
             no_ratings: 'لا يوجد تقييمات بعد'
         },
-        
+
         // Pagination
         pagination: {
             previous: 'السابق',
             next: 'التالي',
             page: 'صفحة'
         },
-        
+
         // Auth
         auth: {
             email: 'البريد الإلكتروني',
@@ -272,7 +274,7 @@ const translations = {
             register: 'تسجيل',
             login_button: 'دخول'
         },
-        
+
         // Dashboard
         dashboard: {
             welcome: 'مرحباً',
@@ -283,7 +285,7 @@ const translations = {
             upcoming: 'القادم',
             calendar: 'التقويم'
         },
-        
+
         // Ratings & Reviews
         reviews: {
             write_review: 'اكتب تقييم',
@@ -299,7 +301,7 @@ const translations = {
             based_on: 'بناءً على',
             reviews: 'تقييم'
         },
-        
+
         // Common
         common: {
             loading: 'جاري التحميل...',
@@ -333,11 +335,11 @@ let currentLanguage = localStorage.getItem('language') || 'en';
 function t(key) {
     const keys = key.split('.');
     let value = translations[currentLanguage];
-    
+
     for (const k of keys) {
         value = value?.[k];
     }
-    
+
     return value || key;
 }
 
@@ -347,17 +349,17 @@ function t(key) {
  */
 function setLanguage(lang) {
     if (!translations[lang]) return;
-    
+
     currentLanguage = lang;
     localStorage.setItem('language', lang);
-    
+
     // Update HTML attributes
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    
+
     // Update all elements with data-i18n attribute
     updatePageTranslations();
-    
+
     // Trigger custom event for other scripts to handle
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
 }
@@ -369,7 +371,7 @@ function updatePageTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translation = t(key);
-        
+
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             if (element.hasAttribute('placeholder')) {
                 element.placeholder = translation;
@@ -380,7 +382,7 @@ function updatePageTranslations() {
             element.textContent = translation;
         }
     });
-    
+
     // Update elements with data-i18n-html (for HTML content)
     document.querySelectorAll('[data-i18n-html]').forEach(element => {
         const key = element.getAttribute('data-i18n-html');
@@ -402,7 +404,7 @@ function initI18n() {
     // Set initial language
     const lang = localStorage.getItem('language') || 'en';
     setLanguage(lang);
-    
+
     // Update language toggle button if exists
     updateLanguageToggle();
 }
@@ -423,7 +425,7 @@ function updateLanguageToggle() {
 function toggleLanguage() {
     const newLang = currentLanguage === 'en' ? 'ar' : 'en';
     setLanguage(newLang);
-    
+
     // Reload page if needed for complex layouts
     // location.reload();
 }

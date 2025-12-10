@@ -29,6 +29,7 @@ html {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -40,6 +41,7 @@ html {
         opacity: 0;
         transform: translateX(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -51,6 +53,7 @@ html {
         opacity: 0;
         transform: translateX(30px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -112,7 +115,9 @@ html {
 }
 
 /* Input focus effects */
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
     outline: none;
 }
 
@@ -127,8 +132,13 @@ input:focus, textarea:focus, select:focus {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Tooltip */
@@ -169,9 +179,12 @@ input:focus, textarea:focus, select:focus {
 
 /* Pulse animation for notifications */
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.5;
     }
@@ -182,7 +195,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Custom radio button styling */
-input[type="radio"]:checked + div {
+input[type="radio"]:checked+div {
     border-color: #4F46E5;
     background-color: #EEF2FF;
 }
@@ -195,7 +208,10 @@ img {
 
 /* Print styles */
 @media print {
-    nav, footer, .no-print {
+
+    nav,
+    footer,
+    .no-print {
         display: none !important;
     }
 }
@@ -204,6 +220,24 @@ img {
 @media (prefers-color-scheme: dark) {
     /* Dark mode styles can be added here */
 }
+
+/* Hide user data elements until JavaScript loads them to prevent flash */
+[data-user-name],
+[data-user-email],
+[data-user-username],
+[data-user-role] {
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+
+/* Show when loaded class is added */
+[data-user-name].loaded,
+[data-user-email].loaded,
+[data-user-username].loaded,
+[data-user-role].loaded {
+    opacity: 1;
+}
+
 
 /* ===================================
    AESTHETIC BACKGROUND SHAPES
@@ -214,6 +248,8 @@ img {
     position: absolute;
     opacity: 0.08;
     z-index: 0;
+    display: none;
+    /* Hide by default to prevent flash before JS loads */
 }
 
 /* Circle Shape */
@@ -314,9 +350,12 @@ img {
 
 /* Animation keyframes for background shapes */
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0) translateX(0);
     }
+
     50% {
         transform: translateY(-30px) translateX(30px);
     }
@@ -326,15 +365,19 @@ img {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
 }
 
 @keyframes morph {
-    0%, 100% {
+
+    0%,
+    100% {
         border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
     }
+
     50% {
         border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
     }
@@ -342,6 +385,6 @@ img {
 
 /* Diagonal lines pattern */
 .diagonal-lines {
-    background: linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.03) 45%, rgba(0,0,0,0.03) 50%, transparent 50%, transparent 95%, rgba(0,0,0,0.03) 95%);
+    background: linear-gradient(135deg, transparent 45%, rgba(0, 0, 0, 0.03) 45%, rgba(0, 0, 0, 0.03) 50%, transparent 50%, transparent 95%, rgba(0, 0, 0, 0.03) 95%);
     background-size: 50px 50px;
 }

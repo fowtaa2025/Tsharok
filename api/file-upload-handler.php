@@ -38,7 +38,6 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-header('Access-Control-Allow-Credentials: true');
 
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -46,8 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once '../config/database.php';
-require_once '../includes/session.php';
+// Only require what's needed for R2 uploads
 require_once '../config/r2-config.php';
 require_once '../includes/r2-storage.php';
 
@@ -60,8 +58,10 @@ if (file_exists('../vendor/autoload.php')) {
     }
 }
 
-// Start session
-session_start();
+// Start session (simple version - no database)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 /**
  * Configuration Class
@@ -724,22 +724,24 @@ class FileUploadHandler {
 // ==================== MAIN EXECUTION ====================
 
 try {
-    // Check authentication
-    $userId = $_SESSION['user_id'] ?? null;
+    // Check authentication - allow guest uploads
+    $userId = $_SESSION['user_id'] ?? 'guest';
     
-    if (!$userId) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Authentication required',
-            'timestamp' => date('Y-m-d H:i:s')
-        ]);
-        exit;
-    }
+    // Note: For production, you may want to require authentication
+    // Uncomment below to require login:
+    // if (!$userId || $userId === 'guest') {
+    //     http_response_code(401);
+    //     echo json_encode([
+    //         'success' => false,
+    //         'message' => 'Authentication required',
+    //         'timestamp' => date('Y-m-d H:i:s')
+    //     ]);
+    //     exit;
+    // }
     
-    // Get database connection
-    $db = Database::getInstance();
-    $conn = $db->getConnection();
+    
+    // Skip database connection - not needed for R2 uploads
+    $conn = null;
     
     // Initialize upload handler
     $handler = new FileUploadHandler($conn, $userId, $interventionAvailable);
@@ -749,10 +751,11 @@ try {
     
 } catch (Exception $e) {
     error_log("Upload Handler Error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'An unexpected error occurred',
+        'message' => 'Upload failed: ' . $e->getMessage(),
         'timestamp' => date('Y-m-d H:i:s')
     ]);
 }

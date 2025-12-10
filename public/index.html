@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="./"> <!-- Fix for Cloudflare Pages routing -->
     <title>Tsharok - Interactive Learning Platform for Students</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +15,9 @@
     <link rel="stylesheet" href="assets/css/custom.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -31,33 +35,40 @@
         body {
             font-family: 'Cairo', sans-serif;
         }
+
         .hero-content {
             min-height: 80vh;
         }
+
         .animate-fade-in {
             animation: fadeInModal 0.3s ease-out;
         }
+
         @keyframes fadeInModal {
             from {
                 opacity: 0;
                 transform: scale(0.95);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
             }
         }
+
         /* Fix input text color */
         input[type="email"],
         input[type="password"],
         input[type="text"] {
             color: #1f2937 !important;
         }
+
         input::placeholder {
             color: #9ca3af !important;
         }
     </style>
 </head>
+
 <body class="bg-white overflow-x-hidden">
     <!-- Navigation -->
     <nav class="bg-white border-b border-gray-200 fixed w-full z-50">
@@ -65,16 +76,22 @@
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="index.html" class="flex items-center">
-                        <img src="assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                        <img src="assets/images/Logo.png" alt="Tsharok Logo" class="h-16">
                     </a>
                 </div>
-                
+
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#about" class="text-gray-700 hover:text-primary transition font-medium" data-i18n="nav.about">About</a>
-                    <button onclick="openAuthModal('register')" class="text-gray-700 hover:text-primary transition font-medium" data-i18n="nav.register">Register</button>
-                    <button onclick="openAuthModal('login')" class="text-gray-700 hover:text-primary transition font-medium" data-i18n="nav.login">Login</button>
-                    <button onclick="toggleLanguage()" id="languageToggle" class="text-gray-700 hover:text-primary transition font-medium">
+                    <a href="#about" class="text-gray-700 hover:text-primary transition font-medium"
+                        data-i18n="nav.about">About</a>
+                    <button onclick="openAuthModal('register')"
+                        class="text-gray-700 hover:text-primary transition font-medium"
+                        data-i18n="nav.register">Register</button>
+                    <button onclick="openAuthModal('login')"
+                        class="text-gray-700 hover:text-primary transition font-medium"
+                        data-i18n="nav.login">Login</button>
+                    <button onclick="toggleLanguage()" id="languageToggle"
+                        class="text-gray-700 hover:text-primary transition font-medium">
                         <span data-i18n="nav.arabic">عربي</span>
                     </button>
                 </div>
@@ -92,9 +109,12 @@
         <div id="mobileMenu" class="hidden md:hidden bg-white border-t slide-in-down">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="#about" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">About</a>
-                <button onclick="openAuthModal('register')" class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">Register</button>
-                <button onclick="openAuthModal('login')" class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">Login</button>
-                <button onclick="toggleLanguage()" class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">عربي</button>
+                <button onclick="openAuthModal('register')"
+                    class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">Register</button>
+                <button onclick="openAuthModal('login')"
+                    class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">Login</button>
+                <button onclick="toggleLanguage()"
+                    class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">عربي</button>
             </div>
         </div>
     </nav>
@@ -110,7 +130,7 @@
         <div class="bg-shape bg-star"></div>
         <div class="bg-shape bg-ellipse"></div>
         <div class="bg-shape bg-blob"></div>
-        
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
             <div class="grid md:grid-cols-2 gap-12 items-center min-h-[70vh]">
                 <!-- Left Side - Welcome Text -->
@@ -118,7 +138,8 @@
                     <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
                         <span data-i18n="Welcome To Tsharok">Welcome To Tsharok</span>
                     </h1>
-                    <p class="text-xl md:text-2xl text-gray-600 mb-8" data-i18n="where students share knowledge and learn together">
+                    <p class="text-xl md:text-2xl text-gray-600 mb-8"
+                        data-i18n="where students share knowledge and learn together">
                         where students share knowledge and learn together
                     </p>
                 </div>
@@ -126,23 +147,19 @@
                 <!-- Right Side - Image -->
                 <div class="hidden md:flex items-center justify-center fade-in-right relative">
                     <div class="absolute inset-0 diagonal-lines opacity-30"></div>
-                    <div class="relative bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full max-w-2xl" style="aspect-ratio: 1024/572;">
-                        <img 
-                            src="assets/images/Tsharok.png" 
-                            alt="Students sharing knowledge and learning together" 
-                            class="w-full h-full object-cover"
-                        >
+                    <div class="relative bg-gray-200 rounded-lg shadow-2xl overflow-hidden w-full max-w-2xl"
+                        style="aspect-ratio: 1024/572;">
+                        <img src="assets/images/Tsharok.png" alt="Students sharing knowledge and learning together"
+                            class="w-full h-full object-cover">
                     </div>
                 </div>
 
                 <!-- Mobile Image -->
                 <div class="md:hidden flex items-center justify-center fade-in-up">
-                    <div class="bg-gray-200 rounded-lg shadow-lg overflow-hidden w-full max-w-sm" style="aspect-ratio: 1024/572;">
-                        <img 
-                            src="assets/images/Tsharok.png" 
-                            alt="Students sharing knowledge and learning together" 
-                            class="w-full h-full object-cover"
-                        >
+                    <div class="bg-gray-200 rounded-lg shadow-lg overflow-hidden w-full max-w-sm"
+                        style="aspect-ratio: 1024/572;">
+                        <img src="assets/images/Tsharok.png" alt="Students sharing knowledge and learning together"
+                            class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
@@ -154,25 +171,31 @@
 
     <!-- Authentication Modal -->
     <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto relative animate-fade-in">
+        <div
+            class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto relative animate-fade-in">
             <!-- Close Button -->
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+            <button onclick="closeAuthModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-2xl"></i>
             </button>
-            
+
             <!-- Modal Content -->
             <div class="p-8">
                 <div class="text-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2" id="modalTitle" data-i18n="Log in or create account">Log in or create account</h2>
-                    <p class="text-gray-600" data-i18n="Learn on your own time from top universities and businesses">Learn on your own time from top universities and businesses</p>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2" id="modalTitle"
+                        data-i18n="Log in or create account">Log in or create account</h2>
+                    <p class="text-gray-600" data-i18n="Learn on your own time from top universities and businesses">
+                        Learn on your own time from top universities and businesses</p>
                 </div>
 
                 <!-- Tab Buttons -->
                 <div class="flex gap-2 mb-6">
-                    <button onclick="switchTab('login')" id="loginTab" class="flex-1 py-2 px-4 rounded-lg font-medium transition">
+                    <button onclick="switchTab('login')" id="loginTab"
+                        class="flex-1 py-2 px-4 rounded-lg font-medium transition">
                         Login
                     </button>
-                    <button onclick="switchTab('register')" id="registerTab" class="flex-1 py-2 px-4 rounded-lg font-medium transition">
+                    <button onclick="switchTab('register')" id="registerTab"
+                        class="flex-1 py-2 px-4 rounded-lg font-medium transition">
                         Register
                     </button>
                 </div>
@@ -183,47 +206,39 @@
                     <form id="loginFormElement" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Email or Username <span class="text-red-500">*</span>
+                                Email <span class="text-red-500">*</span>
                             </label>
-                            <input 
-                                type="text" 
-                                id="loginEmail"
-                                name="identifier"
+                            <input type="email" id="loginEmail" name="email"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                                placeholder="name@email.com or username"
-                                required
-                            >
+                                placeholder="s4XXXXXXXX@uqu.edu.sa" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                            <input 
-                                type="password" 
-                                id="loginPassword"
-                                name="password"
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Password <span class="text-red-500">*</span>
+                            </label>
+                            <input type="password" id="loginPassword" name="password"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                                placeholder="••••••••"
-                                required
-                            >
+                                placeholder="••••••••" required>
                         </div>
                         <div class="flex items-center justify-between text-sm">
                             <label class="flex items-center">
-                                <input type="checkbox" id="rememberMe" class="w-4 h-4 text-primary border-gray-300 rounded">
+                                <input type="checkbox" id="rememberMe"
+                                    class="w-4 h-4 text-primary border-gray-300 rounded">
                                 <span class="ml-2 text-gray-600">Remember me</span>
                             </label>
-                            <a href="forgot-password.html" class="text-primary hover:text-secondary">Forgot password?</a>
+                            <a href="forgot-password.html" class="text-primary hover:text-secondary">Forgot
+                                password?</a>
                         </div>
-                        <button 
-                            type="submit"
-                            id="loginButton"
-                            class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
-                        >
-                            Continue
+                        <button type="submit" id="loginButton"
+                            class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition">
+                            Login
                         </button>
                     </form>
 
                     <div class="mt-6 text-center text-sm text-gray-600">
-                        Don't have an account? 
-                        <button onclick="switchTab('register')" class="text-primary hover:text-secondary font-medium">Sign up</button>
+                        Don't have an account?
+                        <button onclick="switchTab('register')"
+                            class="text-primary hover:text-secondary font-medium">Sign up</button>
                     </div>
                 </div>
 
@@ -231,67 +246,72 @@
                 <div id="registerForm" class="hidden">
                     <div id="registerMessage" class="hidden mb-4 p-3 rounded-lg"></div>
                     <form id="registerFormElement" class="space-y-4">
+                        <!-- First Name -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Full Name <span class="text-red-500">*</span>
+                                First Name <span class="text-red-500">*</span>
                             </label>
-                            <input 
-                                type="text" 
-                                id="registerName"
-                                name="full_name"
+                            <input type="text" id="registerFirstName" name="first_name"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                                placeholder="John Doe"
-                                required
-                            >
+                                placeholder="Ahmed" required>
                         </div>
+
+                        <!-- Last Name -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Email <span class="text-red-500">*</span>
+                                Last Name <span class="text-red-500">*</span>
                             </label>
-                            <input 
-                                type="email" 
-                                id="registerEmail"
-                                name="email"
+                            <input type="text" id="registerLastName" name="last_name"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                                placeholder="name@email.com"
-                                required
-                            >
+                                placeholder="Bamarouf" required>
                         </div>
+
+                        <!-- Email (UQU only) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                            <input 
-                                type="password" 
-                                id="registerPassword"
-                                name="password"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                                placeholder="••••••••"
-                                required
-                            >
-                        </div>
-                        <div class="flex items-start">
-                            <input type="checkbox" id="agreeTerms" class="w-4 h-4 text-primary border-gray-300 rounded mt-1" required>
-                            <label class="ml-2 text-sm text-gray-600">
-                                I agree to the <a href="#" class="text-primary hover:text-secondary">Terms & Conditions</a> and <a href="#" class="text-primary hover:text-secondary">Privacy Policy</a>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                UQU Email <span class="text-red-500">*</span>
                             </label>
+                            <input type="email" id="registerEmail" name="email"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="s4XXXXXXXX@uqu.edu.sa" pattern="[a-zA-Z0-9._%+-]+@uqu\.edu\.sa$"
+                                title="Please use your UQU email address (@uqu.edu.sa)" required>
+                            <p class="mt-1 text-xs text-gray-500">Must be a valid @uqu.edu.sa email</p>
                         </div>
-                        <button 
-                            type="submit"
-                            id="registerButton"
-                            class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
-                        >
-                            Continue
+
+                        <!-- Password -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Password <span class="text-red-500">*</span>
+                            </label>
+                            <input type="password" id="registerPassword" name="password"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="••••••••" minlength="8" required>
+                            <div class="mt-2 text-xs text-gray-600 space-y-1">
+                                <p class="font-medium">Password must contain:</p>
+                                <ul class="list-disc list-inside space-y-0.5 ml-2">
+                                    <li>At least 8 characters</li>
+                                    <li>At least one uppercase letter</li>
+                                    <li>At least one lowercase letter</li>
+                                    <li>At least one number</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Confirm Password <span class="text-red-500">*</span>
+                            </label>
+                            <input type="password" id="registerConfirmPassword" name="confirm_password"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="••••••••" required>
+                        </div>
+
+                        <button type="submit" id="registerButton"
+                            class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition">
+                            Create Account
                         </button>
                     </form>
-
-                    <div class="mt-6 text-center text-sm text-gray-600">
-                        Already have an account? 
-                        <button onclick="switchTab('login')" class="text-primary hover:text-secondary font-medium">Log in</button>
-                    </div>
-                </div>
-
-                <!-- Footer Text -->
-                <div class="mt-6 text-xs text-center text-gray-500">
-                    <p>This site is protected by reCAPTCHA Enterprise and the Google <a href="#" class="text-primary hover:underline">Privacy Policy</a> and <a href="#" class="text-primary hover:underline">Terms of Service</a> apply.</p>
                 </div>
             </div>
         </div>
@@ -304,7 +324,7 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/background-styles.js"></script>
-    
+
     <!-- Auth Modal JavaScript -->
     <script>
         function openAuthModal(tab = 'login') {
@@ -364,14 +384,14 @@
         }
 
         // Handle Login Form Submission
-        document.getElementById('loginFormElement')?.addEventListener('submit', async function(e) {
+        document.getElementById('loginFormElement')?.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const remember = document.getElementById('rememberMe').checked;
             const button = document.getElementById('loginButton');
-            
+
             button.disabled = true;
             button.textContent = 'Logging in...';
 
@@ -398,9 +418,9 @@
                         localStorage.setItem('sessionToken', data.data.user.sessionToken);
                         localStorage.setItem('isLoggedIn', 'true');
                     }
-                    
+
                     showMessage('loginMessage', 'Login successful! Redirecting...', false);
-                    
+
                     // Wait a bit longer to ensure session is established
                     setTimeout(() => {
                         // Check user role and redirect accordingly
@@ -428,14 +448,14 @@
         });
 
         // Handle Register Form Submission
-        document.getElementById('registerFormElement')?.addEventListener('submit', async function(e) {
+        document.getElementById('registerFormElement')?.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const fullName = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const button = document.getElementById('registerButton');
-            
+
             button.disabled = true;
             button.textContent = 'Creating account...';
 
@@ -473,21 +493,21 @@
         });
 
         // Close modal when clicking outside
-        document.getElementById('authModal')?.addEventListener('click', function(e) {
+        document.getElementById('authModal')?.addEventListener('click', function (e) {
             if (e.target === this) {
                 closeAuthModal();
             }
         });
 
         // Close modal on Escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 closeAuthModal();
             }
         });
 
         // Check if redirected from protected page and auto-open login modal
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('redirect')) {
                 // Auto-open login modal if redirected
@@ -496,4 +516,5 @@
         });
     </script>
 </body>
+
 </html>

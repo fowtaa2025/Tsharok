@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,53 +27,98 @@
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            font-size: 16px; /* Base font size increased */
+            font-size: 16px;
+            /* Base font size increased */
         }
-        
+
         /* Increase all text sizes slightly */
-        h1 { font-size: 2.5rem; }
-        h2 { font-size: 1.75rem; }
-        h3 { font-size: 1.25rem; }
-        p, span, a, button, input, textarea, select { font-size: 1rem; }
-        .text-xs { font-size: 0.875rem; }
-        .text-sm { font-size: 0.9375rem; }
-        .text-base { font-size: 1rem; }
-        .text-lg { font-size: 1.125rem; }
-        .text-xl { font-size: 1.375rem; }
-        .text-2xl { font-size: 1.625rem; }
-        
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p,
+        span,
+        a,
+        button,
+        input,
+        textarea,
+        select {
+            font-size: 1rem;
+        }
+
+        .text-xs {
+            font-size: 0.875rem;
+        }
+
+        .text-sm {
+            font-size: 0.9375rem;
+        }
+
+        .text-base {
+            font-size: 1rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .text-xl {
+            font-size: 1.375rem;
+        }
+
+        .text-2xl {
+            font-size: 1.625rem;
+        }
+
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
+
         .scrollbar-hide {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
         .scroll-smooth {
             scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scrolling on iOS */
         }
+
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out;
         }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: scale(0.95);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
             }
         }
+
         #profileMenu:not(.hidden) {
             animation: dropdownFade 0.2s ease-out;
         }
+
         @keyframes dropdownFade {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -80,446 +126,595 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen">
     <!-- Page Background Container -->
     <div class="bg-shapes-container min-h-screen">
-    <!-- Background Shapes -->
-    <div class="bg-shape bg-circle"></div>
-    <div class="bg-shape bg-rounded-rect"></div>
-    
-    <!-- Top Navigation -->
-    <nav class="bg-white border-b border-gray-200 shadow-sm relative z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Left Side - Logo -->
-                <div class="flex items-center">
-                    <a href="../index.html" class="flex items-center">
-                        <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
-                    </a>
-                </div>
+        <!-- Background Shapes -->
+        <div class="bg-shape bg-circle"></div>
+        <div class="bg-shape bg-rounded-rect"></div>
 
-                <!-- Center - Search -->
-                <div class="flex-1 max-w-2xl mx-8">
-                    <div class="relative">
-                        <input 
-                            type="text" 
-                            placeholder="Search" 
-                            class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                        >
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        <button class="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button class="absolute right-10 top-2 text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-filter"></i>
-                        </button>
-                    </div>
-                    </div>
-
-                <!-- Right Side - User Info -->
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700 font-medium" data-user-name>student name</span>
-
-                    <!-- Profile Dropdown -->
-                    <div class="relative">
-                        <button onclick="toggleProfileMenu()" id="profileButton" class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold hover:opacity-90 transition">
-                            <span id="profileInitial">S</span>
-                        </button>
-                        
-                        <!-- Dropdown Menu -->
-                        <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                            <!-- User Info -->
-                            <div class="px-4 py-3 border-b border-gray-200">
-                                <p class="text-sm font-semibold text-gray-900" data-user-name>student name</p>
-                                <p class="text-xs text-gray-500" data-user-email>student@email.com</p>
-                            </div>
-                            
-                            <!-- Menu Items -->
-                            <a href="profile.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
-                                <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
-                                <span>My Profile</span>
-                            </a>
-                            
-                            <a href="settings.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
-                                <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
-                                <span>Settings</span>
-                            </a>
-                            
-                            <div class="border-t border-gray-200 my-2"></div>
-                            
-                            <a href="#" onclick="logout(); return false;" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
-                                <i class="fas fa-sign-out-alt w-5 mr-3"></i>
-                                <span>Logout</span>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium">
-                        عربي
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
-        <!-- My Courses Section -->
-        <section class="mb-8">
-            <div class="mb-4">
-                <h2 class="text-xl font-semibold text-gray-900">My courses</h2>
-            </div>
-
-            <div class="relative">
-                <!-- Gradient fade hints for scrollable content -->
-                <div class="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-100 to-transparent pointer-events-none z-10 md:hidden"></div>
-                <div class="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-100 to-transparent pointer-events-none z-10 md:hidden"></div>
-                
-                <div id="coursesScrollContainer" class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 scroll-smooth snap-x snap-mandatory">
-                    <!-- Add Course Card -->
-                    <a href="add-course.html" class="flex-shrink-0 w-64 h-26 bg-white rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition snap-start no-underline py-4">
-                        <div class="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-2">
-                            <i class="fas fa-plus text-lg text-gray-400"></i>
-                        </div>
-                        <p class="text-gray-500 text-base font-medium">Add Course</p>
-                    </a>
-
-                    <!-- Course Cards - Loaded dynamically from user's added courses -->
-                    <div id="my-courses-container" class="flex space-x-4">
-                        <!-- Courses will be loaded dynamically -->
-                    </div>
-                    
-                    <!-- Empty State when no courses added -->
-                    <div id="no-courses-message" class="hidden flex-shrink-0 w-64 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center py-4">
-                        <i class="fas fa-book-open text-2xl text-gray-300 mb-2"></i>
-                        <p class="text-gray-400 text-base">No courses yet</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Scroll Indicators (dots) -->
-            <div class="flex justify-center mt-2 space-x-2 md:hidden" id="scrollIndicators"></div>
-        </section>
-
-<!-- Bottom Grid - Notifications and Calendar -->
-        <div class="grid lg:grid-cols-2 gap-8">
-            <!-- Recent Notifications -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center mb-6">
-                    <i class="fas fa-bell text-2xl text-gray-700 mr-3"></i>
-                    <h2 class="text-xl font-semibold text-gray-900">Recent Notification</h2>
-                </div>
-
-                <div id="notificationsContainer" class="space-y-4">
-                    <!-- Notifications will be loaded dynamically -->
-                    <div class="text-center py-8 text-gray-400">
-                        <i class="fas fa-bell-slash text-4xl mb-3"></i>
-                        <p>No notifications yet</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Calendar -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex items-center justify-between mb-6">
+        <!-- Top Navigation -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm relative z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Left Side - Logo -->
                     <div class="flex items-center">
-                        <i class="fas fa-calendar text-2xl text-gray-700 mr-3"></i>
-                        <h2 class="text-xl font-semibold text-gray-900" id="calendarMonthYear">May 2025</h2>
-                        </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="previousMonth()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition">
-                            <i class="fas fa-chevron-left text-gray-600"></i>
-                        </button>
-                        <button onclick="nextMonth()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition">
-                            <i class="fas fa-chevron-right text-gray-600"></i>
-                        </button>
-                                </div>
-                            </div>
-
-                <!-- Calendar Grid -->
-                <div class="mb-6">
-                    <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-500 mb-2">
-                        <div>Sun</div>
-                        <div>Mon</div>
-                        <div>Tue</div>
-                        <div>Wed</div>
-                        <div>Thu</div>
-                        <div>Fri</div>
-                        <div>Sat</div>
+                        <a href="../index.html" class="flex items-center">
+                            <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                        </a>
                     </div>
 
-                    <div id="calendarDays" class="grid grid-cols-7 gap-2 text-center text-sm">
-                        <!-- Calendar days will be generated by JavaScript -->
-                                </div>
-                            </div>
+                    <!-- Center - Search -->
+                    <div class="flex-1 max-w-2xl mx-8">
+                        <div class="relative">
+                            <input type="text" placeholder="Search"
+                                class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <button class="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="absolute right-10 top-2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
 
-                <!-- Today Tasks -->
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-3">Today tasks</h3>
-                    <ul id="todayTasks" class="space-y-2 text-sm text-gray-700">
-                        <!-- Tasks will be loaded dynamically -->
-                    </ul>
+                    <!-- Right Side - User Info -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700 font-medium" data-user-name>student name</span>
+
+                        <!-- Profile Dropdown -->
+                        <div class="relative">
+                            <button onclick="toggleProfileMenu()" id="profileButton"
+                                class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold hover:opacity-90 transition">
+                                <span id="profileInitial">S</span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="profileMenu"
+                                class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                                <!-- User Info -->
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <p class="text-sm font-semibold text-gray-900" data-user-name>student name</p>
+                                    <p class="text-xs text-gray-500" data-user-email>student@email.com</p>
                                 </div>
+
+                                <!-- Menu Items -->
+                                <a href="profile.html"
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
+                                    <span>My Profile</span>
+                                </a>
+
+                                <a href="settings.html"
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
+                                    <span>Settings</span>
+                                </a>
+
+                                <div class="border-t border-gray-200 my-2"></div>
+
+                                <a href="#" onclick="logout(); return false;"
+                                    class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
+                                    <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                                    <span>Logout</span>
+                                </a>
                             </div>
                         </div>
-    </main>
 
-    <!-- Add Task Modal -->
-    <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto relative animate-fade-in">
-            <!-- Close Button -->
-            <button onclick="closeTaskModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
-                <i class="fas fa-times text-2xl"></i>
-            </button>
-            
-            <!-- Modal Content -->
-            <div class="p-8">
-                <div class="text-center mb-6">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-primary bg-opacity-10 rounded-full mb-4">
-                        <i class="fas fa-calendar-plus text-3xl text-primary"></i>
+                        <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium">
+                            عربي
+                        </button>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Add Task</h2>
-                    <p class="text-gray-600" id="modalDate">Select a date</p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+            <!-- My Courses Section (Full Width) -->
+            <section class="mb-8">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900">My courses</h2>
                 </div>
 
-                <form id="taskForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Task Title <span class="text-red-500">*</span></label>
-                        <input 
-                            type="text" 
-                            id="taskTitle"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                            placeholder="e.g., Submit assignment"
-                            required
-                        >
-                            </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
-                        <textarea 
-                            id="taskDescription"
-                            rows="3"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                            placeholder="Add more details..."
-                        ></textarea>
-                            </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                        <select 
-                            id="taskPriority"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
-                        >
-                            <option value="blue">📘 Normal (Blue)</option>
-                            <option value="yellow">📙 Medium (Yellow)</option>
-                            <option value="red">📕 High (Red)</option>
-                            <option value="green">📗 Low (Green)</option>
-                        </select>
+                <div class="relative">
+                    <!-- Gradient fade hints for scrollable content -->
+                    <div
+                        class="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-100 to-transparent pointer-events-none z-10 md:hidden">
+                    </div>
+                    <div
+                        class="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-100 to-transparent pointer-events-none z-10 md:hidden">
                     </div>
 
-                    <div class="flex gap-3 mt-6">
-                        <button 
-                            type="button"
-                            onclick="closeTaskModal()"
-                            class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
-                        >
-                            Cancel
-                            </button>
-                        <button 
-                            type="submit"
-                            class="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
-                        >
-                            Add Task
-                            </button>
-                    </div>
-                </form>
+                    <div id="coursesScrollContainer"
+                        class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 scroll-smooth snap-x snap-mandatory">
+                        <!-- Add Course Card -->
+                        <a href="add-course.html"
+                            class="flex-shrink-0 w-64 h-26 bg-white rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition snap-start no-underline py-4">
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-2">
+                                <i class="fas fa-plus text-lg text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-500 text-base font-medium">Add Course</p>
+                        </a>
 
-                <!-- Existing Tasks for Selected Date -->
-                <div id="existingTasks" class="mt-6 hidden">
-                    <div class="border-t pt-4">
-                        <h3 class="font-semibold text-gray-900 mb-3">Tasks on this day:</h3>
-                        <div id="tasksList" class="space-y-2"></div>
+                        <!-- Course Cards - Loaded dynamically from user's added courses -->
+                        <div id="my-courses-container" class="flex space-x-4">
+                            <!-- Courses will be loaded dynamically -->
+                        </div>
+
+                        <!-- Empty State when no courses added -->
+                        <div id="no-courses-message"
+                            class="hidden flex-shrink-0 w-64 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center py-4">
+                            <i class="fas fa-book-open text-2xl text-gray-300 mb-2"></i>
+                            <p class="text-gray-400 text-base">No courses yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll Indicators (dots) -->
+                <div class="flex justify-center mt-2 space-x-2 md:hidden" id="scrollIndicators"></div>
+            </section>
+
+            <!-- Grid: 2 columns (50%:50%) - Left: Notifications+Calendar, Right: Chatbot -->
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left Column: Notifications and Calendar stacked -->
+                <div class="space-y-8">
+                    <!-- Recent Notifications -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-6">
+                            <i class="fas fa-bell text-2xl text-gray-700 mr-3"></i>
+                            <h2 class="text-xl font-semibold text-gray-900">Recent Notification</h2>
+                        </div>
+
+                        <div id="notificationsContainer" class="space-y-4">
+                            <!-- Notifications will be loaded dynamically -->
+                            <div class="text-center py-8 text-gray-400">
+                                <i class="fas fa-bell-slash text-4xl mb-3"></i>
+                                <p>No notifications yet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar text-2xl text-gray-700 mr-3"></i>
+                                <h2 class="text-xl font-semibold text-gray-900" id="calendarMonthYear">May 2025</h2>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="previousMonth()"
+                                    class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition">
+                                    <i class="fas fa-chevron-left text-gray-600"></i>
+                                </button>
+                                <button onclick="nextMonth()"
+                                    class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition">
+                                    <i class="fas fa-chevron-right text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="mb-6">
+                            <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-500 mb-2">
+                                <div>Sun</div>
+                                <div>Mon</div>
+                                <div>Tue</div>
+                                <div>Wed</div>
+                                <div>Thu</div>
+                                <div>Fri</div>
+                                <div>Sat</div>
+                            </div>
+
+                            <div id="calendarDays" class="grid grid-cols-7 gap-2 text-center text-sm">
+                                <!-- Calendar days will be generated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Today Tasks -->
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-3">Today tasks</h3>
+                            <ul id="todayTasks" class="space-y-2 text-sm text-gray-700">
+                                <!-- Tasks will be loaded dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- End left column -->
+
+                <!-- Right Column: Chatbot Panel (50% width, full height) -->
+                <div class="hidden lg:block">
+                    <div class="bg-white rounded-2xl shadow-lg sticky top-24 flex flex-col" style="height: 931px;">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-2xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                                    <i class="fas fa-robot text-2xl text-blue-600"></i>
+                                </div>
+                                <div class="text-white">
+                                    <div class="font-bold text-lg">Tsharok Assistant</div>
+                                    <div class="text-sm opacity-90">Always here to help</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages Area -->
+                        <div class="flex-1 overflow-y-auto p-3 bg-gray-50" id="chatbotMessagesDesktop">
+                            <div class="flex gap-2 mb-3">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-blue-900 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-robot text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
+                                        <p class="text-gray-800 text-xs leading-relaxed">
+                                            👋 Hello! I'm your Tsharok Assistant. How can I help you today?
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5 mt-2">
+                                        <button onclick="sendQuickReplyDesktop('How do I add a course?')"
+                                            class="px-3 py-1.5 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                            Add Course
+                                        </button>
+                                        <button onclick="sendQuickReplyDesktop('Show my schedule')"
+                                            class="px-3 py-1.5 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                            My Schedule
+                                        </button>
+                                        <button onclick="sendQuickReplyDesktop('Help with assignments')"
+                                            class="px-3 py-1.5 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                            Assignments
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Box -->
+                        <div class="p-4 bg-white border-t border-gray-200 rounded-b-2xl">
+                            <div class="flex gap-2 items-center">
+                                <input type="text"
+                                    class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
+                                    id="chatbotInputDesktop" placeholder="Type your message..."
+                                    onkeypress="handleChatKeyPressDesktop(event)">
+                                <button onclick="sendMessageDesktop()"
+                                    class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- End chatbot panel -->
+
+            </div><!-- End grid -->
+
+            <!-- Mobile Floating Chatbot Button (hidden on desktop) -->
+            <div id="mobileChatbotButton" class="lg:hidden fixed bottom-6 right-6 z-50">
+                <button onclick="toggleMobileChatbot()"
+                    class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
+                    <i class="fas fa-robot text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Chatbot Window (expandable) -->
+            <div id="mobileChatbotWindow" class="lg:hidden hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+                onclick="closeMobileChatbot()">
+                <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
+                    onclick="event.stopPropagation()">
+                    <!-- Header -->
+                    <div
+                        class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-3xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                <i class="fas fa-robot text-xl text-blue-600"></i>
+                            </div>
+                            <div class="text-white">
+                                <div class="font-bold">Tsharok Assistant</div>
+                                <div class="text-xs opacity-90">Always here to help</div>
+                            </div>
+                        </div>
+                        <button onclick="closeMobileChatbot()"
+                            class="text-white hover:bg-white/20 rounded-full p-2 transition">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="mobileChatbotMessages">
+                        <div class="flex gap-2 mb-3">
+                            <div
+                                class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-robot text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
+                                    <p class="text-gray-800 text-sm">
+                                        👋 Hello! I'm your Tsharok Assistant. How can I help you today?
+                                    </p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <button onclick="sendQuickReplyMobile('How do I add a course?')"
+                                        class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                        Add Course
+                                    </button>
+                                    <button onclick="sendQuickReplyMobile('Show my schedule')"
+                                        class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                        My Schedule
+                                    </button>
+                                    <button onclick="sendQuickReplyMobile('Help with assignments')"
+                                        class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                        Assignments
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Box -->
+                    <div class="p-4 bg-white border-t border-gray-200">
+                        <div class="flex gap-2 items-center">
+                            <input type="text"
+                                class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
+                                id="mobileChatbotInput" placeholder="Type your message..."
+                                onkeypress="handleChatKeyPressMobile(event)">
+                            <button onclick="sendMessageMobile()"
+                                class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Add Task Modal -->
+        <div id="taskModal"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div
+                class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto relative animate-fade-in">
+                <!-- Close Button -->
+                <button onclick="closeTaskModal()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+
+                <!-- Modal Content -->
+                <div class="p-8">
+                    <div class="text-center mb-6">
+                        <div
+                            class="inline-flex items-center justify-center w-16 h-16 bg-primary bg-opacity-10 rounded-full mb-4">
+                            <i class="fas fa-calendar-plus text-3xl text-primary"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Add Task</h2>
+                        <p class="text-gray-600" id="modalDate">Select a date</p>
+                    </div>
+
+                    <form id="taskForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Task Title <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="taskTitle"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="e.g., Submit assignment" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                            <textarea id="taskDescription" rows="3"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="Add more details..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                            <select id="taskPriority"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition">
+                                <option value="blue">📘 Normal (Blue)</option>
+                                <option value="yellow">📙 Medium (Yellow)</option>
+                                <option value="red">📕 High (Red)</option>
+                                <option value="green">📗 Low (Green)</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" onclick="closeTaskModal()"
+                                class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition">
+                                Add Task
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Existing Tasks for Selected Date -->
+                    <div id="existingTasks" class="mt-6 hidden">
+                        <div class="border-t pt-4">
+                            <h3 class="font-semibold text-gray-900 mb-3">Tasks on this day:</h3>
+                            <div id="tasksList" class="space-y-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="../assets/js/session.js"></script>
-    <script src="../assets/js/dashboard.js"></script>
-    <script src="../assets/js/background-styles.js"></script>
-    <script>
-        // Require authentication for this page
-        requireAuth(['student', 'admin']).then(authenticated => {
-            if (authenticated) {
-                loadDashboardData();
-            }
-        });
-
-        async function loadDashboardData() {
-            // Get current user info
-            const user = getCurrentUser();
-            if (user) {
-                updateProfileDisplay(user);
-                
-                // Update email in dropdown
-                const emailElements = document.querySelectorAll('[data-user-email]');
-                emailElements.forEach(el => {
-                    el.textContent = user.email || 'student@email.com';
-                });
-                
-                // Update profile initial and color
-                const userName = user.fullName || user.name || 'S';
-                const initial = userName.charAt(0).toUpperCase();
-                const profileInitial = document.getElementById('profileInitial');
-                const profileButton = document.getElementById('profileButton');
-                if (profileInitial) profileInitial.textContent = initial;
-                
-                // Use same color scheme as comments for consistency
-                const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
-                const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
-                if (profileButton) {
-                    profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
-                }
-            }
-            
-            // Initialize calendar
-            renderCalendar();
-            
-            // Load user's added courses
-            loadMyCourses();
-            
-            // Load notifications for my courses
-            loadNotifications();
-        }
-
-        // Course data (same as add-course.html)
-        const allCoursesData = {
-            1: { code: '48021400-4', name: 'Calculus (1)', level: 1, rating: 4.5 },
-            2: { code: '48021700-6', name: 'English Language (1)', level: 1, rating: 4.5 },
-            3: { code: '48021503-3', name: 'Computer Programming Skills', level: 1, rating: 4.5 },
-            4: { code: '48021200-4', name: 'General Chemistry (1)', level: 1, rating: 4.5 },
-            5: { code: '48021300-4', name: 'General Physics (1)', level: 2, rating: 4.5 },
-            6: { code: '48021701-4', name: 'Technical English', level: 2, rating: 4.5 },
-            7: { code: '48021002-3', name: 'Learning Skills', level: 2, rating: 4.5 },
-            8: { code: '48021401-4', name: 'Calculus (2)', level: 2, rating: 4.5 },
-            9: { code: '14011801-3', name: 'Discrete Structures I', level: 3, rating: 4.5 },
-            10: { code: '4042301-3', name: 'Elements of Statistics and Probability', level: 3, rating: 4.5 },
-            11: { code: '14031201-4', name: 'Digital Logic Design', level: 3, rating: 4.5 },
-            12: { code: '605101-2', name: 'The Holy Qur\'aan I', level: 3, rating: 4.5 },
-            13: { code: '14011101-4', name: 'Computer Programming', level: 3, rating: 4.5 },
-            14: { code: '14011102-4', name: 'Object Oriented Programming', level: 4, rating: 4.5 },
-            15: { code: '4042402-4', name: 'Linear Algebra (1)', level: 4, rating: 4.5 },
-            16: { code: '14032205-4', name: 'Computer Organization & Architecture', level: 4, rating: 4.5 },
-            17: { code: '14011802-3', name: 'Discrete Structures II', level: 4, rating: 4.5 },
-            18: { code: '14032401-4', name: 'Numerical Methods for Computing', level: 5, rating: 4.5 },
-            19: { code: '14012301-3', name: 'Database I', level: 5, rating: 4.5 },
-            20: { code: '14012401-3', name: 'Data Structures', level: 5, rating: 4.5 },
-            21: { code: '14012203-4', name: 'Operating Systems', level: 5, rating: 4.5 },
-            22: { code: '601101-2', name: 'Islamic Culture I', level: 5, rating: 4.5 },
-            23: { code: '605201-2', name: 'The Holy Qur\'aan II', level: 6, rating: 4.5 },
-            24: { code: '14012109-3', name: 'Compilers Construction', level: 6, rating: 4.5 },
-            25: { code: '14012402-4', name: 'Algorithms', level: 6, rating: 4.5 },
-            26: { code: '14012501-3', name: 'Computer Graphics', level: 6, rating: 4.5 },
-            27: { code: '14033103-4', name: 'Computer Networks', level: 6, rating: 4.5 },
-            28: { code: '14013303-3', name: 'Software Engineering I', level: 7, rating: 4.5 },
-            29: { code: '14013701-4', name: 'Artificial Intelligence', level: 7, rating: 4.5 },
-            30: { code: '601201-2', name: 'Islamic Culture II', level: 7, rating: 4.5 },
-            31: { code: '14013104-3', name: 'Internet Applications', level: 7, rating: 4.5 },
-            32: { code: '14013103-4', name: 'Advanced Programming', level: 7, rating: 4.5 },
-            33: { code: '14013888-2', name: 'Summer Training', level: 8, rating: 4.5 },
-            34: { code: '14013602-3', name: 'Computer Security', level: 8, rating: 4.5 },
-            35: { code: '14013502-3', name: 'User Interface Design', level: 8, rating: 4.5 },
-            36: { code: '14013304-3', name: 'Software Engineering II', level: 8, rating: 4.5 },
-            37: { code: '14013204-3', name: 'Parallel Computing', level: 8, rating: 4.5 },
-            38: { code: '605301-2', name: 'The Holy Qur\'aan III', level: 8, rating: 4.5 },
-            39: { code: '14014902-4', name: 'Graduation Project I', level: 9, rating: 4.5 },
-            40: { code: '14014305-2', name: 'Computers and Society', level: 9, rating: 4.5 },
-            41: { code: '605401-2', name: 'The Holy Qur\'aan (IV)', level: 9, rating: 4.5 },
-            42: { code: '601301-3', name: 'Islamic Culture III', level: 9, rating: 4.5 },
-            43: { code: '102101-2', name: 'Biography of the Prophet', level: 10, rating: 4.5 },
-            44: { code: '14014903-4', name: 'Graduation Project II', level: 10, rating: 4.5 },
-            45: { code: '501101-2', name: 'Arabic Language I', level: 10, rating: 4.5 },
-            46: { code: '601401-2', name: 'Islamic Culture (iv)', level: 10, rating: 4.5 },
-            47: { code: '14014905-3', name: 'Special Topics I', level: 'Elective', rating: 4.5 },
-            48: { code: '14014106-3', name: 'Programming Languages', level: 'Elective', rating: 4.5 },
-            49: { code: '14014604-3', name: 'Introduction to Cryptography', level: 'Elective', rating: 4.5 },
-            50: { code: '14014605-3', name: 'Forensics Computing', level: 'Elective', rating: 4.5 },
-            51: { code: '14014702-3', name: 'Artificial Neural Networks', level: 'Elective', rating: 4.5 },
-            52: { code: '14014703-3', name: 'Pattern Recognition', level: 'Elective', rating: 4.5 },
-            53: { code: '14014704-3', name: 'Natural Language Processing', level: 'Elective', rating: 4.5 },
-            54: { code: '14014803-3', name: 'Theory of Computing', level: 'Elective', rating: 4.5 },
-            55: { code: '14014305-3', name: 'Big Data Analytics', level: 'Elective', rating: 4.5 },
-            56: { code: '14014306-3', name: 'Software Testing', level: 'Elective', rating: 4.5 },
-            57: { code: '14014307-3', name: 'Software Architecture', level: 'Elective', rating: 4.5 },
-            58: { code: '14014308-3', name: 'Information Retrieval Systems', level: 'Elective', rating: 4.5 },
-            59: { code: '14014404-3', name: 'Bioinformatics', level: 'Elective', rating: 4.5 },
-            60: { code: '14014503-3', name: 'Image Processing', level: 'Elective', rating: 4.5 },
-            61: { code: '14014105-3', name: 'Mobile Applications', level: 'Elective', rating: 4.5 },
-            62: { code: '14014906-3', name: 'Special Topics II', level: 'Elective', rating: 4.5 },
-            63: { code: '14014108-3', name: 'Game Programming', level: 'Elective', rating: 4.5 },
-            64: { code: '14014110-3', name: 'Advanced Web Programming', level: 'Elective', rating: 4.5 },
-            65: { code: '14014205-3', name: 'Cloud Computing', level: 'Elective', rating: 4.5 },
-            66: { code: '14014302-3', name: 'Database II', level: 'Elective', rating: 4.5 },
-        };
-
-        // Load user's added courses
-        function loadMyCourses() {
-            const container = document.getElementById('my-courses-container');
-            const noCoursesMsg = document.getElementById('no-courses-message');
-            const addedCourseIds = JSON.parse(localStorage.getItem('addedCourses') || '[]');
-            
-            if (addedCourseIds.length === 0) {
-                container.innerHTML = '';
-                noCoursesMsg.classList.remove('hidden');
-                return;
-            }
-            
-            noCoursesMsg.classList.add('hidden');
-            
-            let html = '';
-            
-            addedCourseIds.forEach(id => {
-                const course = allCoursesData[id];
-                if (course) {
-                    const levelText = course.level === 'Elective' ? 'Elective' : `Level ${course.level}`;
-                    html += getCardHTML(id, course, levelText);
+        <script src="../assets/js/session.js"></script>
+        <script src="../assets/js/dashboard.js"></script>
+        <script src="../assets/js/background-styles.js"></script>
+        <script>
+            // Require authentication for this page
+            requireAuth(['student', 'admin']).then(authenticated => {
+                if (authenticated) {
+                    loadDashboardData();
                 }
             });
-            
-            // Display the cards in the container
-            container.innerHTML = html;
-        }
 
-        // Load notifications for courses the student has added
-        function loadNotifications() {
-            const container = document.getElementById('notificationsContainer');
-            const addedCourseIds = JSON.parse(localStorage.getItem('addedCourses') || '[]');
-            const allNotifications = JSON.parse(localStorage.getItem('course_notifications') || '[]');
-            
-            // Filter notifications to only show those for courses the student has added
-            const myNotifications = allNotifications.filter(n => addedCourseIds.includes(n.courseId));
-            
-            if (myNotifications.length === 0) {
-                container.innerHTML = `
+            async function loadDashboardData() {
+                // Get current user info
+                const user = getCurrentUser();
+                if (user) {
+                    updateProfileDisplay(user);
+
+                    // Update email in dropdown
+                    const emailElements = document.querySelectorAll('[data-user-email]');
+                    emailElements.forEach(el => {
+                        el.textContent = user.email || 'student@email.com';
+                    });
+
+                    // Update profile initial and color
+                    const userName = user.fullName || user.name || 'S';
+                    const initial = userName.charAt(0).toUpperCase();
+                    const profileInitial = document.getElementById('profileInitial');
+                    const profileButton = document.getElementById('profileButton');
+                    if (profileInitial) profileInitial.textContent = initial;
+
+                    // Use same color scheme as comments for consistency
+                    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                    const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
+                    if (profileButton) {
+                        profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
+                    }
+                }
+
+                // Initialize calendar
+                renderCalendar();
+
+                // Load user's added courses
+                loadMyCourses();
+
+                // Load notifications for my courses
+                loadNotifications();
+            }
+
+            // Course data (same as add-course.html)
+            const allCoursesData = {
+                1: { code: '48021400-4', name: 'Calculus (1)', level: 1, rating: 4.5 },
+                2: { code: '48021700-6', name: 'English Language (1)', level: 1, rating: 4.5 },
+                3: { code: '48021503-3', name: 'Computer Programming Skills', level: 1, rating: 4.5 },
+                4: { code: '48021200-4', name: 'General Chemistry (1)', level: 1, rating: 4.5 },
+                5: { code: '48021300-4', name: 'General Physics (1)', level: 2, rating: 4.5 },
+                6: { code: '48021701-4', name: 'Technical English', level: 2, rating: 4.5 },
+                7: { code: '48021002-3', name: 'Learning Skills', level: 2, rating: 4.5 },
+                8: { code: '48021401-4', name: 'Calculus (2)', level: 2, rating: 4.5 },
+                9: { code: '14011801-3', name: 'Discrete Structures I', level: 3, rating: 4.5 },
+                10: { code: '4042301-3', name: 'Elements of Statistics and Probability', level: 3, rating: 4.5 },
+                11: { code: '14031201-4', name: 'Digital Logic Design', level: 3, rating: 4.5 },
+                12: { code: '605101-2', name: 'The Holy Qur\'aan I', level: 3, rating: 4.5 },
+                13: { code: '14011101-4', name: 'Computer Programming', level: 3, rating: 4.5 },
+                14: { code: '14011102-4', name: 'Object Oriented Programming', level: 4, rating: 4.5 },
+                15: { code: '4042402-4', name: 'Linear Algebra (1)', level: 4, rating: 4.5 },
+                16: { code: '14032205-4', name: 'Computer Organization & Architecture', level: 4, rating: 4.5 },
+                17: { code: '14011802-3', name: 'Discrete Structures II', level: 4, rating: 4.5 },
+                18: { code: '14032401-4', name: 'Numerical Methods for Computing', level: 5, rating: 4.5 },
+                19: { code: '14012301-3', name: 'Database I', level: 5, rating: 4.5 },
+                20: { code: '14012401-3', name: 'Data Structures', level: 5, rating: 4.5 },
+                21: { code: '14012203-4', name: 'Operating Systems', level: 5, rating: 4.5 },
+                22: { code: '601101-2', name: 'Islamic Culture I', level: 5, rating: 4.5 },
+                23: { code: '605201-2', name: 'The Holy Qur\'aan II', level: 6, rating: 4.5 },
+                24: { code: '14012109-3', name: 'Compilers Construction', level: 6, rating: 4.5 },
+                25: { code: '14012402-4', name: 'Algorithms', level: 6, rating: 4.5 },
+                26: { code: '14012501-3', name: 'Computer Graphics', level: 6, rating: 4.5 },
+                27: { code: '14033103-4', name: 'Computer Networks', level: 6, rating: 4.5 },
+                28: { code: '14013303-3', name: 'Software Engineering I', level: 7, rating: 4.5 },
+                29: { code: '14013701-4', name: 'Artificial Intelligence', level: 7, rating: 4.5 },
+                30: { code: '601201-2', name: 'Islamic Culture II', level: 7, rating: 4.5 },
+                31: { code: '14013104-3', name: 'Internet Applications', level: 7, rating: 4.5 },
+                32: { code: '14013103-4', name: 'Advanced Programming', level: 7, rating: 4.5 },
+                33: { code: '14013888-2', name: 'Summer Training', level: 8, rating: 4.5 },
+                34: { code: '14013602-3', name: 'Computer Security', level: 8, rating: 4.5 },
+                35: { code: '14013502-3', name: 'User Interface Design', level: 8, rating: 4.5 },
+                36: { code: '14013304-3', name: 'Software Engineering II', level: 8, rating: 4.5 },
+                37: { code: '14013204-3', name: 'Parallel Computing', level: 8, rating: 4.5 },
+                38: { code: '605301-2', name: 'The Holy Qur\'aan III', level: 8, rating: 4.5 },
+                39: { code: '14014902-4', name: 'Graduation Project I', level: 9, rating: 4.5 },
+                40: { code: '14014305-2', name: 'Computers and Society', level: 9, rating: 4.5 },
+                41: { code: '605401-2', name: 'The Holy Qur\'aan (IV)', level: 9, rating: 4.5 },
+                42: { code: '601301-3', name: 'Islamic Culture III', level: 9, rating: 4.5 },
+                43: { code: '102101-2', name: 'Biography of the Prophet', level: 10, rating: 4.5 },
+                44: { code: '14014903-4', name: 'Graduation Project II', level: 10, rating: 4.5 },
+                45: { code: '501101-2', name: 'Arabic Language I', level: 10, rating: 4.5 },
+                46: { code: '601401-2', name: 'Islamic Culture (iv)', level: 10, rating: 4.5 },
+                47: { code: '14014905-3', name: 'Special Topics I', level: 'Elective', rating: 4.5 },
+                48: { code: '14014106-3', name: 'Programming Languages', level: 'Elective', rating: 4.5 },
+                49: { code: '14014604-3', name: 'Introduction to Cryptography', level: 'Elective', rating: 4.5 },
+                50: { code: '14014605-3', name: 'Forensics Computing', level: 'Elective', rating: 4.5 },
+                51: { code: '14014702-3', name: 'Artificial Neural Networks', level: 'Elective', rating: 4.5 },
+                52: { code: '14014703-3', name: 'Pattern Recognition', level: 'Elective', rating: 4.5 },
+                53: { code: '14014704-3', name: 'Natural Language Processing', level: 'Elective', rating: 4.5 },
+                54: { code: '14014803-3', name: 'Theory of Computing', level: 'Elective', rating: 4.5 },
+                55: { code: '14014305-3', name: 'Big Data Analytics', level: 'Elective', rating: 4.5 },
+                56: { code: '14014306-3', name: 'Software Testing', level: 'Elective', rating: 4.5 },
+                57: { code: '14014307-3', name: 'Software Architecture', level: 'Elective', rating: 4.5 },
+                58: { code: '14014308-3', name: 'Information Retrieval Systems', level: 'Elective', rating: 4.5 },
+                59: { code: '14014404-3', name: 'Bioinformatics', level: 'Elective', rating: 4.5 },
+                60: { code: '14014503-3', name: 'Image Processing', level: 'Elective', rating: 4.5 },
+                61: { code: '14014105-3', name: 'Mobile Applications', level: 'Elective', rating: 4.5 },
+                62: { code: '14014906-3', name: 'Special Topics II', level: 'Elective', rating: 4.5 },
+                63: { code: '14014108-3', name: 'Game Programming', level: 'Elective', rating: 4.5 },
+                64: { code: '14014110-3', name: 'Advanced Web Programming', level: 'Elective', rating: 4.5 },
+                65: { code: '14014205-3', name: 'Cloud Computing', level: 'Elective', rating: 4.5 },
+                66: { code: '14014302-3', name: 'Database II', level: 'Elective', rating: 4.5 },
+            };
+
+            // Load user's added courses
+            function loadMyCourses() {
+                const container = document.getElementById('my-courses-container');
+                const noCoursesMsg = document.getElementById('no-courses-message');
+                const addedCourseIds = JSON.parse(localStorage.getItem('addedCourses') || '[]');
+
+                if (addedCourseIds.length === 0) {
+                    container.innerHTML = '';
+                    noCoursesMsg.classList.remove('hidden');
+                    return;
+                }
+
+                noCoursesMsg.classList.add('hidden');
+
+                let html = '';
+
+                addedCourseIds.forEach(id => {
+                    const course = allCoursesData[id];
+                    if (course) {
+                        const levelText = course.level === 'Elective' ? 'Elective' : `Level ${course.level}`;
+                        html += getCardHTML(id, course, levelText);
+                    }
+                });
+
+                // Display the cards in the container
+                container.innerHTML = html;
+            }
+
+            // Load notifications for courses the student has added
+            function loadNotifications() {
+                const container = document.getElementById('notificationsContainer');
+                const addedCourseIds = JSON.parse(localStorage.getItem('addedCourses') || '[]');
+                const allNotifications = JSON.parse(localStorage.getItem('course_notifications') || '[]');
+
+                // Filter notifications to only show those for courses the student has added
+                const myNotifications = allNotifications.filter(n => addedCourseIds.includes(n.courseId));
+
+                if (myNotifications.length === 0) {
+                    container.innerHTML = `
                     <div class="text-center py-8 text-gray-400">
                         <i class="fas fa-bell-slash text-4xl mb-3"></i>
                         <p>No notifications yet</p>
                         <p class="text-xs mt-1">Add courses to receive notifications when new content is uploaded</p>
                     </div>
                 `;
-                return;
-            }
-            
-            // Show only the latest 5 notifications
-            const latestNotifications = myNotifications.slice(0, 5);
-            
-            let html = '';
-            latestNotifications.forEach((notification, index) => {
-                const isLast = index === latestNotifications.length - 1;
-                const timeAgo = getTimeAgo(notification.timestamp);
-                
-                html += `
+                    return;
+                }
+
+                // Show only the latest 5 notifications
+                const latestNotifications = myNotifications.slice(0, 5);
+
+                let html = '';
+                latestNotifications.forEach((notification, index) => {
+                    const isLast = index === latestNotifications.length - 1;
+                    const timeAgo = getTimeAgo(notification.timestamp);
+
+                    html += `
                     <a href="course.html?id=${notification.courseId}" class="flex items-start space-x-3 ${!isLast ? 'pb-4 border-b border-gray-200' : ''} hover:bg-gray-50 rounded-lg p-2 -mx-2 transition">
                         <div class="flex-shrink-0">
                             <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
@@ -535,67 +730,67 @@
                         </div>
                     </a>
                 `;
-            });
-            
-            container.innerHTML = html;
-        }
+                });
 
-        // Get time ago string from timestamp
-        function getTimeAgo(timestamp) {
-            const now = new Date();
-            const then = new Date(timestamp);
-            const diffInSeconds = Math.floor((now - then) / 1000);
-            
-            if (diffInSeconds < 60) return 'Just now';
-            if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' min ago';
-            if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' hours ago';
-            if (diffInSeconds < 604800) return Math.floor(diffInSeconds / 86400) + ' days ago';
-            return then.toLocaleDateString();
-        }
-        
-        // Calculate average rating for a file from comments and ratings
-        function calculateFileRating(courseId, fileId) {
-            const comments = JSON.parse(localStorage.getItem(`file_${courseId}_${fileId}_comments`) || '[]');
-            const ratings = JSON.parse(localStorage.getItem(`file_${courseId}_${fileId}_ratings`) || '[]');
-            
-            let allRatings = [];
-            comments.forEach(c => { if (c.rating) allRatings.push(c.rating); });
-            ratings.forEach(r => { if (r.rating) allRatings.push(r.rating); });
-            
-            if (allRatings.length === 0) return 0;
-            return allRatings.reduce((sum, r) => sum + r, 0) / allRatings.length;
-        }
-
-        // Calculate overall course rating from all files
-        function calculateCourseRating(courseId) {
-            const files = JSON.parse(localStorage.getItem(`course_${courseId}_files`) || '[]');
-            let allFileRatings = [];
-            
-            // Get ratings from uploaded files
-            files.forEach((file, index) => {
-                const rating = calculateFileRating(courseId, index);
-                if (rating > 0) allFileRatings.push(rating);
-            });
-            
-            // If no uploaded files, check sample files (0-8)
-            if (files.length === 0) {
-                for (let i = 0; i < 9; i++) {
-                    const rating = calculateFileRating(courseId, i);
-                    if (rating > 0) allFileRatings.push(rating);
-                }
+                container.innerHTML = html;
             }
-            
-            if (allFileRatings.length === 0) return '0.0';
-            const avgRating = allFileRatings.reduce((sum, r) => sum + r, 0) / allFileRatings.length;
-            return avgRating.toFixed(1);
-        }
 
-        // Card template - Bottom Bar style
-        function getCardHTML(id, course, levelText) {
-            // Calculate the actual Knowledge Rating for this course
-            const knowledgeRating = calculateCourseRating(id);
-            
-            return `
+            // Get time ago string from timestamp
+            function getTimeAgo(timestamp) {
+                const now = new Date();
+                const then = new Date(timestamp);
+                const diffInSeconds = Math.floor((now - then) / 1000);
+
+                if (diffInSeconds < 60) return 'Just now';
+                if (diffInSeconds < 3600) return Math.floor(diffInSeconds / 60) + ' min ago';
+                if (diffInSeconds < 86400) return Math.floor(diffInSeconds / 3600) + ' hours ago';
+                if (diffInSeconds < 604800) return Math.floor(diffInSeconds / 86400) + ' days ago';
+                return then.toLocaleDateString();
+            }
+
+            // Calculate average rating for a file from comments and ratings
+            function calculateFileRating(courseId, fileId) {
+                const comments = JSON.parse(localStorage.getItem(`file_${courseId}_${fileId}_comments`) || '[]');
+                const ratings = JSON.parse(localStorage.getItem(`file_${courseId}_${fileId}_ratings`) || '[]');
+
+                let allRatings = [];
+                comments.forEach(c => { if (c.rating) allRatings.push(c.rating); });
+                ratings.forEach(r => { if (r.rating) allRatings.push(r.rating); });
+
+                if (allRatings.length === 0) return 0;
+                return allRatings.reduce((sum, r) => sum + r, 0) / allRatings.length;
+            }
+
+            // Calculate overall course rating from all files
+            function calculateCourseRating(courseId) {
+                const files = JSON.parse(localStorage.getItem(`course_${courseId}_files`) || '[]');
+                let allFileRatings = [];
+
+                // Get ratings from uploaded files
+                files.forEach((file, index) => {
+                    const rating = calculateFileRating(courseId, index);
+                    if (rating > 0) allFileRatings.push(rating);
+                });
+
+                // If no uploaded files, check sample files (0-8)
+                if (files.length === 0) {
+                    for (let i = 0; i < 9; i++) {
+                        const rating = calculateFileRating(courseId, i);
+                        if (rating > 0) allFileRatings.push(rating);
+                    }
+                }
+
+                if (allFileRatings.length === 0) return '0.0';
+                const avgRating = allFileRatings.reduce((sum, r) => sum + r, 0) / allFileRatings.length;
+                return avgRating.toFixed(1);
+            }
+
+            // Card template - Bottom Bar style
+            function getCardHTML(id, course, levelText) {
+                // Calculate the actual Knowledge Rating for this course
+                const knowledgeRating = calculateCourseRating(id);
+
+                return `
                 <div class="flex-shrink-0 bg-white rounded-xl shadow-md overflow-hidden w-64 hover:shadow-lg transition snap-start cursor-pointer" data-course-id="${id}">
                     <a href="course.html?id=${id}" class="block">
                         <div class="px-4 py-3 h-20 flex flex-col justify-center">
@@ -616,254 +811,254 @@
                     </a>
                 </div>
             `;
-        }
-
-        // Remove course from dashboard
-        function removeCourseFromDashboard(courseId) {
-            let addedCourses = JSON.parse(localStorage.getItem('addedCourses') || '[]');
-            addedCourses = addedCourses.filter(id => id !== courseId);
-            localStorage.setItem('addedCourses', JSON.stringify(addedCourses));
-            loadMyCourses();
-        }
-
-        function toggleLanguage() {
-            // Language toggle functionality
-            const currentLang = document.documentElement.lang;
-            if (currentLang === 'en') {
-                document.documentElement.lang = 'ar';
-                document.documentElement.dir = 'rtl';
-            } else {
-                document.documentElement.lang = 'en';
-                document.documentElement.dir = 'ltr';
             }
-        }
 
-        // ========== PROFILE MENU FUNCTIONALITY ==========
-        
-        function toggleProfileMenu() {
-            const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Close profile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('profileMenu');
-            const button = document.getElementById('profileButton');
-            
-            if (!menu.contains(event.target) && !button.contains(event.target)) {
-                menu.classList.add('hidden');
+            // Remove course from dashboard
+            function removeCourseFromDashboard(courseId) {
+                let addedCourses = JSON.parse(localStorage.getItem('addedCourses') || '[]');
+                addedCourses = addedCourses.filter(id => id !== courseId);
+                localStorage.setItem('addedCourses', JSON.stringify(addedCourses));
+                loadMyCourses();
             }
-        });
 
-        // ========== COURSES SCROLL FUNCTIONALITY ==========
-        
-        function scrollCourses(direction) {
-            const container = document.getElementById('coursesScrollContainer');
-            const scrollAmount = 280; // Width of card + gap
-            
-            if (direction === 'left') {
-                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            } else {
-                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            function toggleLanguage() {
+                // Language toggle functionality
+                const currentLang = document.documentElement.lang;
+                if (currentLang === 'en') {
+                    document.documentElement.lang = 'ar';
+                    document.documentElement.dir = 'rtl';
+                } else {
+                    document.documentElement.lang = 'en';
+                    document.documentElement.dir = 'ltr';
+                }
             }
-        }
 
-        // Touch swipe support for mobile
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        function initTouchSupport() {
-            const container = document.getElementById('coursesScrollContainer');
-            
-            container.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
+            // ========== PROFILE MENU FUNCTIONALITY ==========
 
-            container.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, { passive: true });
-        }
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = touchStartX - touchEndX;
-            
-            if (Math.abs(diff) > swipeThreshold) {
-                // Swipe detected - the scroll container will handle it naturally
-                // This is just for additional functionality if needed
+            function toggleProfileMenu() {
+                const menu = document.getElementById('profileMenu');
+                menu.classList.toggle('hidden');
             }
-        }
 
-        // Initialize touch support on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadMyCourses();  // Load user's added courses
-            initTouchSupport();
-            updateScrollIndicators();
-        });
+            // Close profile menu when clicking outside
+            document.addEventListener('click', function (event) {
+                const menu = document.getElementById('profileMenu');
+                const button = document.getElementById('profileButton');
 
-        // Update scroll indicators
-        function updateScrollIndicators() {
-            const container = document.getElementById('coursesScrollContainer');
-            const indicators = document.getElementById('scrollIndicators');
-            
-            if (!container || !indicators) return;
-            
-            // Calculate number of "pages"
-            const cardWidth = 240; // Approximate width
-            const visibleWidth = container.clientWidth;
-            const scrollWidth = container.scrollWidth;
-            const numPages = Math.ceil(scrollWidth / visibleWidth);
-            
-            if (numPages <= 1) {
-                indicators.innerHTML = '';
-                return;
-            }
-            
-            // Create dot indicators
-            indicators.innerHTML = '';
-            for (let i = 0; i < numPages; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'w-2 h-2 rounded-full bg-gray-300 transition-all';
-                dot.id = `indicator-${i}`;
-                indicators.appendChild(dot);
-            }
-            
-            // Update active indicator on scroll
-            container.addEventListener('scroll', () => {
-                const scrollPercentage = container.scrollLeft / (scrollWidth - visibleWidth);
-                const activePage = Math.round(scrollPercentage * (numPages - 1));
-                
-                for (let i = 0; i < numPages; i++) {
-                    const dot = document.getElementById(`indicator-${i}`);
-                    if (i === activePage) {
-                        dot.classList.remove('bg-gray-300');
-                        dot.classList.add('bg-primary', 'w-6');
-                    } else {
-                        dot.classList.remove('bg-primary', 'w-6');
-                        dot.classList.add('bg-gray-300');
-                    }
+                if (!menu.contains(event.target) && !button.contains(event.target)) {
+                    menu.classList.add('hidden');
                 }
             });
-        }
 
-        // ========== CALENDAR FUNCTIONALITY ==========
-        
-        let currentDate = new Date();
-        let selectedDate = null;
-        
-        // Load events from localStorage or use default
-        function loadCalendarEvents() {
-            const saved = localStorage.getItem('calendarEvents');
-            if (saved) {
-                return JSON.parse(saved);
-            }
-            // Default sample events
-            return {
-                '2024-12-15': [{ title: 'mid-term exam', description: '', color: 'blue', id: 1 }],
-                '2024-12-22': [{ title: 'Submit a report', description: '', color: 'green', id: 2 }],
-                '2024-12-10': [{ title: 'Quiz', description: '', color: 'yellow', id: 3 }],
-                '2025-01-05': [{ title: 'Final Exam', description: '', color: 'red', id: 4 }],
-            };
-        }
-        
-        let calendarEvents = loadCalendarEvents();
-        
-        // Save events to localStorage
-        function saveCalendarEvents() {
-            localStorage.setItem('calendarEvents', JSON.stringify(calendarEvents));
-        }
+            // ========== COURSES SCROLL FUNCTIONALITY ==========
 
-        function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
-            // Update month/year display
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'];
-            document.getElementById('calendarMonthYear').textContent = `${monthNames[month]} ${year}`;
-            
-            // Get first day of month and number of days
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            // Get today's date
-            const today = new Date();
-            const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
-            const todayDate = today.getDate();
-            
-            // Clear calendar
-            const calendarDays = document.getElementById('calendarDays');
-            calendarDays.innerHTML = '';
-            
-            // Add empty cells for days before month starts
-            for (let i = 0; i < firstDay; i++) {
-                calendarDays.innerHTML += '<div class="py-2"></div>';
-            }
-            
-            // Add days of month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const events = calendarEvents[dateStr] || [];
-                const isToday = isCurrentMonth && day === todayDate;
-                
-                let dayClass = 'py-2 text-gray-900 hover:bg-gray-100 rounded cursor-pointer transition';
-                let dayContent = `<div>${day}</div>`;
-                
-                if (isToday && events.length === 0) {
-                    dayClass = 'py-2 bg-primary text-white rounded font-semibold hover:bg-secondary';
+            function scrollCourses(direction) {
+                const container = document.getElementById('coursesScrollContainer');
+                const scrollAmount = 280; // Width of card + gap
+
+                if (direction === 'left') {
+                    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                } else {
+                    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
                 }
-                
-                if (events.length > 0) {
-                    // Show first event, indicate if there are more
-                    const firstEvent = events[0];
-                    const colorClasses = {
-                        blue: 'bg-blue-100 text-blue-900',
-                        green: 'bg-green-100 text-green-900',
-                        yellow: 'bg-yellow-100 text-yellow-900',
-                        red: 'bg-red-100 text-red-900'
-                    };
-                    
-                    if (isToday) {
-                        dayClass = `py-2 ${colorClasses[firstEvent.color]} border-2 border-primary rounded font-semibold`;
-                    } else {
-                        dayClass = `py-2 ${colorClasses[firstEvent.color]} rounded font-semibold hover:opacity-80`;
+            }
+
+            // Touch swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            function initTouchSupport() {
+                const container = document.getElementById('coursesScrollContainer');
+
+                container.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+
+                container.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, { passive: true });
+            }
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+
+                if (Math.abs(diff) > swipeThreshold) {
+                    // Swipe detected - the scroll container will handle it naturally
+                    // This is just for additional functionality if needed
+                }
+            }
+
+            // Initialize touch support on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                loadMyCourses();  // Load user's added courses
+                initTouchSupport();
+                updateScrollIndicators();
+            });
+
+            // Update scroll indicators
+            function updateScrollIndicators() {
+                const container = document.getElementById('coursesScrollContainer');
+                const indicators = document.getElementById('scrollIndicators');
+
+                if (!container || !indicators) return;
+
+                // Calculate number of "pages"
+                const cardWidth = 240; // Approximate width
+                const visibleWidth = container.clientWidth;
+                const scrollWidth = container.scrollWidth;
+                const numPages = Math.ceil(scrollWidth / visibleWidth);
+
+                if (numPages <= 1) {
+                    indicators.innerHTML = '';
+                    return;
+                }
+
+                // Create dot indicators
+                indicators.innerHTML = '';
+                for (let i = 0; i < numPages; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'w-2 h-2 rounded-full bg-gray-300 transition-all';
+                    dot.id = `indicator-${i}`;
+                    indicators.appendChild(dot);
+                }
+
+                // Update active indicator on scroll
+                container.addEventListener('scroll', () => {
+                    const scrollPercentage = container.scrollLeft / (scrollWidth - visibleWidth);
+                    const activePage = Math.round(scrollPercentage * (numPages - 1));
+
+                    for (let i = 0; i < numPages; i++) {
+                        const dot = document.getElementById(`indicator-${i}`);
+                        if (i === activePage) {
+                            dot.classList.remove('bg-gray-300');
+                            dot.classList.add('bg-primary', 'w-6');
+                        } else {
+                            dot.classList.remove('bg-primary', 'w-6');
+                            dot.classList.add('bg-gray-300');
+                        }
                     }
-                    
-                    dayContent = `
+                });
+            }
+
+            // ========== CALENDAR FUNCTIONALITY ==========
+
+            let currentDate = new Date();
+            let selectedDate = null;
+
+            // Load events from localStorage or use default
+            function loadCalendarEvents() {
+                const saved = localStorage.getItem('calendarEvents');
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+                // Default sample events
+                return {
+                    '2024-12-15': [{ title: 'mid-term exam', description: '', color: 'blue', id: 1 }],
+                    '2024-12-22': [{ title: 'Submit a report', description: '', color: 'green', id: 2 }],
+                    '2024-12-10': [{ title: 'Quiz', description: '', color: 'yellow', id: 3 }],
+                    '2025-01-05': [{ title: 'Final Exam', description: '', color: 'red', id: 4 }],
+                };
+            }
+
+            let calendarEvents = loadCalendarEvents();
+
+            // Save events to localStorage
+            function saveCalendarEvents() {
+                localStorage.setItem('calendarEvents', JSON.stringify(calendarEvents));
+            }
+
+            function renderCalendar() {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                // Update month/year display
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                document.getElementById('calendarMonthYear').textContent = `${monthNames[month]} ${year}`;
+
+                // Get first day of month and number of days
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // Get today's date
+                const today = new Date();
+                const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+                const todayDate = today.getDate();
+
+                // Clear calendar
+                const calendarDays = document.getElementById('calendarDays');
+                calendarDays.innerHTML = '';
+
+                // Add empty cells for days before month starts
+                for (let i = 0; i < firstDay; i++) {
+                    calendarDays.innerHTML += '<div class="py-2"></div>';
+                }
+
+                // Add days of month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const events = calendarEvents[dateStr] || [];
+                    const isToday = isCurrentMonth && day === todayDate;
+
+                    let dayClass = 'py-2 text-gray-900 hover:bg-gray-100 rounded cursor-pointer transition';
+                    let dayContent = `<div>${day}</div>`;
+
+                    if (isToday && events.length === 0) {
+                        dayClass = 'py-2 bg-primary text-white rounded font-semibold hover:bg-secondary';
+                    }
+
+                    if (events.length > 0) {
+                        // Show first event, indicate if there are more
+                        const firstEvent = events[0];
+                        const colorClasses = {
+                            blue: 'bg-blue-100 text-blue-900',
+                            green: 'bg-green-100 text-green-900',
+                            yellow: 'bg-yellow-100 text-yellow-900',
+                            red: 'bg-red-100 text-red-900'
+                        };
+
+                        if (isToday) {
+                            dayClass = `py-2 ${colorClasses[firstEvent.color]} border-2 border-primary rounded font-semibold`;
+                        } else {
+                            dayClass = `py-2 ${colorClasses[firstEvent.color]} rounded font-semibold hover:opacity-80`;
+                        }
+
+                        dayContent = `
                         <div>${day}</div>
                         <div class="text-xs leading-tight">${firstEvent.title}</div>
                         ${events.length > 1 ? `<div class="text-xs">+${events.length - 1} more</div>` : ''}
                     `;
-                }
-                
-                calendarDays.innerHTML += `<div class="${dayClass}" onclick="selectDate('${dateStr}')">${dayContent}</div>`;
-            }
-            
-            // Update today's tasks
-            updateTodayTasks();
-        }
+                    }
 
-        function updateTodayTasks() {
-            const today = new Date();
-            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-            
-            const todayTasksEl = document.getElementById('todayTasks');
-            const todayEvents = calendarEvents[todayStr] || [];
-            
-            if (todayEvents.length === 0) {
-                todayTasksEl.innerHTML = '<li class="text-gray-500 text-sm">No tasks for today</li>';
-                return;
+                    calendarDays.innerHTML += `<div class="${dayClass}" onclick="selectDate('${dateStr}')">${dayContent}</div>`;
+                }
+
+                // Update today's tasks
+                updateTodayTasks();
             }
-            
-            todayTasksEl.innerHTML = todayEvents.map(event => {
-                const colorClasses = {
-                    blue: 'bg-blue-500',
-                    green: 'bg-green-500',
-                    yellow: 'bg-yellow-500',
-                    red: 'bg-red-500'
-                };
-                return `
+
+            function updateTodayTasks() {
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+                const todayTasksEl = document.getElementById('todayTasks');
+                const todayEvents = calendarEvents[todayStr] || [];
+
+                if (todayEvents.length === 0) {
+                    todayTasksEl.innerHTML = '<li class="text-gray-500 text-sm">No tasks for today</li>';
+                    return;
+                }
+
+                todayTasksEl.innerHTML = todayEvents.map(event => {
+                    const colorClasses = {
+                        blue: 'bg-blue-500',
+                        green: 'bg-green-500',
+                        yellow: 'bg-yellow-500',
+                        red: 'bg-red-500'
+                    };
+                    return `
                     <li class="flex items-center justify-between">
                         <div class="flex items-center">
                             <span class="w-2 h-2 ${colorClasses[event.color]} rounded-full mr-2"></span>
@@ -874,53 +1069,53 @@
                         </button>
                     </li>
                 `;
-            }).join('');
-        }
+                }).join('');
+            }
 
-        function previousMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        }
+            function previousMonth() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            }
 
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        }
+            function nextMonth() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            }
 
-        function selectDate(dateStr) {
-            selectedDate = dateStr;
-            openTaskModal(dateStr);
-        }
+            function selectDate(dateStr) {
+                selectedDate = dateStr;
+                openTaskModal(dateStr);
+            }
 
-        // ========== TASK MODAL FUNCTIONS ==========
-        
-        function openTaskModal(dateStr) {
-            const modal = document.getElementById('taskModal');
-            const modalDate = document.getElementById('modalDate');
-            const taskForm = document.getElementById('taskForm');
-            const existingTasksDiv = document.getElementById('existingTasks');
-            const tasksListDiv = document.getElementById('tasksList');
-            
-            // Format and display date
-            const date = new Date(dateStr + 'T00:00:00');
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            modalDate.textContent = date.toLocaleDateString('en-US', options);
-            
-            // Reset form
-            taskForm.reset();
-            
-            // Show existing tasks for this date
-            const events = calendarEvents[dateStr] || [];
-            if (events.length > 0) {
-                existingTasksDiv.classList.remove('hidden');
-                tasksListDiv.innerHTML = events.map(event => {
-                    const colorClasses = {
-                        blue: 'bg-blue-100 text-blue-900 border-blue-300',
-                        green: 'bg-green-100 text-green-900 border-green-300',
-                        yellow: 'bg-yellow-100 text-yellow-900 border-yellow-300',
-                        red: 'bg-red-100 text-red-900 border-red-300'
-                    };
-                    return `
+            // ========== TASK MODAL FUNCTIONS ==========
+
+            function openTaskModal(dateStr) {
+                const modal = document.getElementById('taskModal');
+                const modalDate = document.getElementById('modalDate');
+                const taskForm = document.getElementById('taskForm');
+                const existingTasksDiv = document.getElementById('existingTasks');
+                const tasksListDiv = document.getElementById('tasksList');
+
+                // Format and display date
+                const date = new Date(dateStr + 'T00:00:00');
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                modalDate.textContent = date.toLocaleDateString('en-US', options);
+
+                // Reset form
+                taskForm.reset();
+
+                // Show existing tasks for this date
+                const events = calendarEvents[dateStr] || [];
+                if (events.length > 0) {
+                    existingTasksDiv.classList.remove('hidden');
+                    tasksListDiv.innerHTML = events.map(event => {
+                        const colorClasses = {
+                            blue: 'bg-blue-100 text-blue-900 border-blue-300',
+                            green: 'bg-green-100 text-green-900 border-green-300',
+                            yellow: 'bg-yellow-100 text-yellow-900 border-yellow-300',
+                            red: 'bg-red-100 text-red-900 border-red-300'
+                        };
+                        return `
                         <div class="flex items-start justify-between p-3 ${colorClasses[event.color]} border rounded-lg">
                             <div class="flex-1">
                                 <p class="font-semibold">${event.title}</p>
@@ -932,143 +1127,145 @@
                             </button>
                         </div>
                     `;
-                }).join('');
-            } else {
-                existingTasksDiv.classList.add('hidden');
-            }
-            
-            // Show modal
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeTaskModal() {
-            const modal = document.getElementById('taskModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Handle task form submission
-        document.getElementById('taskForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('taskTitle').value.trim();
-            const description = document.getElementById('taskDescription').value.trim();
-            const priority = document.getElementById('taskPriority').value;
-            
-            if (!title || !selectedDate) return;
-            
-            // Create new task
-            const newTask = {
-                id: Date.now(),
-                title: title,
-                description: description,
-                color: priority
-            };
-            
-            // Add to calendar events
-            if (!calendarEvents[selectedDate]) {
-                calendarEvents[selectedDate] = [];
-            }
-            calendarEvents[selectedDate].push(newTask);
-            
-            // Save to localStorage
-            saveCalendarEvents();
-            
-            // Refresh calendar
-            renderCalendar();
-            
-            // Close modal
-            closeTaskModal();
-            
-            // Show success message
-            showNotification('Task added successfully!', 'success');
-        });
-
-        function deleteTask(dateStr, taskId) {
-            if (!confirm('Are you sure you want to delete this task?')) return;
-            
-            // Remove task from events
-            if (calendarEvents[dateStr]) {
-                calendarEvents[dateStr] = calendarEvents[dateStr].filter(task => task.id !== taskId);
-                
-                // Remove date entry if no tasks left
-                if (calendarEvents[dateStr].length === 0) {
-                    delete calendarEvents[dateStr];
+                    }).join('');
+                } else {
+                    existingTasksDiv.classList.add('hidden');
                 }
-            }
-            
-            // Save to localStorage
-            saveCalendarEvents();
-            
-            // Refresh calendar
-            renderCalendar();
-            
-            // Close modal if open
-            const modal = document.getElementById('taskModal');
-            if (!modal.classList.contains('hidden')) {
-                closeTaskModal();
-            }
-            
-            // Show success message
-            showNotification('Task deleted successfully!', 'success');
-        }
 
-        function showNotification(message, type = 'success') {
-            const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                info: 'bg-blue-500'
-            };
-            
-            const notification = document.createElement('div');
-            notification.className = `fixed top-20 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
-            notification.innerHTML = `
+                // Show modal
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeTaskModal() {
+                const modal = document.getElementById('taskModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Handle task form submission
+            document.getElementById('taskForm')?.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const title = document.getElementById('taskTitle').value.trim();
+                const description = document.getElementById('taskDescription').value.trim();
+                const priority = document.getElementById('taskPriority').value;
+
+                if (!title || !selectedDate) return;
+
+                // Create new task
+                const newTask = {
+                    id: Date.now(),
+                    title: title,
+                    description: description,
+                    color: priority
+                };
+
+                // Add to calendar events
+                if (!calendarEvents[selectedDate]) {
+                    calendarEvents[selectedDate] = [];
+                }
+                calendarEvents[selectedDate].push(newTask);
+
+                // Save to localStorage
+                saveCalendarEvents();
+
+                // Refresh calendar
+                renderCalendar();
+
+                // Close modal
+                closeTaskModal();
+
+                // Show success message
+                showNotification('Task added successfully!', 'success');
+            });
+
+            function deleteTask(dateStr, taskId) {
+                if (!confirm('Are you sure you want to delete this task?')) return;
+
+                // Remove task from events
+                if (calendarEvents[dateStr]) {
+                    calendarEvents[dateStr] = calendarEvents[dateStr].filter(task => task.id !== taskId);
+
+                    // Remove date entry if no tasks left
+                    if (calendarEvents[dateStr].length === 0) {
+                        delete calendarEvents[dateStr];
+                    }
+                }
+
+                // Save to localStorage
+                saveCalendarEvents();
+
+                // Refresh calendar
+                renderCalendar();
+
+                // Close modal if open
+                const modal = document.getElementById('taskModal');
+                if (!modal.classList.contains('hidden')) {
+                    closeTaskModal();
+                }
+
+                // Show success message
+                showNotification('Task deleted successfully!', 'success');
+            }
+
+            function showNotification(message, type = 'success') {
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    info: 'bg-blue-500'
+                };
+
+                const notification = document.createElement('div');
+                notification.className = `fixed top-20 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+                notification.innerHTML = `
                 <div class="flex items-center">
                     <i class="fas fa-check-circle mr-2"></i>
                     <span>${message}</span>
                 </div>
             `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
 
-        // Close modal when clicking outside
-        document.getElementById('taskModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeTaskModal();
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
             }
-        });
 
-        // Close modal on Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeTaskModal();
+            // Close modal when clicking outside
+            document.getElementById('taskModal')?.addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeTaskModal();
+                }
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeTaskModal();
+                }
+            });
+
+            // Auto-refresh calendar at midnight
+            function scheduleCalendarRefresh() {
+                const now = new Date();
+                const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                const timeUntilMidnight = tomorrow - now;
+
+                setTimeout(() => {
+                    renderCalendar();
+                    scheduleCalendarRefresh();
+                }, timeUntilMidnight);
             }
-        });
 
-        // Auto-refresh calendar at midnight
-        function scheduleCalendarRefresh() {
-            const now = new Date();
-            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-            const timeUntilMidnight = tomorrow - now;
-            
-            setTimeout(() => {
-                renderCalendar();
-                scheduleCalendarRefresh();
-            }, timeUntilMidnight);
-        }
-        
-        scheduleCalendarRefresh();
-    </script>
+            scheduleCalendarRefresh();
+        </script>
+
+        <!-- Chatbot Functions -->
+        <script src="student_chatbot.js"></script>
     </div><!-- End of bg-shapes-container -->
 </body>
+
 </html>
-
-

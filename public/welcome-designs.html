@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tsharok - Welcome Page Designs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .design-section {
+            min-height: 100vh;
+            scroll-snap-align: start;
+        }
+
+        .scroll-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+        }
+
+        .gradient-bg-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-bg-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .gradient-bg-3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .gradient-bg-4 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .gradient-bg-5 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+
+<body class="scroll-container">
+
+    <!-- Design 1: Modern Gradient Hero -->
+    <section class="design-section gradient-bg-1 flex items-center justify-center relative overflow-hidden">
+        <!-- Floating Shapes -->
+        <div class="absolute top-20 left-10 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl floating"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-white opacity-10 rounded-full blur-3xl floating"
+            style="animation-delay: 1.5s;"></div>
+
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="mb-4">
+                <span
+                    class="inline-block px-6 py-2 bg-white bg-opacity-20 backdrop-blur-lg rounded-full text-white font-semibold text-sm">
+                    🎓 Design 1: Modern Gradient
+                </span>
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black text-white mb-6 leading-tight"
+                style="font-family: 'Poppins', sans-serif;">
+                Welcome to<br>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-pink-200">Tsharok</span>
+            </h1>
+            <p class="text-2xl md:text-3xl text-white text-opacity-90 mb-12 max-w-3xl mx-auto font-light">
+                Where Knowledge Meets Collaboration
+            </p>
+            <p class="text-lg text-white text-opacity-80 mb-12 max-w-2xl mx-auto">
+                Join thousands of students sharing knowledge, collaborating on projects, and achieving academic
+                excellence together.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="register.html"
+                    class="px-10 py-5 bg-white text-purple-600 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-2xl">
+                    Get Started Free
+                </a>
+                <a href="#"
+                    class="px-10 py-5 bg-white bg-opacity-20 backdrop-blur-lg text-white rounded-full font-bold text-lg hover:bg-opacity-30 transition border-2 border-white">
+                    Learn More
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-20 grid grid-cols-3 gap-8 max-w-3xl mx-auto">
+                <div class="text-center">
+                    <div class="text-4xl font-black text-white mb-2">10K+</div>
+                    <div class="text-white text-opacity-80">Students</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-black text-white mb-2">500+</div>
+                    <div class="text-white text-opacity-80">Courses</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-black text-white mb-2">98%</div>
+                    <div class="text-white text-opacity-80">Satisfaction</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white text-opacity-60 animate-bounce">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- Design 2: Minimalist Split Screen -->
+    <section class="design-section bg-gray-50 flex items-center justify-center">
+        <div class="container mx-auto px-6">
+            <div class="mb-4 text-center">
+                <span class="inline-block px-6 py-2 bg-gray-200 rounded-full text-gray-700 font-semibold text-sm">
+                    📐 Design 2: Minimalist Split
+                </span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+                <!-- Left: Text -->
+                <div class="space-y-8">
+                    <h1 class="text-6xl md:text-7xl font-serif font-bold text-gray-900 leading-tight">
+                        Tsharok
+                    </h1>
+                    <h2 class="text-3xl text-gray-600 font-light">
+                        Your Learning Community
+                    </h2>
+                    <p class="text-xl text-gray-500 leading-relaxed">
+                        A platform designed for students who believe in the power of collaboration. Share notes, discuss
+                        ideas, and grow together.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="register.html"
+                            class="px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition">
+                            Join Now
+                        </a>
+                        <a href="#"
+                            class="px-8 py-4 border-2 border-gray-900 text-gray-900 rounded-lg font-semibold hover:bg-gray-900 hover:text-white transition">
+                            Explore
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Illustration -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-12 shadow-2xl">
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-lg">
+                                <div
+                                    class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="h-3 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                    <div class="h-2 bg-gray-100 rounded w-1/2"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-lg">
+                                <div
+                                    class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="h-3 bg-gray-200 rounded w-2/3 mb-2"></div>
+                                    <div class="h-2 bg-gray-100 rounded w-1/3"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-lg">
+                                <div
+                                    class="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="h-3 bg-gray-200 rounded w-4/5 mb-2"></div>
+                                    <div class="h-2 bg-gray-100 rounded w-2/5"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design 3: Bold & Colorful -->
+    <section class="design-section gradient-bg-2 flex items-center justify-center relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="mb-4 text-center">
+                <span
+                    class="inline-block px-6 py-2 bg-white bg-opacity-30 backdrop-blur-lg rounded-full text-white font-semibold text-sm">
+                    🎨 Design 3: Bold & Colorful
+                </span>
+            </div>
+            <div class="text-center mb-16">
+                <h1 class="text-6xl md:text-8xl font-black text-white mb-6" style="font-family: 'Poppins', sans-serif;">
+                    Transform Your<br>Learning Experience
+                </h1>
+                <p class="text-2xl text-white text-opacity-90 max-w-3xl mx-auto">
+                    Collaborate, Share, and Excel Together
+                </p>
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-3xl p-8 shadow-2xl hover:scale-105 transition-transform">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-share-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Share Notes</h3>
+                    <p class="text-gray-600">Upload and share your study materials with classmates instantly.</p>
+                </div>
+
+                <div class="bg-white rounded-3xl p-8 shadow-2xl hover:scale-105 transition-transform">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Collaborate</h3>
+                    <p class="text-gray-600">Work together on projects and assignments in real-time.</p>
+                </div>
+
+                <div class="bg-white rounded-3xl p-8 shadow-2xl hover:scale-105 transition-transform">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Track Progress</h3>
+                    <p class="text-gray-600">Monitor your academic journey and celebrate achievements.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="register.html"
+                    class="inline-block px-12 py-5 bg-white text-pink-600 rounded-full font-bold text-xl hover:scale-105 transition-transform shadow-2xl">
+                    Start Your Journey
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design 4: Elegant Professional -->
+    <section
+        class="design-section bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative">
+        <div
+            class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40">
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="mb-4 text-center">
+                <span
+                    class="inline-block px-6 py-2 bg-amber-500 bg-opacity-20 backdrop-blur-lg rounded-full text-amber-300 font-semibold text-sm border border-amber-500">
+                    👔 Design 4: Elegant Professional
+                </span>
+            </div>
+
+            <div class="max-w-4xl mx-auto text-center mb-16">
+                <h1 class="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                    <span class="text-amber-400">Tsharok</span><br>
+                    Excellence in Collaborative Learning
+                </h1>
+                <p class="text-xl text-gray-300 mb-8">
+                    A premium platform trusted by thousands of students for academic success
+                </p>
+
+                <!-- Trust Badges -->
+                <div class="flex flex-wrap justify-center gap-6 mb-12">
+                    <div
+                        class="flex items-center gap-2 bg-white bg-opacity-10 backdrop-blur-lg px-6 py-3 rounded-full border border-white border-opacity-20">
+                        <i class="fas fa-shield-alt text-green-400"></i>
+                        <span class="text-white font-semibold">Secure</span>
+                    </div>
+                    <div
+                        class="flex items-center gap-2 bg-white bg-opacity-10 backdrop-blur-lg px-6 py-3 rounded-full border border-white border-opacity-20">
+                        <i class="fas fa-check-circle text-blue-400"></i>
+                        <span class="text-white font-semibold">Verified</span>
+                    </div>
+                    <div
+                        class="flex items-center gap-2 bg-white bg-opacity-10 backdrop-blur-lg px-6 py-3 rounded-full border border-white border-opacity-20">
+                        <i class="fas fa-users text-purple-400"></i>
+                        <span class="text-white font-semibold">10,000+ Students</span>
+                    </div>
+                </div>
+
+                <a href="register.html"
+                    class="inline-block px-12 py-5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-lg hover:from-amber-600 hover:to-amber-700 transition shadow-2xl">
+                    Join the Elite Community
+                </a>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                <div
+                    class="bg-white bg-opacity-5 backdrop-blur-lg p-6 rounded-2xl border border-white border-opacity-10">
+                    <i class="fas fa-graduation-cap text-amber-400 text-3xl mb-4"></i>
+                    <h3 class="text-white font-bold mb-2">Academic Excellence</h3>
+                    <p class="text-gray-400 text-sm">Top-tier learning resources</p>
+                </div>
+                <div
+                    class="bg-white bg-opacity-5 backdrop-blur-lg p-6 rounded-2xl border border-white border-opacity-10">
+                    <i class="fas fa-lock text-amber-400 text-3xl mb-4"></i>
+                    <h3 class="text-white font-bold mb-2">Secure Platform</h3>
+                    <p class="text-gray-400 text-sm">Your data is protected</p>
+                </div>
+                <div
+                    class="bg-white bg-opacity-5 backdrop-blur-lg p-6 rounded-2xl border border-white border-opacity-10">
+                    <i class="fas fa-headset text-amber-400 text-3xl mb-4"></i>
+                    <h3 class="text-white font-bold mb-2">24/7 Support</h3>
+                    <p class="text-gray-400 text-sm">Always here to help</p>
+                </div>
+                <div
+                    class="bg-white bg-opacity-5 backdrop-blur-lg p-6 rounded-2xl border border-white border-opacity-10">
+                    <i class="fas fa-trophy text-amber-400 text-3xl mb-4"></i>
+                    <h3 class="text-white font-bold mb-2">Proven Results</h3>
+                    <p class="text-gray-400 text-sm">98% success rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design 5: Interactive Modern -->
+    <section class="design-section gradient-bg-3 flex items-center justify-center relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="mb-4 text-center">
+                <span
+                    class="inline-block px-6 py-2 bg-white bg-opacity-30 backdrop-blur-lg rounded-full text-white font-semibold text-sm">
+                    ⚡ Design 5: Interactive Modern
+                </span>
+            </div>
+
+            <div class="text-center mb-16">
+                <h1 class="text-6xl md:text-8xl font-black text-white mb-6" style="font-family: 'Poppins', sans-serif;">
+                    Connect. Learn.<br>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-white">Grow
+                        Together</span>
+                </h1>
+                <p class="text-2xl text-white text-opacity-90 max-w-3xl mx-auto">
+                    The future of collaborative education is here
+                </p>
+            </div>
+
+            <!-- Feature Showcase -->
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
+                <div class="group">
+                    <div
+                        class="bg-white bg-opacity-10 backdrop-blur-xl p-8 rounded-3xl border-2 border-white border-opacity-20 hover:bg-opacity-20 transition-all hover:scale-105">
+                        <div
+                            class="w-20 h-20 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-bolt text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Real-time Collaboration</h3>
+                        <p class="text-white text-opacity-80">Work together seamlessly with instant sync and live
+                            updates.</p>
+                    </div>
+                </div>
+
+                <div class="group">
+                    <div
+                        class="bg-white bg-opacity-10 backdrop-blur-xl p-8 rounded-3xl border-2 border-white border-opacity-20 hover:bg-opacity-20 transition-all hover:scale-105">
+                        <div
+                            class="w-20 h-20 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-brain text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Smart Course Management</h3>
+                        <p class="text-white text-opacity-80">Organize your studies with intelligent tools and insights.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="group">
+                    <div
+                        class="bg-white bg-opacity-10 backdrop-blur-xl p-8 rounded-3xl border-2 border-white border-opacity-20 hover:bg-opacity-20 transition-all hover:scale-105">
+                        <div
+                            class="w-20 h-20 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-robot text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">AI-Powered Assistant</h3>
+                        <p class="text-white text-opacity-80">Get instant help and personalized recommendations 24/7.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="register.html"
+                    class="inline-block px-12 py-5 bg-white text-cyan-600 rounded-full font-bold text-xl hover:scale-105 transition-transform shadow-2xl">
+                    Experience the Future
+                </a>
+                <p class="text-white text-opacity-70 mt-6">No credit card required • Free forever</p>
+            </div>
+        </div>
+
+        <!-- Animated Circles -->
+        <div class="absolute top-1/4 right-10 w-32 h-32 bg-white opacity-10 rounded-full pulse-slow"></div>
+        <div class="absolute bottom-1/4 left-10 w-48 h-48 bg-white opacity-10 rounded-full pulse-slow"
+            style="animation-delay: 2s;"></div>
+    </section>
+
+    <!-- Navigation Dots -->
+    <div class="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 space-y-4">
+        <div class="w-3 h-3 bg-white rounded-full opacity-50 hover:opacity-100 cursor-pointer transition"></div>
+        <div class="w-3 h-3 bg-white rounded-full opacity-50 hover:opacity-100 cursor-pointer transition"></div>
+        <div class="w-3 h-3 bg-white rounded-full opacity-50 hover:opacity-100 cursor-pointer transition"></div>
+        <div class="w-3 h-3 bg-white rounded-full opacity-50 hover:opacity-100 cursor-pointer transition"></div>
+        <div class="w-3 h-3 bg-white rounded-full opacity-50 hover:opacity-100 cursor-pointer transition"></div>
+    </div>
+
+</body>
+
+</html>

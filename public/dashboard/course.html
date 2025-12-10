@@ -183,6 +183,7 @@
             }
         }
     </style>
+<script src="student_chatbot.js"></script>
 </head>
 
 <body class="min-h-screen">
@@ -199,7 +200,7 @@
                     <!-- Left Side - Logo -->
                     <div class="flex items-center">
                         <a href="student.html" class="flex items-center">
-                            <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-10">
+                            <img src="../assets/images/Logo.png" alt="Tsharok Logo" class="h-16">
                         </a>
                     </div>
 
@@ -660,7 +661,7 @@
                 let allFileRatings = [];
 
                 // Get ratings from actual uploaded files
-                sortedFiles.forEach((file) => {
+                files.forEach((file, index) => {
                     const rating = parseFloat(calculateFileRating(currentCourseId, index));
                     if (rating > 0) {
                         allFileRatings.push(rating);
@@ -730,6 +731,7 @@
             // Load files for this course
             function loadFiles() {
                 const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                console.log('Loading files for course', currentCourseId, ':', files);
                 const sortedFiles = sortFiles(files, currentSortOption);
 
                 const docsGrid = document.getElementById('documentsGrid');
@@ -932,10 +934,11 @@
             }
 
             // Submit file
-            function submitFile(e) {
+            async function submitFile(e) {
                 e.preventDefault();
 
                 const name = document.getElementById('fileName').value;
+                const description = document.getElementById('fileDescription').value.trim();
                 const fileInput = document.getElementById('fileInput');
 
                 if (!name.trim()) {
@@ -955,88 +958,87 @@
                 }
 
                 const file = fileInput.files[0];
-                const reader = new FileReader();
+                const extension = file.name.split('.').pop().toLowerCase();
+
+                // Get user data
+                const userData = (typeof getCurrentUser === 'function' ? getCurrentUser() : null) ||
+                    JSON.parse(sessionStorage.getItem('user') || '{}') ||
+                    JSON.parse(localStorage.getItem('user') || '{}');
 
                 // Show loading state
-                document.getElementById('uploadBtn').textContent = 'Uploading...';
-                document.getElementById('uploadBtn').disabled = true;
+                const uploadBtn = document.getElementById('uploadBtn');
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading to R2...';
+                uploadBtn.disabled = true;
 
-                reader.onload = function (event) {
-                    const fileData = event.target.result;
-                    const extension = file.name.split('.').pop().toLowerCase();
-                    const description = document.getElementById('fileDescription').value.trim();
-                    // Get user data from sessionStorage (getCurrentUser) or localStorage as fallback
-                    const userData = (typeof getCurrentUser === 'function' ? getCurrentUser() : null) ||
-                        JSON.parse(sessionStorage.getItem('user') || '{}') ||
-                        JSON.parse(localStorage.getItem('user') || '{}');
+                try {
+                    // Create FormData for upload
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_type', 'content');
+                    formData.append('course_id', currentCourseId);
+                    formData.append('file_name', name);
+                    formData.append('description', description);
 
-                    let files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
-                    files.push({
-                        name: name,
-                        description: description || '',
-                        type: currentFileType,
-                        rating: 4.5,
-                        date: new Date().toISOString(),
-                        originalName: file.name,
-                        fileData: fileData,
-                        mimeType: file.type,
-                        extension: extension,
-                        size: file.size,
-                        uploadedBy: userData.fullName || userData.name || userData.username || 'Student',
-                        uploaderId: userData.id || null
+                    // Upload to R2 via simple PHP API (minimal version for testing)
+                    const response = await fetch('/api/simple-upload.php', {
+                        method: 'POST',
+                        body: formData
                     });
 
-                    try {
-                        localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
-                        // Create notification for this upload
-                        createNotification(name, currentFileType, extension);
-                        closeModal();
-                        loadFiles();
-                        showToast(currentFileType === 'video' ? 'Video added successfully!' : 'Document added successfully!');
-                    } catch (err) {
-                        // If file is too large for localStorage, save without file data
-                        console.log('File too large for localStorage, saving metadata only');
+                    const result = await response.json();
 
-                        // Remove the last added file and re-add without fileData
-                        files.pop();
+                    if (result.success) {
+                        // File uploaded to R2 successfully!
+                        // Now save metadata to localStorage
+                        let files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+
                         files.push({
                             name: name,
                             description: description || '',
                             type: currentFileType,
-                            rating: 4.5,
+                            rating: 0,
                             date: new Date().toISOString(),
                             originalName: file.name,
-                            fileData: null, // No file data - too large
+                            r2Url: result.files.original.url,  // R2 URL
+                            r2Key: result.files.original.r2_key,  // R2 key
                             mimeType: file.type,
                             extension: extension,
                             size: file.size,
                             uploadedBy: userData.fullName || userData.name || userData.username || 'Student',
                             uploaderId: userData.id || null,
-                            tooLarge: true // Flag to indicate file was too large
+                            storageType: 'r2'  // Mark as R2 storage
                         });
 
-                        try {
-                            localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
-                            // Create notification for this upload
-                            createNotification(name, currentFileType, extension);
-                            closeModal();
+                        // Save metadata only (not the file data!)
+                        localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
+                        console.log('File saved to localStorage:', files[files.length - 1]);
+
+                        // Create notification
+                        createNotification(name, currentFileType, extension);
+
+                        // Close modal and reload
+                        closeModal();
+
+                        // Force reload files
+                        setTimeout(() => {
                             loadFiles();
-                            showToast('File added! Note: File is too large for preview (max ~5MB). Content saved as reference only.', 'warning');
-                        } catch (err2) {
-                            alert('Unable to save file. Storage may be full.');
-                            document.getElementById('uploadBtn').textContent = 'Upload';
-                            document.getElementById('uploadBtn').disabled = false;
-                        }
+                            console.log('Files reloaded after upload');
+                        }, 100);
+                        showToast(
+                            currentFileType === 'video' ?
+                                '✅ Video uploaded to cloud storage!' :
+                                '✅ Document uploaded to cloud storage!'
+                        );
+                    } else {
+                        throw new Error(result.message || 'Upload failed');
                     }
-                };
 
-                reader.onerror = function () {
-                    alert('Error reading file. Please try again.');
-                    document.getElementById('uploadBtn').textContent = 'Upload';
-                    document.getElementById('uploadBtn').disabled = false;
-                };
-
-                reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Upload failed: ' + error.message + '\n\nPlease make sure:\n1. Local server is running\n2. R2 is configured correctly');
+                    uploadBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>Upload';
+                    uploadBtn.disabled = false;
+                }
             }
 
             // Create notification for new file upload
@@ -1163,6 +1165,80 @@
             });
         </script>
     </div><!-- End of bg-shapes-container -->
+<!-- Mobile Floating Chatbot Button -->
+<div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50">
+    <button onclick="toggleMobileChatbot()"
+        class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
+        <i class="fas fa-robot text-2xl"></i>
+    </button>
+</div>
+
+<!-- Mobile Chatbot Window (expandable) -->
+<div id="mobileChatbotWindow" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50" onclick="closeMobileChatbot()">
+    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
+        onclick="event.stopPropagation()">
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-3xl flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                    <i class="fas fa-robot text-xl text-blue-600"></i>
+                </div>
+                <div class="text-white">
+                    <div class="font-bold">Tsharok Assistant</div>
+                    <div class="text-xs opacity-90">Always here to help</div>
+                </div>
+            </div>
+            <button onclick="closeMobileChatbot()" class="text-white hover:bg-white/20 rounded-full p-2 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="mobileChatbotMessages">
+            <div class="flex gap-2 mb-3">
+                <div
+                    class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
+                        <p class="text-gray-800 text-sm">
+                            👋 Hello! I'm your Tsharok Assistant. How can I help you today?
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button onclick="sendQuickReplyMobile('How do I add a course?')"
+                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                            Add Course
+                        </button>
+                        <button onclick="sendQuickReplyMobile('Show my schedule')"
+                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                            My Schedule
+                        </button>
+                        <button onclick="sendQuickReplyMobile('Help with assignments')"
+                            class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                            Assignments
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="p-4 bg-white border-t border-gray-200">
+            <div class="flex gap-2 items-center">
+                <input type="text"
+                    class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
+                    id="mobileChatbotInput" placeholder="Type your message..."
+                    onkeypress="handleChatKeyPressMobile(event)">
+                <button onclick="sendMessageMobile()"
+                    class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

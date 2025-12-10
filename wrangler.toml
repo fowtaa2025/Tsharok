@@ -1,0 +1,19 @@
+name = "tsharok"
+compatibility_date = "2024-12-10"
+pages_build_output_dir = "public"
+
+# R2 Bucket (already exists!)
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "btsharok"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "tsharok-db"
+database_id = "b14446c7-0ff8-4b74-8569-432fa78e9b4b"
+
+# Environment Variables
+[vars]
+R2_PUBLIC_URL = "https://pub-cd42bce9da7242b69d703b8bf1e9e4b6.r2.dev"
+JWT_SECRET = "CHANGE_THIS_TO_RANDOM_STRING_BEFORE_PRODUCTION"
