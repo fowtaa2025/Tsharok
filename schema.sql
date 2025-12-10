@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS content (
   file_key TEXT,
   upload_date TEXT NOT NULL DEFAULT (datetime('now')),
   uploader_id INTEGER NOT NULL,
-  course_id INTEGER NOT NULL,
+  course_id INTEGER,  -- Made nullable to support localStorage course management
   is_approved INTEGER DEFAULT 0,
   description TEXT,
   file_size INTEGER,
