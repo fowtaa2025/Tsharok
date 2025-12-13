@@ -798,12 +798,13 @@
                     let html = '';
                     comments.forEach((comment, index) => {
                         html += getCommentHTML({
+                            id: comment.id,
                             author: comment.user_name,
                             text: comment.text,
                             date: formatDate(comment.created_at),
                             rating: 0,
-                            likes: 0,
-                            replies: []
+                            likes: comment.likes || 0,
+                            replies: comment.replies || []
                         }, index);
                     });
                     container.innerHTML = html;
