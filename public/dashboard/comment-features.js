@@ -1,47 +1,51 @@
 // Comment Features Integration
 // Add this script to file.html to enable database-backed likes and replies
 
-// Store original functions
-const originalToggleLike = window.toggleLike;
-const originalAddReply = window.addReply;
-const originalLoadComments = window.loadComments;
-const originalGetCommentHTML = window.getCommentHTML;
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Comment features: Initializing...');
 
-// Override toggleLike to use API
-window.toggleLike = function (commentIndex) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        showToast('Please login to like comments', 'error');
-        return;
-    }
+    // Override toggleLike to use API
+    window.toggleLike = function(commentIndex) {
+        console.log('toggleLike called for index:', commentIndex);
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('Please login to like comments', 'error');
+            return;
+        }
 
-    // Get comment ID from the DOM
-    const commentElement = document.querySelector(`[data-comment-index="${commentIndex}"]`);
-    if (!commentElement) {
-        console.error('Comment element not found');
-        return;
-    }
+        // Get comment ID from the DOM
+        const commentElement = document.querySelector(`[data-comment-index="${commentIndex}"]`);
+        if (!commentElement) {
+            console.error('Comment element not found for index:', commentIndex);
+            return;
+        }
 
-    const commentId = commentElement.dataset.commentId;
-    if (!commentId) {
-        console.error('Comment ID not found');
-        return;
-    }
+        const commentId = commentElement.dataset.commentId;
+        console.log('Comment ID:', commentId);
+        
+        if (!commentId) {
+            console.error('Comment ID not found in element');
+            return;
+        }
 
-    // Call API to toggle like
-    fetch('/api/comment-likes', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ commentId: parseInt(commentId) })
-    })
+        // Call API to toggle like
+        fetch('/api/comment-likes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ commentId: parseInt(commentId) })
+        })
         .then(response => response.json())
         .then(result => {
+            console.log('Like toggle result:', result);
             if (result.success) {
                 // Reload comments to show updated likes
                 loadComments();
+                showToast(result.liked ? 'Liked!' : 'Unliked!', 'success');
             } else {
                 throw new Error(result.error || 'Failed to toggle like');
             }
@@ -50,13 +54,6 @@ window.toggleLike = function (commentIndex) {
             console.error('Error toggling like:', error);
             showToast(error.message || 'Failed to toggle like', 'error');
         });
-};
-
-// Override addReply to use API
-window.addReply = function (commentIndex) {
-    const replyInput = document.getElementById(`replyInput-${commentIndex}`);
-    const text = replyInput.value.trim();
-
     if (!text) {
         showToast('Please enter a reply', 'error');
         return;
