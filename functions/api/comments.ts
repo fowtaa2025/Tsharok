@@ -34,6 +34,16 @@ export async function onRequestGet(context: any) {
             return jsonError('contentId is required', 400);
         }
 
+        // Check if user is authenticated (optional for GET)
+        const token = request.headers.get('Authorization')?.replace('Bearer ', '');
+        let currentUserId = null;
+        if (token) {
+            const user = await verifyToken(token, env.JWT_SECRET);
+            if (user) {
+                currentUserId = user.userId;
+            }
+        }
+
         // Get comments with user info
         const comments = await env.DB.prepare(`
             SELECT 
@@ -49,13 +59,22 @@ export async function onRequestGet(context: any) {
             ORDER BY c.created_at DESC
         `).bind(contentId).all();
 
-        // For each comment, get likes count and replies
+        // For each comment, get likes count, likedByMe, and replies
         const commentsWithDetails = await Promise.all(
             (comments.results || []).map(async (comment: any) => {
                 // Get likes count
                 const likesResult = await env.DB.prepare(`
                     SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?
                 `).bind(comment.id).first();
+
+                // Check if current user liked this comment
+                let likedByMe = false;
+                if (currentUserId) {
+                    const likeCheck = await env.DB.prepare(`
+                        SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?
+                    `).bind(comment.id, currentUserId).first();
+                    likedByMe = !!likeCheck;
+                }
 
                 // Get replies
                 const repliesResult = await env.DB.prepare(`
@@ -73,6 +92,7 @@ export async function onRequestGet(context: any) {
                 return {
                     ...comment,
                     likes: likesResult?.count || 0,
+                    likedByMe: likedByMe,
                     replies: repliesResult.results || []
                 };
             })
