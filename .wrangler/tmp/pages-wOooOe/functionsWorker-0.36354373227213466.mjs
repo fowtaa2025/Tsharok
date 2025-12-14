@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-sntQ32/strip-cf-connecting-ip-header.js
+// ../.wrangler/tmp/bundle-t3ZVui/strip-cf-connecting-ip-header.js
 function stripCfConnectingIPHeader(input, init) {
   const request = new Request(input, init);
   request.headers.delete("CF-Connecting-IP");
@@ -16,1278 +16,6 @@ globalThis.fetch = new Proxy(globalThis.fetch, {
   }
 });
 
-// ../node_modules/jose/dist/browser/runtime/webcrypto.js
-var webcrypto_default = crypto;
-var isCryptoKey = /* @__PURE__ */ __name((key) => key instanceof CryptoKey, "isCryptoKey");
-
-// ../node_modules/jose/dist/browser/lib/buffer_utils.js
-var encoder = new TextEncoder();
-var decoder = new TextDecoder();
-var MAX_INT32 = 2 ** 32;
-function concat(...buffers) {
-  const size = buffers.reduce((acc, { length }) => acc + length, 0);
-  const buf = new Uint8Array(size);
-  let i = 0;
-  for (const buffer of buffers) {
-    buf.set(buffer, i);
-    i += buffer.length;
-  }
-  return buf;
-}
-__name(concat, "concat");
-
-// ../node_modules/jose/dist/browser/runtime/base64url.js
-var encodeBase64 = /* @__PURE__ */ __name((input) => {
-  let unencoded = input;
-  if (typeof unencoded === "string") {
-    unencoded = encoder.encode(unencoded);
-  }
-  const CHUNK_SIZE = 32768;
-  const arr = [];
-  for (let i = 0; i < unencoded.length; i += CHUNK_SIZE) {
-    arr.push(String.fromCharCode.apply(null, unencoded.subarray(i, i + CHUNK_SIZE)));
-  }
-  return btoa(arr.join(""));
-}, "encodeBase64");
-var encode = /* @__PURE__ */ __name((input) => {
-  return encodeBase64(input).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-}, "encode");
-var decodeBase64 = /* @__PURE__ */ __name((encoded) => {
-  const binary = atob(encoded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-}, "decodeBase64");
-var decode = /* @__PURE__ */ __name((input) => {
-  let encoded = input;
-  if (encoded instanceof Uint8Array) {
-    encoded = decoder.decode(encoded);
-  }
-  encoded = encoded.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
-  try {
-    return decodeBase64(encoded);
-  } catch {
-    throw new TypeError("The input to be decoded is not correctly encoded.");
-  }
-}, "decode");
-
-// ../node_modules/jose/dist/browser/util/errors.js
-var JOSEError = class extends Error {
-  constructor(message2, options) {
-    super(message2, options);
-    this.code = "ERR_JOSE_GENERIC";
-    this.name = this.constructor.name;
-    Error.captureStackTrace?.(this, this.constructor);
-  }
-};
-__name(JOSEError, "JOSEError");
-JOSEError.code = "ERR_JOSE_GENERIC";
-var JWTClaimValidationFailed = class extends JOSEError {
-  constructor(message2, payload, claim = "unspecified", reason = "unspecified") {
-    super(message2, { cause: { claim, reason, payload } });
-    this.code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-    this.claim = claim;
-    this.reason = reason;
-    this.payload = payload;
-  }
-};
-__name(JWTClaimValidationFailed, "JWTClaimValidationFailed");
-JWTClaimValidationFailed.code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-var JWTExpired = class extends JOSEError {
-  constructor(message2, payload, claim = "unspecified", reason = "unspecified") {
-    super(message2, { cause: { claim, reason, payload } });
-    this.code = "ERR_JWT_EXPIRED";
-    this.claim = claim;
-    this.reason = reason;
-    this.payload = payload;
-  }
-};
-__name(JWTExpired, "JWTExpired");
-JWTExpired.code = "ERR_JWT_EXPIRED";
-var JOSEAlgNotAllowed = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JOSE_ALG_NOT_ALLOWED";
-  }
-};
-__name(JOSEAlgNotAllowed, "JOSEAlgNotAllowed");
-JOSEAlgNotAllowed.code = "ERR_JOSE_ALG_NOT_ALLOWED";
-var JOSENotSupported = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JOSE_NOT_SUPPORTED";
-  }
-};
-__name(JOSENotSupported, "JOSENotSupported");
-JOSENotSupported.code = "ERR_JOSE_NOT_SUPPORTED";
-var JWEDecryptionFailed = class extends JOSEError {
-  constructor(message2 = "decryption operation failed", options) {
-    super(message2, options);
-    this.code = "ERR_JWE_DECRYPTION_FAILED";
-  }
-};
-__name(JWEDecryptionFailed, "JWEDecryptionFailed");
-JWEDecryptionFailed.code = "ERR_JWE_DECRYPTION_FAILED";
-var JWEInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWE_INVALID";
-  }
-};
-__name(JWEInvalid, "JWEInvalid");
-JWEInvalid.code = "ERR_JWE_INVALID";
-var JWSInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWS_INVALID";
-  }
-};
-__name(JWSInvalid, "JWSInvalid");
-JWSInvalid.code = "ERR_JWS_INVALID";
-var JWTInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWT_INVALID";
-  }
-};
-__name(JWTInvalid, "JWTInvalid");
-JWTInvalid.code = "ERR_JWT_INVALID";
-var JWKInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWK_INVALID";
-  }
-};
-__name(JWKInvalid, "JWKInvalid");
-JWKInvalid.code = "ERR_JWK_INVALID";
-var JWKSInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWKS_INVALID";
-  }
-};
-__name(JWKSInvalid, "JWKSInvalid");
-JWKSInvalid.code = "ERR_JWKS_INVALID";
-var JWKSNoMatchingKey = class extends JOSEError {
-  constructor(message2 = "no applicable key found in the JSON Web Key Set", options) {
-    super(message2, options);
-    this.code = "ERR_JWKS_NO_MATCHING_KEY";
-  }
-};
-__name(JWKSNoMatchingKey, "JWKSNoMatchingKey");
-JWKSNoMatchingKey.code = "ERR_JWKS_NO_MATCHING_KEY";
-var JWKSMultipleMatchingKeys = class extends JOSEError {
-  constructor(message2 = "multiple matching keys found in the JSON Web Key Set", options) {
-    super(message2, options);
-    this.code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-  }
-};
-__name(JWKSMultipleMatchingKeys, "JWKSMultipleMatchingKeys");
-JWKSMultipleMatchingKeys.code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-var JWKSTimeout = class extends JOSEError {
-  constructor(message2 = "request timed out", options) {
-    super(message2, options);
-    this.code = "ERR_JWKS_TIMEOUT";
-  }
-};
-__name(JWKSTimeout, "JWKSTimeout");
-JWKSTimeout.code = "ERR_JWKS_TIMEOUT";
-var JWSSignatureVerificationFailed = class extends JOSEError {
-  constructor(message2 = "signature verification failed", options) {
-    super(message2, options);
-    this.code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-  }
-};
-__name(JWSSignatureVerificationFailed, "JWSSignatureVerificationFailed");
-JWSSignatureVerificationFailed.code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-
-// ../node_modules/jose/dist/browser/lib/crypto_key.js
-function unusable(name, prop = "algorithm.name") {
-  return new TypeError(`CryptoKey does not support this operation, its ${prop} must be ${name}`);
-}
-__name(unusable, "unusable");
-function isAlgorithm(algorithm, name) {
-  return algorithm.name === name;
-}
-__name(isAlgorithm, "isAlgorithm");
-function getHashLength(hash) {
-  return parseInt(hash.name.slice(4), 10);
-}
-__name(getHashLength, "getHashLength");
-function getNamedCurve(alg) {
-  switch (alg) {
-    case "ES256":
-      return "P-256";
-    case "ES384":
-      return "P-384";
-    case "ES512":
-      return "P-521";
-    default:
-      throw new Error("unreachable");
-  }
-}
-__name(getNamedCurve, "getNamedCurve");
-function checkUsage(key, usages) {
-  if (usages.length && !usages.some((expected) => key.usages.includes(expected))) {
-    let msg = "CryptoKey does not support this operation, its usages must include ";
-    if (usages.length > 2) {
-      const last = usages.pop();
-      msg += `one of ${usages.join(", ")}, or ${last}.`;
-    } else if (usages.length === 2) {
-      msg += `one of ${usages[0]} or ${usages[1]}.`;
-    } else {
-      msg += `${usages[0]}.`;
-    }
-    throw new TypeError(msg);
-  }
-}
-__name(checkUsage, "checkUsage");
-function checkSigCryptoKey(key, alg, ...usages) {
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512": {
-      if (!isAlgorithm(key.algorithm, "HMAC"))
-        throw unusable("HMAC");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected)
-        throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "RS256":
-    case "RS384":
-    case "RS512": {
-      if (!isAlgorithm(key.algorithm, "RSASSA-PKCS1-v1_5"))
-        throw unusable("RSASSA-PKCS1-v1_5");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected)
-        throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "PS256":
-    case "PS384":
-    case "PS512": {
-      if (!isAlgorithm(key.algorithm, "RSA-PSS"))
-        throw unusable("RSA-PSS");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected)
-        throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "EdDSA": {
-      if (key.algorithm.name !== "Ed25519" && key.algorithm.name !== "Ed448") {
-        throw unusable("Ed25519 or Ed448");
-      }
-      break;
-    }
-    case "Ed25519": {
-      if (!isAlgorithm(key.algorithm, "Ed25519"))
-        throw unusable("Ed25519");
-      break;
-    }
-    case "ES256":
-    case "ES384":
-    case "ES512": {
-      if (!isAlgorithm(key.algorithm, "ECDSA"))
-        throw unusable("ECDSA");
-      const expected = getNamedCurve(alg);
-      const actual = key.algorithm.namedCurve;
-      if (actual !== expected)
-        throw unusable(expected, "algorithm.namedCurve");
-      break;
-    }
-    default:
-      throw new TypeError("CryptoKey does not support this operation");
-  }
-  checkUsage(key, usages);
-}
-__name(checkSigCryptoKey, "checkSigCryptoKey");
-
-// ../node_modules/jose/dist/browser/lib/invalid_key_input.js
-function message(msg, actual, ...types2) {
-  types2 = types2.filter(Boolean);
-  if (types2.length > 2) {
-    const last = types2.pop();
-    msg += `one of type ${types2.join(", ")}, or ${last}.`;
-  } else if (types2.length === 2) {
-    msg += `one of type ${types2[0]} or ${types2[1]}.`;
-  } else {
-    msg += `of type ${types2[0]}.`;
-  }
-  if (actual == null) {
-    msg += ` Received ${actual}`;
-  } else if (typeof actual === "function" && actual.name) {
-    msg += ` Received function ${actual.name}`;
-  } else if (typeof actual === "object" && actual != null) {
-    if (actual.constructor?.name) {
-      msg += ` Received an instance of ${actual.constructor.name}`;
-    }
-  }
-  return msg;
-}
-__name(message, "message");
-var invalid_key_input_default = /* @__PURE__ */ __name((actual, ...types2) => {
-  return message("Key must be ", actual, ...types2);
-}, "default");
-function withAlg(alg, actual, ...types2) {
-  return message(`Key for the ${alg} algorithm must be `, actual, ...types2);
-}
-__name(withAlg, "withAlg");
-
-// ../node_modules/jose/dist/browser/runtime/is_key_like.js
-var is_key_like_default = /* @__PURE__ */ __name((key) => {
-  if (isCryptoKey(key)) {
-    return true;
-  }
-  return key?.[Symbol.toStringTag] === "KeyObject";
-}, "default");
-var types = ["CryptoKey"];
-
-// ../node_modules/jose/dist/browser/lib/is_disjoint.js
-var isDisjoint = /* @__PURE__ */ __name((...headers) => {
-  const sources = headers.filter(Boolean);
-  if (sources.length === 0 || sources.length === 1) {
-    return true;
-  }
-  let acc;
-  for (const header of sources) {
-    const parameters = Object.keys(header);
-    if (!acc || acc.size === 0) {
-      acc = new Set(parameters);
-      continue;
-    }
-    for (const parameter of parameters) {
-      if (acc.has(parameter)) {
-        return false;
-      }
-      acc.add(parameter);
-    }
-  }
-  return true;
-}, "isDisjoint");
-var is_disjoint_default = isDisjoint;
-
-// ../node_modules/jose/dist/browser/lib/is_object.js
-function isObjectLike(value) {
-  return typeof value === "object" && value !== null;
-}
-__name(isObjectLike, "isObjectLike");
-function isObject(input) {
-  if (!isObjectLike(input) || Object.prototype.toString.call(input) !== "[object Object]") {
-    return false;
-  }
-  if (Object.getPrototypeOf(input) === null) {
-    return true;
-  }
-  let proto = input;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return Object.getPrototypeOf(input) === proto;
-}
-__name(isObject, "isObject");
-
-// ../node_modules/jose/dist/browser/runtime/check_key_length.js
-var check_key_length_default = /* @__PURE__ */ __name((alg, key) => {
-  if (alg.startsWith("RS") || alg.startsWith("PS")) {
-    const { modulusLength } = key.algorithm;
-    if (typeof modulusLength !== "number" || modulusLength < 2048) {
-      throw new TypeError(`${alg} requires key modulusLength to be 2048 bits or larger`);
-    }
-  }
-}, "default");
-
-// ../node_modules/jose/dist/browser/lib/is_jwk.js
-function isJWK(key) {
-  return isObject(key) && typeof key.kty === "string";
-}
-__name(isJWK, "isJWK");
-function isPrivateJWK(key) {
-  return key.kty !== "oct" && typeof key.d === "string";
-}
-__name(isPrivateJWK, "isPrivateJWK");
-function isPublicJWK(key) {
-  return key.kty !== "oct" && typeof key.d === "undefined";
-}
-__name(isPublicJWK, "isPublicJWK");
-function isSecretJWK(key) {
-  return isJWK(key) && key.kty === "oct" && typeof key.k === "string";
-}
-__name(isSecretJWK, "isSecretJWK");
-
-// ../node_modules/jose/dist/browser/runtime/jwk_to_key.js
-function subtleMapping(jwk) {
-  let algorithm;
-  let keyUsages;
-  switch (jwk.kty) {
-    case "RSA": {
-      switch (jwk.alg) {
-        case "PS256":
-        case "PS384":
-        case "PS512":
-          algorithm = { name: "RSA-PSS", hash: `SHA-${jwk.alg.slice(-3)}` };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "RS256":
-        case "RS384":
-        case "RS512":
-          algorithm = { name: "RSASSA-PKCS1-v1_5", hash: `SHA-${jwk.alg.slice(-3)}` };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "RSA-OAEP":
-        case "RSA-OAEP-256":
-        case "RSA-OAEP-384":
-        case "RSA-OAEP-512":
-          algorithm = {
-            name: "RSA-OAEP",
-            hash: `SHA-${parseInt(jwk.alg.slice(-3), 10) || 1}`
-          };
-          keyUsages = jwk.d ? ["decrypt", "unwrapKey"] : ["encrypt", "wrapKey"];
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-      }
-      break;
-    }
-    case "EC": {
-      switch (jwk.alg) {
-        case "ES256":
-          algorithm = { name: "ECDSA", namedCurve: "P-256" };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ES384":
-          algorithm = { name: "ECDSA", namedCurve: "P-384" };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ES512":
-          algorithm = { name: "ECDSA", namedCurve: "P-521" };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW":
-          algorithm = { name: "ECDH", namedCurve: jwk.crv };
-          keyUsages = jwk.d ? ["deriveBits"] : [];
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-      }
-      break;
-    }
-    case "OKP": {
-      switch (jwk.alg) {
-        case "Ed25519":
-          algorithm = { name: "Ed25519" };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "EdDSA":
-          algorithm = { name: jwk.crv };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW":
-          algorithm = { name: jwk.crv };
-          keyUsages = jwk.d ? ["deriveBits"] : [];
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-      }
-      break;
-    }
-    default:
-      throw new JOSENotSupported('Invalid or unsupported JWK "kty" (Key Type) Parameter value');
-  }
-  return { algorithm, keyUsages };
-}
-__name(subtleMapping, "subtleMapping");
-var parse = /* @__PURE__ */ __name(async (jwk) => {
-  if (!jwk.alg) {
-    throw new TypeError('"alg" argument is required when "jwk.alg" is not present');
-  }
-  const { algorithm, keyUsages } = subtleMapping(jwk);
-  const rest = [
-    algorithm,
-    jwk.ext ?? false,
-    jwk.key_ops ?? keyUsages
-  ];
-  const keyData = { ...jwk };
-  delete keyData.alg;
-  delete keyData.use;
-  return webcrypto_default.subtle.importKey("jwk", keyData, ...rest);
-}, "parse");
-var jwk_to_key_default = parse;
-
-// ../node_modules/jose/dist/browser/runtime/normalize_key.js
-var exportKeyValue = /* @__PURE__ */ __name((k) => decode(k), "exportKeyValue");
-var privCache;
-var pubCache;
-var isKeyObject = /* @__PURE__ */ __name((key) => {
-  return key?.[Symbol.toStringTag] === "KeyObject";
-}, "isKeyObject");
-var importAndCache = /* @__PURE__ */ __name(async (cache, key, jwk, alg, freeze = false) => {
-  let cached = cache.get(key);
-  if (cached?.[alg]) {
-    return cached[alg];
-  }
-  const cryptoKey = await jwk_to_key_default({ ...jwk, alg });
-  if (freeze)
-    Object.freeze(key);
-  if (!cached) {
-    cache.set(key, { [alg]: cryptoKey });
-  } else {
-    cached[alg] = cryptoKey;
-  }
-  return cryptoKey;
-}, "importAndCache");
-var normalizePublicKey = /* @__PURE__ */ __name((key, alg) => {
-  if (isKeyObject(key)) {
-    let jwk = key.export({ format: "jwk" });
-    delete jwk.d;
-    delete jwk.dp;
-    delete jwk.dq;
-    delete jwk.p;
-    delete jwk.q;
-    delete jwk.qi;
-    if (jwk.k) {
-      return exportKeyValue(jwk.k);
-    }
-    pubCache || (pubCache = /* @__PURE__ */ new WeakMap());
-    return importAndCache(pubCache, key, jwk, alg);
-  }
-  if (isJWK(key)) {
-    if (key.k)
-      return decode(key.k);
-    pubCache || (pubCache = /* @__PURE__ */ new WeakMap());
-    const cryptoKey = importAndCache(pubCache, key, key, alg, true);
-    return cryptoKey;
-  }
-  return key;
-}, "normalizePublicKey");
-var normalizePrivateKey = /* @__PURE__ */ __name((key, alg) => {
-  if (isKeyObject(key)) {
-    let jwk = key.export({ format: "jwk" });
-    if (jwk.k) {
-      return exportKeyValue(jwk.k);
-    }
-    privCache || (privCache = /* @__PURE__ */ new WeakMap());
-    return importAndCache(privCache, key, jwk, alg);
-  }
-  if (isJWK(key)) {
-    if (key.k)
-      return decode(key.k);
-    privCache || (privCache = /* @__PURE__ */ new WeakMap());
-    const cryptoKey = importAndCache(privCache, key, key, alg, true);
-    return cryptoKey;
-  }
-  return key;
-}, "normalizePrivateKey");
-var normalize_key_default = { normalizePublicKey, normalizePrivateKey };
-
-// ../node_modules/jose/dist/browser/key/import.js
-async function importJWK(jwk, alg) {
-  if (!isObject(jwk)) {
-    throw new TypeError("JWK must be an object");
-  }
-  alg || (alg = jwk.alg);
-  switch (jwk.kty) {
-    case "oct":
-      if (typeof jwk.k !== "string" || !jwk.k) {
-        throw new TypeError('missing "k" (Key Value) Parameter value');
-      }
-      return decode(jwk.k);
-    case "RSA":
-      if ("oth" in jwk && jwk.oth !== void 0) {
-        throw new JOSENotSupported('RSA JWK "oth" (Other Primes Info) Parameter value is not supported');
-      }
-    case "EC":
-    case "OKP":
-      return jwk_to_key_default({ ...jwk, alg });
-    default:
-      throw new JOSENotSupported('Unsupported "kty" (Key Type) Parameter value');
-  }
-}
-__name(importJWK, "importJWK");
-
-// ../node_modules/jose/dist/browser/lib/check_key_type.js
-var tag = /* @__PURE__ */ __name((key) => key?.[Symbol.toStringTag], "tag");
-var jwkMatchesOp = /* @__PURE__ */ __name((alg, key, usage) => {
-  if (key.use !== void 0 && key.use !== "sig") {
-    throw new TypeError("Invalid key for this operation, when present its use must be sig");
-  }
-  if (key.key_ops !== void 0 && key.key_ops.includes?.(usage) !== true) {
-    throw new TypeError(`Invalid key for this operation, when present its key_ops must include ${usage}`);
-  }
-  if (key.alg !== void 0 && key.alg !== alg) {
-    throw new TypeError(`Invalid key for this operation, when present its alg must be ${alg}`);
-  }
-  return true;
-}, "jwkMatchesOp");
-var symmetricTypeCheck = /* @__PURE__ */ __name((alg, key, usage, allowJwk) => {
-  if (key instanceof Uint8Array)
-    return;
-  if (allowJwk && isJWK(key)) {
-    if (isSecretJWK(key) && jwkMatchesOp(alg, key, usage))
-      return;
-    throw new TypeError(`JSON Web Key for symmetric algorithms must have JWK "kty" (Key Type) equal to "oct" and the JWK "k" (Key Value) present`);
-  }
-  if (!is_key_like_default(key)) {
-    throw new TypeError(withAlg(alg, key, ...types, "Uint8Array", allowJwk ? "JSON Web Key" : null));
-  }
-  if (key.type !== "secret") {
-    throw new TypeError(`${tag(key)} instances for symmetric algorithms must be of type "secret"`);
-  }
-}, "symmetricTypeCheck");
-var asymmetricTypeCheck = /* @__PURE__ */ __name((alg, key, usage, allowJwk) => {
-  if (allowJwk && isJWK(key)) {
-    switch (usage) {
-      case "sign":
-        if (isPrivateJWK(key) && jwkMatchesOp(alg, key, usage))
-          return;
-        throw new TypeError(`JSON Web Key for this operation be a private JWK`);
-      case "verify":
-        if (isPublicJWK(key) && jwkMatchesOp(alg, key, usage))
-          return;
-        throw new TypeError(`JSON Web Key for this operation be a public JWK`);
-    }
-  }
-  if (!is_key_like_default(key)) {
-    throw new TypeError(withAlg(alg, key, ...types, allowJwk ? "JSON Web Key" : null));
-  }
-  if (key.type === "secret") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithms must not be of type "secret"`);
-  }
-  if (usage === "sign" && key.type === "public") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm signing must be of type "private"`);
-  }
-  if (usage === "decrypt" && key.type === "public") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm decryption must be of type "private"`);
-  }
-  if (key.algorithm && usage === "verify" && key.type === "private") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm verifying must be of type "public"`);
-  }
-  if (key.algorithm && usage === "encrypt" && key.type === "private") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm encryption must be of type "public"`);
-  }
-}, "asymmetricTypeCheck");
-function checkKeyType(allowJwk, alg, key, usage) {
-  const symmetric = alg.startsWith("HS") || alg === "dir" || alg.startsWith("PBES2") || /^A\d{3}(?:GCM)?KW$/.test(alg);
-  if (symmetric) {
-    symmetricTypeCheck(alg, key, usage, allowJwk);
-  } else {
-    asymmetricTypeCheck(alg, key, usage, allowJwk);
-  }
-}
-__name(checkKeyType, "checkKeyType");
-var check_key_type_default = checkKeyType.bind(void 0, false);
-var checkKeyTypeWithJwk = checkKeyType.bind(void 0, true);
-
-// ../node_modules/jose/dist/browser/lib/validate_crit.js
-function validateCrit(Err, recognizedDefault, recognizedOption, protectedHeader, joseHeader) {
-  if (joseHeader.crit !== void 0 && protectedHeader?.crit === void 0) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be integrity protected');
-  }
-  if (!protectedHeader || protectedHeader.crit === void 0) {
-    return /* @__PURE__ */ new Set();
-  }
-  if (!Array.isArray(protectedHeader.crit) || protectedHeader.crit.length === 0 || protectedHeader.crit.some((input) => typeof input !== "string" || input.length === 0)) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be an array of non-empty strings when present');
-  }
-  let recognized;
-  if (recognizedOption !== void 0) {
-    recognized = new Map([...Object.entries(recognizedOption), ...recognizedDefault.entries()]);
-  } else {
-    recognized = recognizedDefault;
-  }
-  for (const parameter of protectedHeader.crit) {
-    if (!recognized.has(parameter)) {
-      throw new JOSENotSupported(`Extension Header Parameter "${parameter}" is not recognized`);
-    }
-    if (joseHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" is missing`);
-    }
-    if (recognized.get(parameter) && protectedHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" MUST be integrity protected`);
-    }
-  }
-  return new Set(protectedHeader.crit);
-}
-__name(validateCrit, "validateCrit");
-var validate_crit_default = validateCrit;
-
-// ../node_modules/jose/dist/browser/lib/validate_algorithms.js
-var validateAlgorithms = /* @__PURE__ */ __name((option, algorithms) => {
-  if (algorithms !== void 0 && (!Array.isArray(algorithms) || algorithms.some((s) => typeof s !== "string"))) {
-    throw new TypeError(`"${option}" option must be an array of strings`);
-  }
-  if (!algorithms) {
-    return void 0;
-  }
-  return new Set(algorithms);
-}, "validateAlgorithms");
-var validate_algorithms_default = validateAlgorithms;
-
-// ../node_modules/jose/dist/browser/runtime/subtle_dsa.js
-function subtleDsa(alg, algorithm) {
-  const hash = `SHA-${alg.slice(-3)}`;
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512":
-      return { hash, name: "HMAC" };
-    case "PS256":
-    case "PS384":
-    case "PS512":
-      return { hash, name: "RSA-PSS", saltLength: alg.slice(-3) >> 3 };
-    case "RS256":
-    case "RS384":
-    case "RS512":
-      return { hash, name: "RSASSA-PKCS1-v1_5" };
-    case "ES256":
-    case "ES384":
-    case "ES512":
-      return { hash, name: "ECDSA", namedCurve: algorithm.namedCurve };
-    case "Ed25519":
-      return { name: "Ed25519" };
-    case "EdDSA":
-      return { name: algorithm.name };
-    default:
-      throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-  }
-}
-__name(subtleDsa, "subtleDsa");
-
-// ../node_modules/jose/dist/browser/runtime/get_sign_verify_key.js
-async function getCryptoKey(alg, key, usage) {
-  if (usage === "sign") {
-    key = await normalize_key_default.normalizePrivateKey(key, alg);
-  }
-  if (usage === "verify") {
-    key = await normalize_key_default.normalizePublicKey(key, alg);
-  }
-  if (isCryptoKey(key)) {
-    checkSigCryptoKey(key, alg, usage);
-    return key;
-  }
-  if (key instanceof Uint8Array) {
-    if (!alg.startsWith("HS")) {
-      throw new TypeError(invalid_key_input_default(key, ...types));
-    }
-    return webcrypto_default.subtle.importKey("raw", key, { hash: `SHA-${alg.slice(-3)}`, name: "HMAC" }, false, [usage]);
-  }
-  throw new TypeError(invalid_key_input_default(key, ...types, "Uint8Array", "JSON Web Key"));
-}
-__name(getCryptoKey, "getCryptoKey");
-
-// ../node_modules/jose/dist/browser/runtime/verify.js
-var verify = /* @__PURE__ */ __name(async (alg, key, signature, data) => {
-  const cryptoKey = await getCryptoKey(alg, key, "verify");
-  check_key_length_default(alg, cryptoKey);
-  const algorithm = subtleDsa(alg, cryptoKey.algorithm);
-  try {
-    return await webcrypto_default.subtle.verify(algorithm, cryptoKey, signature, data);
-  } catch {
-    return false;
-  }
-}, "verify");
-var verify_default = verify;
-
-// ../node_modules/jose/dist/browser/jws/flattened/verify.js
-async function flattenedVerify(jws, key, options) {
-  if (!isObject(jws)) {
-    throw new JWSInvalid("Flattened JWS must be an object");
-  }
-  if (jws.protected === void 0 && jws.header === void 0) {
-    throw new JWSInvalid('Flattened JWS must have either of the "protected" or "header" members');
-  }
-  if (jws.protected !== void 0 && typeof jws.protected !== "string") {
-    throw new JWSInvalid("JWS Protected Header incorrect type");
-  }
-  if (jws.payload === void 0) {
-    throw new JWSInvalid("JWS Payload missing");
-  }
-  if (typeof jws.signature !== "string") {
-    throw new JWSInvalid("JWS Signature missing or incorrect type");
-  }
-  if (jws.header !== void 0 && !isObject(jws.header)) {
-    throw new JWSInvalid("JWS Unprotected Header incorrect type");
-  }
-  let parsedProt = {};
-  if (jws.protected) {
-    try {
-      const protectedHeader = decode(jws.protected);
-      parsedProt = JSON.parse(decoder.decode(protectedHeader));
-    } catch {
-      throw new JWSInvalid("JWS Protected Header is invalid");
-    }
-  }
-  if (!is_disjoint_default(parsedProt, jws.header)) {
-    throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-  }
-  const joseHeader = {
-    ...parsedProt,
-    ...jws.header
-  };
-  const extensions = validate_crit_default(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options?.crit, parsedProt, joseHeader);
-  let b64 = true;
-  if (extensions.has("b64")) {
-    b64 = parsedProt.b64;
-    if (typeof b64 !== "boolean") {
-      throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-    }
-  }
-  const { alg } = joseHeader;
-  if (typeof alg !== "string" || !alg) {
-    throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-  }
-  const algorithms = options && validate_algorithms_default("algorithms", options.algorithms);
-  if (algorithms && !algorithms.has(alg)) {
-    throw new JOSEAlgNotAllowed('"alg" (Algorithm) Header Parameter value not allowed');
-  }
-  if (b64) {
-    if (typeof jws.payload !== "string") {
-      throw new JWSInvalid("JWS Payload must be a string");
-    }
-  } else if (typeof jws.payload !== "string" && !(jws.payload instanceof Uint8Array)) {
-    throw new JWSInvalid("JWS Payload must be a string or an Uint8Array instance");
-  }
-  let resolvedKey = false;
-  if (typeof key === "function") {
-    key = await key(parsedProt, jws);
-    resolvedKey = true;
-    checkKeyTypeWithJwk(alg, key, "verify");
-    if (isJWK(key)) {
-      key = await importJWK(key, alg);
-    }
-  } else {
-    checkKeyTypeWithJwk(alg, key, "verify");
-  }
-  const data = concat(encoder.encode(jws.protected ?? ""), encoder.encode("."), typeof jws.payload === "string" ? encoder.encode(jws.payload) : jws.payload);
-  let signature;
-  try {
-    signature = decode(jws.signature);
-  } catch {
-    throw new JWSInvalid("Failed to base64url decode the signature");
-  }
-  const verified = await verify_default(alg, key, signature, data);
-  if (!verified) {
-    throw new JWSSignatureVerificationFailed();
-  }
-  let payload;
-  if (b64) {
-    try {
-      payload = decode(jws.payload);
-    } catch {
-      throw new JWSInvalid("Failed to base64url decode the payload");
-    }
-  } else if (typeof jws.payload === "string") {
-    payload = encoder.encode(jws.payload);
-  } else {
-    payload = jws.payload;
-  }
-  const result = { payload };
-  if (jws.protected !== void 0) {
-    result.protectedHeader = parsedProt;
-  }
-  if (jws.header !== void 0) {
-    result.unprotectedHeader = jws.header;
-  }
-  if (resolvedKey) {
-    return { ...result, key };
-  }
-  return result;
-}
-__name(flattenedVerify, "flattenedVerify");
-
-// ../node_modules/jose/dist/browser/jws/compact/verify.js
-async function compactVerify(jws, key, options) {
-  if (jws instanceof Uint8Array) {
-    jws = decoder.decode(jws);
-  }
-  if (typeof jws !== "string") {
-    throw new JWSInvalid("Compact JWS must be a string or Uint8Array");
-  }
-  const { 0: protectedHeader, 1: payload, 2: signature, length } = jws.split(".");
-  if (length !== 3) {
-    throw new JWSInvalid("Invalid Compact JWS");
-  }
-  const verified = await flattenedVerify({ payload, protected: protectedHeader, signature }, key, options);
-  const result = { payload: verified.payload, protectedHeader: verified.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: verified.key };
-  }
-  return result;
-}
-__name(compactVerify, "compactVerify");
-
-// ../node_modules/jose/dist/browser/lib/epoch.js
-var epoch_default = /* @__PURE__ */ __name((date) => Math.floor(date.getTime() / 1e3), "default");
-
-// ../node_modules/jose/dist/browser/lib/secs.js
-var minute = 60;
-var hour = minute * 60;
-var day = hour * 24;
-var week = day * 7;
-var year = day * 365.25;
-var REGEX = /^(\+|\-)? ?(\d+|\d+\.\d+) ?(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)(?: (ago|from now))?$/i;
-var secs_default = /* @__PURE__ */ __name((str) => {
-  const matched = REGEX.exec(str);
-  if (!matched || matched[4] && matched[1]) {
-    throw new TypeError("Invalid time period format");
-  }
-  const value = parseFloat(matched[2]);
-  const unit = matched[3].toLowerCase();
-  let numericDate;
-  switch (unit) {
-    case "sec":
-    case "secs":
-    case "second":
-    case "seconds":
-    case "s":
-      numericDate = Math.round(value);
-      break;
-    case "minute":
-    case "minutes":
-    case "min":
-    case "mins":
-    case "m":
-      numericDate = Math.round(value * minute);
-      break;
-    case "hour":
-    case "hours":
-    case "hr":
-    case "hrs":
-    case "h":
-      numericDate = Math.round(value * hour);
-      break;
-    case "day":
-    case "days":
-    case "d":
-      numericDate = Math.round(value * day);
-      break;
-    case "week":
-    case "weeks":
-    case "w":
-      numericDate = Math.round(value * week);
-      break;
-    default:
-      numericDate = Math.round(value * year);
-      break;
-  }
-  if (matched[1] === "-" || matched[4] === "ago") {
-    return -numericDate;
-  }
-  return numericDate;
-}, "default");
-
-// ../node_modules/jose/dist/browser/lib/jwt_claims_set.js
-var normalizeTyp = /* @__PURE__ */ __name((value) => value.toLowerCase().replace(/^application\//, ""), "normalizeTyp");
-var checkAudiencePresence = /* @__PURE__ */ __name((audPayload, audOption) => {
-  if (typeof audPayload === "string") {
-    return audOption.includes(audPayload);
-  }
-  if (Array.isArray(audPayload)) {
-    return audOption.some(Set.prototype.has.bind(new Set(audPayload)));
-  }
-  return false;
-}, "checkAudiencePresence");
-var jwt_claims_set_default = /* @__PURE__ */ __name((protectedHeader, encodedPayload, options = {}) => {
-  let payload;
-  try {
-    payload = JSON.parse(decoder.decode(encodedPayload));
-  } catch {
-  }
-  if (!isObject(payload)) {
-    throw new JWTInvalid("JWT Claims Set must be a top-level JSON object");
-  }
-  const { typ } = options;
-  if (typ && (typeof protectedHeader.typ !== "string" || normalizeTyp(protectedHeader.typ) !== normalizeTyp(typ))) {
-    throw new JWTClaimValidationFailed('unexpected "typ" JWT header value', payload, "typ", "check_failed");
-  }
-  const { requiredClaims = [], issuer, subject, audience, maxTokenAge } = options;
-  const presenceCheck = [...requiredClaims];
-  if (maxTokenAge !== void 0)
-    presenceCheck.push("iat");
-  if (audience !== void 0)
-    presenceCheck.push("aud");
-  if (subject !== void 0)
-    presenceCheck.push("sub");
-  if (issuer !== void 0)
-    presenceCheck.push("iss");
-  for (const claim of new Set(presenceCheck.reverse())) {
-    if (!(claim in payload)) {
-      throw new JWTClaimValidationFailed(`missing required "${claim}" claim`, payload, claim, "missing");
-    }
-  }
-  if (issuer && !(Array.isArray(issuer) ? issuer : [issuer]).includes(payload.iss)) {
-    throw new JWTClaimValidationFailed('unexpected "iss" claim value', payload, "iss", "check_failed");
-  }
-  if (subject && payload.sub !== subject) {
-    throw new JWTClaimValidationFailed('unexpected "sub" claim value', payload, "sub", "check_failed");
-  }
-  if (audience && !checkAudiencePresence(payload.aud, typeof audience === "string" ? [audience] : audience)) {
-    throw new JWTClaimValidationFailed('unexpected "aud" claim value', payload, "aud", "check_failed");
-  }
-  let tolerance;
-  switch (typeof options.clockTolerance) {
-    case "string":
-      tolerance = secs_default(options.clockTolerance);
-      break;
-    case "number":
-      tolerance = options.clockTolerance;
-      break;
-    case "undefined":
-      tolerance = 0;
-      break;
-    default:
-      throw new TypeError("Invalid clockTolerance option type");
-  }
-  const { currentDate } = options;
-  const now = epoch_default(currentDate || /* @__PURE__ */ new Date());
-  if ((payload.iat !== void 0 || maxTokenAge) && typeof payload.iat !== "number") {
-    throw new JWTClaimValidationFailed('"iat" claim must be a number', payload, "iat", "invalid");
-  }
-  if (payload.nbf !== void 0) {
-    if (typeof payload.nbf !== "number") {
-      throw new JWTClaimValidationFailed('"nbf" claim must be a number', payload, "nbf", "invalid");
-    }
-    if (payload.nbf > now + tolerance) {
-      throw new JWTClaimValidationFailed('"nbf" claim timestamp check failed', payload, "nbf", "check_failed");
-    }
-  }
-  if (payload.exp !== void 0) {
-    if (typeof payload.exp !== "number") {
-      throw new JWTClaimValidationFailed('"exp" claim must be a number', payload, "exp", "invalid");
-    }
-    if (payload.exp <= now - tolerance) {
-      throw new JWTExpired('"exp" claim timestamp check failed', payload, "exp", "check_failed");
-    }
-  }
-  if (maxTokenAge) {
-    const age = now - payload.iat;
-    const max = typeof maxTokenAge === "number" ? maxTokenAge : secs_default(maxTokenAge);
-    if (age - tolerance > max) {
-      throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', payload, "iat", "check_failed");
-    }
-    if (age < 0 - tolerance) {
-      throw new JWTClaimValidationFailed('"iat" claim timestamp check failed (it should be in the past)', payload, "iat", "check_failed");
-    }
-  }
-  return payload;
-}, "default");
-
-// ../node_modules/jose/dist/browser/jwt/verify.js
-async function jwtVerify(jwt, key, options) {
-  const verified = await compactVerify(jwt, key, options);
-  if (verified.protectedHeader.crit?.includes("b64") && verified.protectedHeader.b64 === false) {
-    throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-  }
-  const payload = jwt_claims_set_default(verified.protectedHeader, verified.payload, options);
-  const result = { payload, protectedHeader: verified.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: verified.key };
-  }
-  return result;
-}
-__name(jwtVerify, "jwtVerify");
-
-// ../node_modules/jose/dist/browser/runtime/sign.js
-var sign = /* @__PURE__ */ __name(async (alg, key, data) => {
-  const cryptoKey = await getCryptoKey(alg, key, "sign");
-  check_key_length_default(alg, cryptoKey);
-  const signature = await webcrypto_default.subtle.sign(subtleDsa(alg, cryptoKey.algorithm), cryptoKey, data);
-  return new Uint8Array(signature);
-}, "sign");
-var sign_default = sign;
-
-// ../node_modules/jose/dist/browser/jws/flattened/sign.js
-var FlattenedSign = class {
-  constructor(payload) {
-    if (!(payload instanceof Uint8Array)) {
-      throw new TypeError("payload must be an instance of Uint8Array");
-    }
-    this._payload = payload;
-  }
-  setProtectedHeader(protectedHeader) {
-    if (this._protectedHeader) {
-      throw new TypeError("setProtectedHeader can only be called once");
-    }
-    this._protectedHeader = protectedHeader;
-    return this;
-  }
-  setUnprotectedHeader(unprotectedHeader) {
-    if (this._unprotectedHeader) {
-      throw new TypeError("setUnprotectedHeader can only be called once");
-    }
-    this._unprotectedHeader = unprotectedHeader;
-    return this;
-  }
-  async sign(key, options) {
-    if (!this._protectedHeader && !this._unprotectedHeader) {
-      throw new JWSInvalid("either setProtectedHeader or setUnprotectedHeader must be called before #sign()");
-    }
-    if (!is_disjoint_default(this._protectedHeader, this._unprotectedHeader)) {
-      throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-    }
-    const joseHeader = {
-      ...this._protectedHeader,
-      ...this._unprotectedHeader
-    };
-    const extensions = validate_crit_default(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options?.crit, this._protectedHeader, joseHeader);
-    let b64 = true;
-    if (extensions.has("b64")) {
-      b64 = this._protectedHeader.b64;
-      if (typeof b64 !== "boolean") {
-        throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-      }
-    }
-    const { alg } = joseHeader;
-    if (typeof alg !== "string" || !alg) {
-      throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-    }
-    checkKeyTypeWithJwk(alg, key, "sign");
-    let payload = this._payload;
-    if (b64) {
-      payload = encoder.encode(encode(payload));
-    }
-    let protectedHeader;
-    if (this._protectedHeader) {
-      protectedHeader = encoder.encode(encode(JSON.stringify(this._protectedHeader)));
-    } else {
-      protectedHeader = encoder.encode("");
-    }
-    const data = concat(protectedHeader, encoder.encode("."), payload);
-    const signature = await sign_default(alg, key, data);
-    const jws = {
-      signature: encode(signature),
-      payload: ""
-    };
-    if (b64) {
-      jws.payload = decoder.decode(payload);
-    }
-    if (this._unprotectedHeader) {
-      jws.header = this._unprotectedHeader;
-    }
-    if (this._protectedHeader) {
-      jws.protected = decoder.decode(protectedHeader);
-    }
-    return jws;
-  }
-};
-__name(FlattenedSign, "FlattenedSign");
-
-// ../node_modules/jose/dist/browser/jws/compact/sign.js
-var CompactSign = class {
-  constructor(payload) {
-    this._flattened = new FlattenedSign(payload);
-  }
-  setProtectedHeader(protectedHeader) {
-    this._flattened.setProtectedHeader(protectedHeader);
-    return this;
-  }
-  async sign(key, options) {
-    const jws = await this._flattened.sign(key, options);
-    if (jws.payload === void 0) {
-      throw new TypeError("use the flattened module for creating JWS with b64: false");
-    }
-    return `${jws.protected}.${jws.payload}.${jws.signature}`;
-  }
-};
-__name(CompactSign, "CompactSign");
-
-// ../node_modules/jose/dist/browser/jwt/produce.js
-function validateInput(label, input) {
-  if (!Number.isFinite(input)) {
-    throw new TypeError(`Invalid ${label} input`);
-  }
-  return input;
-}
-__name(validateInput, "validateInput");
-var ProduceJWT = class {
-  constructor(payload = {}) {
-    if (!isObject(payload)) {
-      throw new TypeError("JWT Claims Set MUST be an object");
-    }
-    this._payload = payload;
-  }
-  setIssuer(issuer) {
-    this._payload = { ...this._payload, iss: issuer };
-    return this;
-  }
-  setSubject(subject) {
-    this._payload = { ...this._payload, sub: subject };
-    return this;
-  }
-  setAudience(audience) {
-    this._payload = { ...this._payload, aud: audience };
-    return this;
-  }
-  setJti(jwtId) {
-    this._payload = { ...this._payload, jti: jwtId };
-    return this;
-  }
-  setNotBefore(input) {
-    if (typeof input === "number") {
-      this._payload = { ...this._payload, nbf: validateInput("setNotBefore", input) };
-    } else if (input instanceof Date) {
-      this._payload = { ...this._payload, nbf: validateInput("setNotBefore", epoch_default(input)) };
-    } else {
-      this._payload = { ...this._payload, nbf: epoch_default(/* @__PURE__ */ new Date()) + secs_default(input) };
-    }
-    return this;
-  }
-  setExpirationTime(input) {
-    if (typeof input === "number") {
-      this._payload = { ...this._payload, exp: validateInput("setExpirationTime", input) };
-    } else if (input instanceof Date) {
-      this._payload = { ...this._payload, exp: validateInput("setExpirationTime", epoch_default(input)) };
-    } else {
-      this._payload = { ...this._payload, exp: epoch_default(/* @__PURE__ */ new Date()) + secs_default(input) };
-    }
-    return this;
-  }
-  setIssuedAt(input) {
-    if (typeof input === "undefined") {
-      this._payload = { ...this._payload, iat: epoch_default(/* @__PURE__ */ new Date()) };
-    } else if (input instanceof Date) {
-      this._payload = { ...this._payload, iat: validateInput("setIssuedAt", epoch_default(input)) };
-    } else if (typeof input === "string") {
-      this._payload = {
-        ...this._payload,
-        iat: validateInput("setIssuedAt", epoch_default(/* @__PURE__ */ new Date()) + secs_default(input))
-      };
-    } else {
-      this._payload = { ...this._payload, iat: validateInput("setIssuedAt", input) };
-    }
-    return this;
-  }
-};
-__name(ProduceJWT, "ProduceJWT");
-
-// ../node_modules/jose/dist/browser/jwt/sign.js
-var SignJWT = class extends ProduceJWT {
-  setProtectedHeader(protectedHeader) {
-    this._protectedHeader = protectedHeader;
-    return this;
-  }
-  async sign(key, options) {
-    const sig = new CompactSign(encoder.encode(JSON.stringify(this._payload)));
-    sig.setProtectedHeader(this._protectedHeader);
-    if (Array.isArray(this._protectedHeader?.crit) && this._protectedHeader.crit.includes("b64") && this._protectedHeader.b64 === false) {
-      throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-    }
-    return sig.sign(key, options);
-  }
-};
-__name(SignJWT, "SignJWT");
-
 // api/auth.ts
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -1298,13 +26,13 @@ function jsonResponse(data, status = 200) {
   });
 }
 __name(jsonResponse, "jsonResponse");
-function jsonError(message2, status = 400) {
-  return jsonResponse({ success: false, error: message2 }, status);
+function jsonError(message, status = 400) {
+  return jsonResponse({ success: false, error: message }, status);
 }
 __name(jsonError, "jsonError");
 async function hashPassword(password) {
-  const encoder2 = new TextEncoder();
-  const data = encoder2.encode(password);
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
   const hash = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
@@ -1314,22 +42,79 @@ async function verifyPassword(password, hash) {
   return passwordHash === hash;
 }
 __name(verifyPassword, "verifyPassword");
+function base64UrlEncode(str) {
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+__name(base64UrlEncode, "base64UrlEncode");
 async function generateToken(user, secret) {
-  const encoder2 = new TextEncoder();
-  const secretKey = encoder2.encode(secret);
-  const token = await new SignJWT({
+  const header = {
+    alg: "HS256",
+    typ: "JWT"
+  };
+  const now = Math.floor(Date.now() / 1e3);
+  const payload = {
     userId: user.user_id,
     email: user.email,
-    role: user.role
-  }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("24h").setIssuedAt().sign(secretKey);
-  return token;
+    role: user.role,
+    iat: now,
+    exp: now + 24 * 60 * 60
+    // 24 hours
+  };
+  const encodedHeader = base64UrlEncode(JSON.stringify(header));
+  const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+  const data = `${encodedHeader}.${encodedPayload}`;
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(data)
+  );
+  const encodedSignature = base64UrlEncode(
+    String.fromCharCode(...new Uint8Array(signature))
+  );
+  return `${data}.${encodedSignature}`;
 }
 __name(generateToken, "generateToken");
 async function verifyToken(token, secret) {
   try {
-    const encoder2 = new TextEncoder();
-    const secretKey = encoder2.encode(secret);
-    const { payload } = await jwtVerify(token, secretKey);
+    const parts = token.split(".");
+    if (parts.length !== 3)
+      return null;
+    const [encodedHeader, encodedPayload, encodedSignature] = parts;
+    const data = `${encodedHeader}.${encodedPayload}`;
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+    const signature = Uint8Array.from(
+      atob(encodedSignature.replace(/-/g, "+").replace(/_/g, "/")),
+      (c) => c.charCodeAt(0)
+    );
+    const isValid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      signature,
+      encoder.encode(data)
+    );
+    if (!isValid)
+      return null;
+    const payload = JSON.parse(
+      atob(encodedPayload.replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    const now = Math.floor(Date.now() / 1e3);
+    if (payload.exp && payload.exp < now)
+      return null;
     return payload;
   } catch {
     return null;
@@ -1345,6 +130,13 @@ async function onRequestPost(context) {
       const { firstName, lastName } = body;
       if (!email || !password || !firstName || !lastName) {
         return jsonError("All fields are required", 400);
+      }
+      if (!email.toLowerCase().endsWith("@uqu.edu.sa")) {
+        return jsonError("Only UQU students can register. Please use your @uqu.edu.sa email address.", 400);
+      }
+      const emailRegex = /^[a-zA-Z0-9._-]+@uqu\.edu\.sa$/;
+      if (!emailRegex.test(email.toLowerCase())) {
+        return jsonError("Invalid email format", 400);
       }
       const existing = await env.DB.prepare(
         "SELECT user_id FROM users WHERE email = ?"
@@ -1447,7 +239,7 @@ async function onRequestGet(context) {
 }
 __name(onRequestGet, "onRequestGet");
 
-// api/courses.ts
+// api/comment-likes.ts
 function jsonResponse2(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -1457,11 +249,342 @@ function jsonResponse2(data, status = 200) {
   });
 }
 __name(jsonResponse2, "jsonResponse");
-function jsonError2(message2, status = 400) {
-  return jsonResponse2({ success: false, error: message2 }, status);
+function jsonError2(message, status = 400) {
+  return jsonResponse2({ success: false, error: message }, status);
 }
 __name(jsonError2, "jsonError");
+async function onRequestPost2(context) {
+  const { request, env } = context;
+  try {
+    const token = request.headers.get("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return jsonError2("Unauthorized - No token provided", 401);
+    }
+    const user = await verifyToken(token, env.JWT_SECRET);
+    if (!user) {
+      return jsonError2("Unauthorized - Invalid token", 401);
+    }
+    const body = await request.json();
+    const { commentId } = body;
+    if (!commentId) {
+      return jsonError2("commentId is required", 400);
+    }
+    const existing = await env.DB.prepare(`
+            SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?
+        `).bind(commentId, user.userId).first();
+    if (existing) {
+      await env.DB.prepare(`
+                DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?
+            `).bind(commentId, user.userId).run();
+      const countResult = await env.DB.prepare(`
+                SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?
+            `).bind(commentId).first();
+      return jsonResponse2({
+        success: true,
+        liked: false,
+        likes: countResult?.count || 0
+      });
+    } else {
+      await env.DB.prepare(`
+                INSERT INTO comment_likes (comment_id, user_id, created_at)
+                VALUES (?, ?, datetime('now'))
+            `).bind(commentId, user.userId).run();
+      const countResult = await env.DB.prepare(`
+                SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?
+            `).bind(commentId).first();
+      return jsonResponse2({
+        success: true,
+        liked: true,
+        likes: countResult?.count || 0
+      });
+    }
+  } catch (error) {
+    console.error("Toggle like error:", error);
+    return jsonError2(error.message || "Failed to toggle like", 500);
+  }
+}
+__name(onRequestPost2, "onRequestPost");
+
+// api/comment-replies.ts
+function jsonResponse3(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+__name(jsonResponse3, "jsonResponse");
+function jsonError3(message, status = 400) {
+  return jsonResponse3({ success: false, error: message }, status);
+}
+__name(jsonError3, "jsonError");
+async function onRequestPost3(context) {
+  const { request, env } = context;
+  try {
+    const token = request.headers.get("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return jsonError3("Unauthorized - No token provided", 401);
+    }
+    const user = await verifyToken(token, env.JWT_SECRET);
+    if (!user) {
+      return jsonError3("Unauthorized - Invalid token", 401);
+    }
+    const body = await request.json();
+    const { commentId, text } = body;
+    if (!commentId || !text) {
+      return jsonError3("commentId and text are required", 400);
+    }
+    if (!text.trim()) {
+      return jsonError3("Reply text cannot be empty", 400);
+    }
+    const result = await env.DB.prepare(`
+            INSERT INTO comment_replies (comment_id, user_id, content, created_at, updated_at)
+            VALUES (?, ?, ?, datetime('now'), datetime('now'))
+        `).bind(commentId, user.userId, text.trim()).run();
+    const newReply = await env.DB.prepare(`
+            SELECT 
+                r.id,
+                r.content as text,
+                r.created_at,
+                u.first_name || ' ' || u.last_name as author,
+                u.user_id
+            FROM comment_replies r
+            LEFT JOIN users u ON r.user_id = u.user_id
+            WHERE r.id = ?
+        `).bind(result.meta.last_row_id).first();
+    return jsonResponse3({
+      success: true,
+      message: "Reply added successfully",
+      reply: newReply
+    });
+  } catch (error) {
+    console.error("Post reply error:", error);
+    return jsonError3(error.message || "Failed to add reply", 500);
+  }
+}
+__name(onRequestPost3, "onRequestPost");
+
+// api/comments.ts
+function jsonResponse4(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+__name(jsonResponse4, "jsonResponse");
+function jsonError4(message, status = 400) {
+  return jsonResponse4({ success: false, error: message }, status);
+}
+__name(jsonError4, "jsonError");
 async function onRequestGet2(context) {
+  const { request, env } = context;
+  try {
+    const url = new URL(request.url);
+    const contentId = url.searchParams.get("contentId");
+    if (!contentId) {
+      return jsonError4("contentId is required", 400);
+    }
+    const comments = await env.DB.prepare(`
+            SELECT 
+                c.id,
+                c.content as text,
+                c.created_at,
+                c.updated_at,
+                u.first_name || ' ' || u.last_name as user_name,
+                u.user_id
+            FROM comments c
+            LEFT JOIN users u ON c.user_id = u.user_id
+            WHERE c.content_id = ?
+            ORDER BY c.created_at DESC
+        `).bind(contentId).all();
+    const commentsWithDetails = await Promise.all(
+      (comments.results || []).map(async (comment) => {
+        const likesResult = await env.DB.prepare(`
+                    SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?
+                `).bind(comment.id).first();
+        const repliesResult = await env.DB.prepare(`
+                    SELECT 
+                        r.id,
+                        r.content as text,
+                        r.created_at,
+                        u.first_name || ' ' || u.last_name as author
+                    FROM comment_replies r
+                    LEFT JOIN users u ON r.user_id = u.user_id
+                    WHERE r.comment_id = ?
+                    ORDER BY r.created_at ASC
+                `).bind(comment.id).all();
+        return {
+          ...comment,
+          likes: likesResult?.count || 0,
+          replies: repliesResult.results || []
+        };
+      })
+    );
+    return jsonResponse4({
+      success: true,
+      comments: commentsWithDetails,
+      count: commentsWithDetails.length
+    });
+  } catch (error) {
+    console.error("Get comments error:", error);
+    return jsonError4(error.message || "Failed to fetch comments", 500);
+  }
+}
+__name(onRequestGet2, "onRequestGet");
+async function onRequestPost4(context) {
+  const { request, env } = context;
+  try {
+    const token = request.headers.get("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return jsonError4("Unauthorized - No token provided", 401);
+    }
+    const user = await verifyToken(token, env.JWT_SECRET);
+    if (!user) {
+      return jsonError4("Unauthorized - Invalid token", 401);
+    }
+    const body = await request.json();
+    const { contentId, text } = body;
+    if (!contentId || !text) {
+      return jsonError4("contentId and text are required", 400);
+    }
+    if (!text.trim()) {
+      return jsonError4("Comment text cannot be empty", 400);
+    }
+    const result = await env.DB.prepare(`
+            INSERT INTO comments (content_id, user_id, content, created_at, updated_at)
+            VALUES (?, ?, ?, datetime('now'), datetime('now'))
+        `).bind(contentId, user.userId, text.trim()).run();
+    const newComment = await env.DB.prepare(`
+            SELECT 
+                c.id,
+                c.content as text,
+                c.created_at,
+                c.updated_at,
+                u.first_name || ' ' || u.last_name as user_name,
+                u.user_id
+            FROM comments c
+            LEFT JOIN users u ON c.user_id = u.user_id
+            WHERE c.id = ?
+        `).bind(result.meta.last_row_id).first();
+    return jsonResponse4({
+      success: true,
+      message: "Comment added successfully",
+      comment: newComment
+    });
+  } catch (error) {
+    console.error("Post comment error:", error);
+    return jsonError4(error.message || "Failed to add comment", 500);
+  }
+}
+__name(onRequestPost4, "onRequestPost");
+
+// api/content.ts
+function jsonResponse5(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+__name(jsonResponse5, "jsonResponse");
+function jsonError5(message, status = 400) {
+  return jsonResponse5({ success: false, error: message }, status);
+}
+__name(jsonError5, "jsonError");
+async function onRequestGet3(context) {
+  const { request, env } = context;
+  try {
+    const url = new URL(request.url);
+    const courseId = url.searchParams.get("courseId");
+    const type = url.searchParams.get("type");
+    const id = url.searchParams.get("id");
+    if (id) {
+      const file = await env.DB.prepare(`
+                SELECT 
+                    c.id,
+                    c.title,
+                    c.type,
+                    c.file_url,
+                    c.file_key,
+                    c.description,
+                    c.file_size,
+                    c.mime_type,
+                    c.upload_date,
+                    c.is_approved,
+                    u.first_name || ' ' || u.last_name as uploader_name,
+                    u.user_id as uploader_id
+                FROM content c
+                LEFT JOIN users u ON c.uploader_id = u.user_id
+                WHERE c.id = ?
+            `).bind(id).first();
+      if (!file) {
+        return jsonError5("File not found", 404);
+      }
+      return jsonResponse5({
+        success: true,
+        file
+      });
+    }
+    let query = `
+            SELECT 
+                c.id,
+                c.title,
+                c.type,
+                c.file_url,
+                c.file_key,
+                c.description,
+                c.file_size,
+                c.mime_type,
+                c.upload_date,
+                c.is_approved,
+                u.first_name || ' ' || u.last_name as uploader_name,
+                u.user_id as uploader_id
+            FROM content c
+            LEFT JOIN users u ON c.uploader_id = u.user_id
+            WHERE 1=1
+        `;
+    const params = [];
+    if (courseId) {
+      query += ` AND (c.course_id = ? OR c.course_id IS NULL)`;
+      params.push(courseId);
+    }
+    if (type) {
+      query += ` AND c.type = ?`;
+      params.push(type);
+    }
+    query += ` ORDER BY c.upload_date DESC`;
+    const result = await env.DB.prepare(query).bind(...params).all();
+    return jsonResponse5({
+      success: true,
+      files: result.results || [],
+      count: result.results?.length || 0
+    });
+  } catch (error) {
+    console.error("Get content error:", error);
+    return jsonError5(error.message || "Failed to fetch content", 500);
+  }
+}
+__name(onRequestGet3, "onRequestGet");
+
+// api/courses.ts
+function jsonResponse6(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+__name(jsonResponse6, "jsonResponse");
+function jsonError6(message, status = 400) {
+  return jsonResponse6({ success: false, error: message }, status);
+}
+__name(jsonError6, "jsonError");
+async function onRequestGet4(context) {
   const { request, env } = context;
   try {
     const url = new URL(request.url);
@@ -1530,7 +653,7 @@ async function onRequestGet2(context) {
       createdAt: course.created_at,
       updatedAt: course.updated_at
     }));
-    return jsonResponse2({
+    return jsonResponse6({
       success: true,
       courses,
       pagination: {
@@ -1542,10 +665,10 @@ async function onRequestGet2(context) {
     });
   } catch (error) {
     console.error("Courses error:", error);
-    return jsonError2("Failed to fetch courses", 500);
+    return jsonError6("Failed to fetch courses", 500);
   }
 }
-__name(onRequestGet2, "onRequestGet");
+__name(onRequestGet4, "onRequestGet");
 async function onRequest(context) {
   const { request, env, params } = context;
   if (params && params.id) {
@@ -1565,9 +688,9 @@ async function onRequest(context) {
         GROUP BY c.course_id
       `).bind(courseId).first();
       if (!course) {
-        return jsonError2("Course not found", 404);
+        return jsonError6("Course not found", 404);
       }
-      return jsonResponse2({
+      return jsonResponse6({
         success: true,
         course: {
           courseId: course.course_id,
@@ -1589,15 +712,15 @@ async function onRequest(context) {
         }
       });
     } catch (error) {
-      return jsonError2("Failed to fetch course", 500);
+      return jsonError6("Failed to fetch course", 500);
     }
   }
-  return onRequestGet2(context);
+  return onRequestGet4(context);
 }
 __name(onRequest, "onRequest");
 
-// api/upload.ts
-function jsonResponse3(data, status = 200) {
+// api/ratings.ts
+function jsonResponse7(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -1605,26 +728,125 @@ function jsonResponse3(data, status = 200) {
     }
   });
 }
-__name(jsonResponse3, "jsonResponse");
-function jsonError3(message2, status = 400) {
-  return jsonResponse3({ success: false, error: message2 }, status);
+__name(jsonResponse7, "jsonResponse");
+function jsonError7(message, status = 400) {
+  return jsonResponse7({ success: false, error: message }, status);
 }
-__name(jsonError3, "jsonError");
-async function onRequestPost2(context) {
+__name(jsonError7, "jsonError");
+async function onRequestGet5(context) {
+  const { request, env } = context;
+  try {
+    const url = new URL(request.url);
+    const contentId = url.searchParams.get("contentId");
+    if (!contentId) {
+      return jsonError7("contentId is required", 400);
+    }
+    const result = await env.DB.prepare(`
+            SELECT 
+                r.id,
+                r.score,
+                r.created_at,
+                r.updated_at,
+                u.first_name || ' ' || u.last_name as user_name,
+                u.user_id
+            FROM ratings r
+            LEFT JOIN users u ON r.user_id = u.user_id
+            WHERE r.content_id = ?
+            ORDER BY r.created_at DESC
+        `).bind(contentId).all();
+    const ratings = result.results || [];
+    const avgRating = ratings.length > 0 ? ratings.reduce((sum, r) => sum + r.score, 0) / ratings.length : 0;
+    return jsonResponse7({
+      success: true,
+      ratings,
+      count: ratings.length,
+      average: Number(avgRating.toFixed(1))
+    });
+  } catch (error) {
+    console.error("Get ratings error:", error);
+    return jsonError7(error.message || "Failed to fetch ratings", 500);
+  }
+}
+__name(onRequestGet5, "onRequestGet");
+async function onRequestPost5(context) {
   const { request, env } = context;
   try {
     const token = request.headers.get("Authorization")?.replace("Bearer ", "");
     if (!token) {
-      return jsonError3("Unauthorized - No token provided", 401);
+      return jsonError7("Unauthorized - No token provided", 401);
     }
     const user = await verifyToken(token, env.JWT_SECRET);
     if (!user) {
-      return jsonError3("Unauthorized - Invalid token", 401);
+      return jsonError7("Unauthorized - Invalid token", 401);
+    }
+    const body = await request.json();
+    const { contentId, score } = body;
+    if (!contentId || score === void 0) {
+      return jsonError7("contentId and score are required", 400);
+    }
+    if (score < 0 || score > 5) {
+      return jsonError7("Score must be between 0 and 5", 400);
+    }
+    const existing = await env.DB.prepare(`
+            SELECT id FROM ratings WHERE content_id = ? AND user_id = ?
+        `).bind(contentId, user.userId).first();
+    let result;
+    if (existing) {
+      result = await env.DB.prepare(`
+                UPDATE ratings 
+                SET score = ?, updated_at = datetime('now')
+                WHERE content_id = ? AND user_id = ?
+            `).bind(score, contentId, user.userId).run();
+    } else {
+      result = await env.DB.prepare(`
+                INSERT INTO ratings (content_id, user_id, score, created_at, updated_at)
+                VALUES (?, ?, ?, datetime('now'), datetime('now'))
+            `).bind(contentId, user.userId, score).run();
+    }
+    const avgResult = await env.DB.prepare(`
+            SELECT AVG(score) as avg FROM ratings WHERE content_id = ?
+        `).bind(contentId).first();
+    return jsonResponse7({
+      success: true,
+      message: existing ? "Rating updated successfully" : "Rating added successfully",
+      average: Number((avgResult?.avg || 0).toFixed(1))
+    });
+  } catch (error) {
+    console.error("Post rating error:", error);
+    return jsonError7(error.message || "Failed to add rating", 500);
+  }
+}
+__name(onRequestPost5, "onRequestPost");
+
+// api/upload.ts
+function jsonResponse8(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+__name(jsonResponse8, "jsonResponse");
+function jsonError8(message, status = 400) {
+  return jsonResponse8({ success: false, error: message }, status);
+}
+__name(jsonError8, "jsonError");
+async function onRequestPost6(context) {
+  const { request, env } = context;
+  try {
+    const token = request.headers.get("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return jsonError8("Unauthorized - No token provided", 401);
+    }
+    const user = await verifyToken(token, env.JWT_SECRET);
+    if (!user) {
+      return jsonError8("Unauthorized - Invalid token", 401);
     }
     const formData = await request.formData();
     const file = formData.get("file");
     if (!file) {
-      return jsonError3("No file provided", 400);
+      return jsonError8("No file provided", 400);
     }
     const allowedTypes = [
       "application/pdf",
@@ -1639,11 +861,11 @@ async function onRequestPost2(context) {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ];
     if (!allowedTypes.includes(file.type)) {
-      return jsonError3(`File type not allowed: ${file.type}`, 400);
+      return jsonError8(`File type not allowed: ${file.type}`, 400);
     }
     const maxSize = 100 * 1024 * 1024;
     if (file.size > maxSize) {
-      return jsonError3("File too large (max 100MB)", 400);
+      return jsonError8("File too large (max 100MB)", 400);
     }
     const timestamp = Date.now();
     const randomId = crypto.randomUUID();
@@ -1660,7 +882,7 @@ async function onRequestPost2(context) {
         fileSize: file.size.toString()
       }
     });
-    const courseId = formData.get("courseId") || null;
+    const courseId = null;
     const title = formData.get("title") || file.name;
     const description = formData.get("description") || null;
     let contentType = "other";
@@ -1686,11 +908,12 @@ async function onRequestPost2(context) {
       key,
       user.userId,
       courseId,
+      // NULL to avoid FK constraint
       file.size,
       file.type,
       description
     ).run();
-    return jsonResponse3({
+    return jsonResponse8({
       success: true,
       message: "File uploaded successfully",
       file: {
@@ -1705,10 +928,10 @@ async function onRequestPost2(context) {
     });
   } catch (error) {
     console.error("Upload error:", error);
-    return jsonError3(error.message || "Upload failed", 500);
+    return jsonError8(error.message || "Upload failed", 500);
   }
 }
-__name(onRequestPost2, "onRequestPost");
+__name(onRequestPost6, "onRequestPost");
 
 // api/_middleware.ts
 async function onRequest2(context) {
@@ -1749,18 +972,67 @@ var routes = [
     modules: [onRequestPost]
   },
   {
-    routePath: "/api/courses",
+    routePath: "/api/comment-likes",
+    mountPath: "/api",
+    method: "POST",
+    middlewares: [],
+    modules: [onRequestPost2]
+  },
+  {
+    routePath: "/api/comment-replies",
+    mountPath: "/api",
+    method: "POST",
+    middlewares: [],
+    modules: [onRequestPost3]
+  },
+  {
+    routePath: "/api/comments",
     mountPath: "/api",
     method: "GET",
     middlewares: [],
     modules: [onRequestGet2]
   },
   {
+    routePath: "/api/comments",
+    mountPath: "/api",
+    method: "POST",
+    middlewares: [],
+    modules: [onRequestPost4]
+  },
+  {
+    routePath: "/api/content",
+    mountPath: "/api",
+    method: "GET",
+    middlewares: [],
+    modules: [onRequestGet3]
+  },
+  {
+    routePath: "/api/courses",
+    mountPath: "/api",
+    method: "GET",
+    middlewares: [],
+    modules: [onRequestGet4]
+  },
+  {
+    routePath: "/api/ratings",
+    mountPath: "/api",
+    method: "GET",
+    middlewares: [],
+    modules: [onRequestGet5]
+  },
+  {
+    routePath: "/api/ratings",
+    mountPath: "/api",
+    method: "POST",
+    middlewares: [],
+    modules: [onRequestPost5]
+  },
+  {
     routePath: "/api/upload",
     mountPath: "/api",
     method: "POST",
     middlewares: [],
-    modules: [onRequestPost2]
+    modules: [onRequestPost6]
   },
   {
     routePath: "/api/courses",
@@ -1863,7 +1135,7 @@ function lexer(str) {
   return tokens;
 }
 __name(lexer, "lexer");
-function parse2(str, options) {
+function parse(str, options) {
   if (options === void 0) {
     options = {};
   }
@@ -1962,7 +1234,7 @@ function parse2(str, options) {
   }
   return result;
 }
-__name(parse2, "parse");
+__name(parse, "parse");
 function match(str, options) {
   var keys = [];
   var re = pathToRegexp(str, keys, options);
@@ -1973,7 +1245,7 @@ function regexpToFunction(re, keys, options) {
   if (options === void 0) {
     options = {};
   }
-  var _a = options.decode, decode2 = _a === void 0 ? function(x) {
+  var _a = options.decode, decode = _a === void 0 ? function(x) {
     return x;
   } : _a;
   return function(pathname) {
@@ -1988,10 +1260,10 @@ function regexpToFunction(re, keys, options) {
       var key = keys[i2 - 1];
       if (key.modifier === "*" || key.modifier === "+") {
         params[key.name] = m[i2].split(key.prefix + key.suffix).map(function(value) {
-          return decode2(value, key);
+          return decode(value, key);
         });
       } else {
-        params[key.name] = decode2(m[i2], key);
+        params[key.name] = decode(m[i2], key);
       }
     }, "_loop_1");
     for (var i = 1; i < m.length; i++) {
@@ -2037,14 +1309,14 @@ function arrayToRegexp(paths, keys, options) {
 }
 __name(arrayToRegexp, "arrayToRegexp");
 function stringToRegexp(path, keys, options) {
-  return tokensToRegexp(parse2(path, options), keys, options);
+  return tokensToRegexp(parse(path, options), keys, options);
 }
 __name(stringToRegexp, "stringToRegexp");
 function tokensToRegexp(tokens, keys, options) {
   if (options === void 0) {
     options = {};
   }
-  var _a = options.strict, strict = _a === void 0 ? false : _a, _b = options.start, start = _b === void 0 ? true : _b, _c = options.end, end = _c === void 0 ? true : _c, _d = options.encode, encode2 = _d === void 0 ? function(x) {
+  var _a = options.strict, strict = _a === void 0 ? false : _a, _b = options.start, start = _b === void 0 ? true : _b, _c = options.end, end = _c === void 0 ? true : _c, _d = options.encode, encode = _d === void 0 ? function(x) {
     return x;
   } : _d, _e = options.delimiter, delimiter = _e === void 0 ? "/#?" : _e, _f = options.endsWith, endsWith = _f === void 0 ? "" : _f;
   var endsWithRe = "[".concat(escapeString(endsWith), "]|$");
@@ -2053,10 +1325,10 @@ function tokensToRegexp(tokens, keys, options) {
   for (var _i = 0, tokens_1 = tokens; _i < tokens_1.length; _i++) {
     var token = tokens_1[_i];
     if (typeof token === "string") {
-      route += escapeString(encode2(token));
+      route += escapeString(encode(token));
     } else {
-      var prefix = escapeString(encode2(token.prefix));
-      var suffix = escapeString(encode2(token.suffix));
+      var prefix = escapeString(encode(token.prefix));
+      var suffix = escapeString(encode(token.suffix));
       if (token.pattern) {
         if (keys)
           keys.push(token);
@@ -2252,7 +1524,7 @@ function reduceError(e) {
   };
 }
 __name(reduceError, "reduceError");
-var jsonError4 = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx) => {
+var jsonError9 = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx) => {
   try {
     return await middlewareCtx.next(request, env);
   } catch (e) {
@@ -2263,9 +1535,9 @@ var jsonError4 = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx
     });
   }
 }, "jsonError");
-var middleware_miniflare3_json_error_default = jsonError4;
+var middleware_miniflare3_json_error_default = jsonError9;
 
-// ../.wrangler/tmp/bundle-sntQ32/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-t3ZVui/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -2297,7 +1569,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-sntQ32/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-t3ZVui/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
