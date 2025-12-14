@@ -773,7 +773,15 @@
             // Load comments
             async function loadComments() {
                 try {
-                    const response = await fetch(`/api/comments?contentId=${currentFileId}`);
+                    const token = localStorage.getItem('token');
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    if (token) {
+                        headers['Authorization'] = `Bearer ${token}`;
+                    }
+
+                    const response = await fetch(`/api/comments?contentId=${currentFileId}`, { headers });
                     const result = await response.json();
 
                     if (!result.success) {
@@ -804,6 +812,7 @@
                             date: formatDate(comment.created_at),
                             rating: 0,
                             likes: comment.likes || 0,
+                            likedByMe: comment.likedByMe || false,
                             replies: comment.replies || []
                         }, index);
                     });
