@@ -111,33 +111,3 @@ export async function onRequestGet(context: any) {
         return jsonError(error.message || 'Failed to fetch content', 500);
     }
 }
-
-// POST /api/content - Track view
-export async function onRequestPost(context: any) {
-    const { request, env } = context as { request: Request; env: Env };
-
-    try {
-        const body = await request.json();
-        const { action, contentId } = body;
-
-        if (action === 'view' && contentId) {
-            // Increment view count
-            await env.DB.prepare(`
-                UPDATE content 
-                SET views = COALESCE(views, 0) + 1 
-                WHERE id = ?
-            `).bind(contentId).run();
-
-            return jsonResponse({
-                success: true,
-                message: 'View tracked'
-            });
-        }
-
-        return jsonError('Invalid action or missing contentId', 400);
-
-    } catch (error: any) {
-        console.error('Track view error:', error);
-        return jsonError(error.message || 'Failed to track view', 500);
-    }
-}

@@ -286,10 +286,6 @@
                                 <span class="text-gray-500"><i class="fas fa-weight mr-2"></i>File Size</span>
                                 <span id="fileSize" class="text-gray-800">-</span>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-500"><i class="fas fa-eye mr-2"></i>Views</span>
-                                <span id="viewCount" class="text-gray-800">1</span>
-                            </div>
                         </div>
                     </div>
 
@@ -563,9 +559,6 @@
                     document.getElementById('uploadDate').textContent = formatDate(file.upload_date);
                     document.getElementById('fileSize').textContent = formatFileSize(file.file_size);
                     document.getElementById('uploadedBy').textContent = file.uploader_name || 'Student';
-
-                    // Track view
-                    trackView();
 
                     // Display file content
                     displayFileContent({
@@ -1266,22 +1259,6 @@
                     menu.classList.add('hidden');
                 }
             });
-
-            // Track view
-            async function trackView() {
-                try {
-                    await fetch('/api/content', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'view',
-                            contentId: currentFileId
-                        })
-                    });
-                } catch (error) {
-                    console.error('Error tracking view:', error);
-                }
-            }
 
             // Set comment rating
             function setCommentRating(rating) {
