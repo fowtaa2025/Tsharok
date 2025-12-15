@@ -749,7 +749,7 @@
                         name: file.title,
                         description: file.description || '',
                         type: file.type,
-                        rating: 0, // Will be calculated from ratings table later
+                        rating: file.average_rating || '0.0',
                         date: file.upload_date,
                         originalName: file.title,
                         r2Url: file.file_url,

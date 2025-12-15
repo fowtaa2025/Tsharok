@@ -100,10 +100,31 @@ export async function onRequestGet(context: any) {
 
         const result = await env.DB.prepare(query).bind(...params).all();
 
+        // For each file, calculate average rating from ratings table
+        const filesWithRatings = await Promise.all(
+            (result.results || []).map(async (file: any) => {
+                // Get average rating for this file
+                const ratingResult = await env.DB.prepare(`
+                    SELECT AVG(score) as avg_rating, COUNT(*) as rating_count
+                    FROM ratings
+                    WHERE content_id = ?
+                `).bind(file.id).first();
+
+                const avgRating = ratingResult?.avg_rating ? Number(ratingResult.avg_rating).toFixed(1) : '0.0';
+                const ratingCount = ratingResult?.rating_count || 0;
+
+                return {
+                    ...file,
+                    average_rating: avgRating,
+                    rating_count: ratingCount
+                };
+            })
+        );
+
         return jsonResponse({
             success: true,
-            files: result.results || [],
-            count: result.results?.length || 0
+            files: filesWithRatings,
+            count: filesWithRatings.length
         });
 
     } catch (error: any) {
