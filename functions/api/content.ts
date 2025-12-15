@@ -1,9 +1,13 @@
 // Get Content API - Fetch uploaded files from database
 // GET /api/content?courseId=1
+// POST /api/content - Track views
+
+import { verifyToken } from './auth';
 
 interface Env {
     DB: D1Database;
     R2_PUBLIC_URL: string;
+    JWT_SECRET: string;
 }
 
 function jsonResponse(data: any, status = 200) {
@@ -43,6 +47,7 @@ export async function onRequestGet(context: any) {
                     c.mime_type,
                     c.upload_date,
                     c.is_approved,
+                    c.views,
                     u.first_name || ' ' || u.last_name as uploader_name,
                     u.user_id as uploader_id
                 FROM content c
@@ -73,6 +78,7 @@ export async function onRequestGet(context: any) {
                 c.mime_type,
                 c.upload_date,
                 c.is_approved,
+                c.views,
                 u.first_name || ' ' || u.last_name as uploader_name,
                 u.user_id as uploader_id
             FROM content c
@@ -105,5 +111,35 @@ export async function onRequestGet(context: any) {
     } catch (error: any) {
         console.error('Get content error:', error);
         return jsonError(error.message || 'Failed to fetch content', 500);
+    }
+}
+
+// POST /api/content - Track view
+export async function onRequestPost(context: any) {
+    const { request, env } = context as { request: Request; env: Env };
+
+    try {
+        const body = await request.json();
+        const { action, contentId } = body;
+
+        if (action === 'view' && contentId) {
+            // Increment view count
+            await env.DB.prepare(`
+                UPDATE content 
+                SET views = COALESCE(views, 0) + 1 
+                WHERE id = ?
+            `).bind(contentId).run();
+
+            return jsonResponse({
+                success: true,
+                message: 'View tracked'
+            });
+        }
+
+        return jsonError('Invalid action or missing contentId', 400);
+
+    } catch (error: any) {
+        console.error('Track view error:', error);
+        return jsonError(error.message || 'Failed to track view', 500);
     }
 }

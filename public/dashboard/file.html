@@ -563,6 +563,10 @@
                     document.getElementById('uploadDate').textContent = formatDate(file.upload_date);
                     document.getElementById('fileSize').textContent = formatFileSize(file.file_size);
                     document.getElementById('uploadedBy').textContent = file.uploader_name || 'Student';
+                    document.getElementById('viewCount').textContent = file.views || 1;
+
+                    // Track view
+                    trackView();
 
                     // Display file content
                     displayFileContent({
@@ -810,7 +814,7 @@
                             author: comment.user_name,
                             text: comment.text,
                             date: formatDate(comment.created_at),
-                            rating: 0,
+                            rating: comment.rating || 0,
                             likes: comment.likes || 0,
                             likedByMe: comment.likedByMe || false,
                             replies: comment.replies || []
@@ -1263,6 +1267,36 @@
                     menu.classList.add('hidden');
                 }
             });
+
+            // Track view
+            async function trackView() {
+                try {
+                    await fetch('/api/content', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'view',
+                            contentId: currentFileId
+                        })
+                    });
+                } catch (error) {
+                    console.error('Error tracking view:', error);
+                }
+            }
+
+            // Set comment rating
+            function setCommentRating(rating) {
+                commentRating = rating;
+                const stars = document.querySelectorAll('#commentRating i');
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.className = 'fas fa-star text-lg text-yellow-400 cursor-pointer';
+                    } else {
+                        star.className = 'far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition';
+                    }
+                });
+                document.getElementById('commentRatingError').classList.add('hidden');
+            }
 
             // Initialize
             document.addEventListener('DOMContentLoaded', loadFile);

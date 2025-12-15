@@ -59,7 +59,7 @@ export async function onRequestGet(context: any) {
             ORDER BY c.created_at DESC
         `).bind(contentId).all();
 
-        // For each comment, get likes count, likedByMe, and replies
+        // For each comment, get likes count, likedByMe, rating, and replies
         const commentsWithDetails = await Promise.all(
             (comments.results || []).map(async (comment: any) => {
                 // Get likes count
@@ -74,6 +74,17 @@ export async function onRequestGet(context: any) {
                         SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?
                     `).bind(comment.id, currentUserId).first();
                     likedByMe = !!likeCheck;
+                }
+
+                // Get user's rating for this content (if they rated it)
+                let userRating = 0;
+                const ratingResult = await env.DB.prepare(`
+                    SELECT score FROM ratings 
+                    WHERE content_id = ? AND user_id = ?
+                `).bind(contentId, comment.user_id).first();
+
+                if (ratingResult) {
+                    userRating = ratingResult.score;
                 }
 
                 // Get replies
@@ -93,6 +104,7 @@ export async function onRequestGet(context: any) {
                     ...comment,
                     likes: likesResult?.count || 0,
                     likedByMe: likedByMe,
+                    rating: userRating,
                     replies: repliesResult.results || []
                 };
             })
