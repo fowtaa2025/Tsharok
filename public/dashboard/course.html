@@ -656,13 +656,12 @@
             }
 
             // Calculate overall course rating from all files (documents + videos)
-            function calculateOverallCourseRating() {
-                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+            function calculateOverallCourseRating(files) {
+                // Get ratings from files loaded from API
                 let allFileRatings = [];
 
-                // Get ratings from actual uploaded files
-                files.forEach((file, index) => {
-                    const rating = parseFloat(calculateFileRating(currentCourseId, index));
+                files.forEach(file => {
+                    const rating = parseFloat(file.rating);
                     if (rating > 0) {
                         allFileRatings.push(rating);
                     }
@@ -764,6 +763,9 @@
                     }));
 
                     const sortedFiles = sortFiles(formattedFiles, currentSortOption);
+
+                    // Calculate and display overall course rating
+                    calculateOverallCourseRating(formattedFiles);
 
                     const docsGrid = document.getElementById('documentsGrid');
                     const videoGrid = document.getElementById('videoGrid');
