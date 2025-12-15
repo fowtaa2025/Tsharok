@@ -1082,9 +1082,13 @@
                         commentRating = 0;
                         setCommentRating(0);
 
-                        // Reload comments and ratings
+                        // Reload comments
                         loadComments();
-                        updateAverageRating();
+
+                        // Wait a moment for database to fully commit, then update average rating
+                        setTimeout(() => {
+                            updateAverageRating();
+                        }, 500);
 
                         showToast('Comment posted successfully!', 'success');
                     })
