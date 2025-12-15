@@ -47,7 +47,7 @@ export async function onRequestGet(context: any) {
                     c.mime_type,
                     c.upload_date,
                     c.is_approved,
-                    c.views,
+                    COALESCE(c.views, 0) as views,
                     u.first_name || ' ' || u.last_name as uploader_name,
                     u.user_id as uploader_id
                 FROM content c
@@ -78,7 +78,7 @@ export async function onRequestGet(context: any) {
                 c.mime_type,
                 c.upload_date,
                 c.is_approved,
-                c.views,
+                COALESCE(c.views, 0) as views,
                 u.first_name || ' ' || u.last_name as uploader_name,
                 u.user_id as uploader_id
             FROM content c
