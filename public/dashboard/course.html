@@ -776,8 +776,8 @@
                         const index = file.originalIndex || 0;
                         const uploadDate = file.date ? new Date(file.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
 
-                        // Calculate average rating from comments and ratings
-                        const avgRating = calculateFileRating(currentCourseId, index);
+                        // Use default rating for now (will be fetched from API later)
+                        const avgRating = file.rating || '0.0';
 
                         // Get file type icon and color
                         const fileIcon = file.type === 'video' ? 'fa-play-circle' : getFileIcon(file.extension);
