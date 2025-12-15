@@ -657,6 +657,12 @@
 
             // Calculate overall course rating from all files (documents + videos)
             function calculateOverallCourseRating(files) {
+                // Safety check: ensure files is an array
+                if (!files || !Array.isArray(files)) {
+                    document.getElementById('courseRating').textContent = '0.0★';
+                    return;
+                }
+
                 // Get ratings from files loaded from API
                 let allFileRatings = [];
 
