@@ -391,7 +391,7 @@
                     if (profileInitial) profileInitial.textContent = initial;
 
                     // Use same color scheme as comments for consistency
-                    const colors = ['bg-primary', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                    const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
                     const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
                     if (profileButton) {
                         profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;

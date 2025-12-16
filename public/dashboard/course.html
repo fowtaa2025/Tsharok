@@ -7,7 +7,9 @@
     <title>Course Content - Tsharok</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/minimalist-design.css">
     <link rel="stylesheet" href="../assets/css/design-system.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
@@ -108,6 +110,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -241,7 +244,7 @@
                             </div>
                         </div>
                         <div id="descriptionBox" class="bg-white/10 backdrop-blur-sm rounded-xl p-5 max-w-2xl mt-4">
-                            <p id="courseDescription" class="text-white/90 leading-relaxed"></p>
+                            <p id="courseDescription" class="text-gray-900 leading-relaxed font-medium"></p>
                         </div>
                     </div>
                     <div class="text-right ml-8">
@@ -437,7 +440,7 @@
                     if (profileInitial) profileInitial.textContent = initial;
 
                     // Use same color scheme as comments for consistency
-                    const colors = ['bg-primary', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                    const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
                     const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
                     if (profileButton) {
                         profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
@@ -613,7 +616,10 @@
             function calculateOverallCourseRating(files) {
                 // Safety check: ensure files is an array
                 if (!files || !Array.isArray(files)) {
-                    document.getElementById('courseRating').textContent = '0.0★';
+                    // If no files, use course default rating
+                    const course = allCoursesData[currentCourseId];
+                    const defaultRating = course ? (course.rating || 0) : 0;
+                    document.getElementById('courseRating').textContent = defaultRating.toFixed(1) + '★';
                     return;
                 }
 
@@ -630,7 +636,10 @@
                 // Update the course rating display
                 const courseRatingEl = document.getElementById('courseRating');
                 if (allFileRatings.length === 0) {
-                    courseRatingEl.textContent = '0.0★';
+                    // If no file ratings, use course default rating
+                    const course = allCoursesData[currentCourseId];
+                    const defaultRating = course ? (course.rating || 0) : 0;
+                    courseRatingEl.textContent = defaultRating.toFixed(1) + '★';
                 } else {
                     const overallRating = allFileRatings.reduce((sum, r) => sum + r, 0) / allFileRatings.length;
                     courseRatingEl.textContent = overallRating.toFixed(1) + '★';
