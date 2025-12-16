@@ -5,6 +5,7 @@
 
 export interface Env {
 	DB: D1Database;
+	BUCKET: R2Bucket;
 }
 
 export default {
@@ -32,6 +33,21 @@ export default {
 			// Route: POST /api/register
 			if (url.pathname === '/api/register' && request.method === 'POST') {
 				return await handleRegister(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/logout
+			if (url.pathname === '/api/logout' && request.method === 'POST') {
+				return await handleLogout(corsHeaders);
+			}
+
+			// Route: POST /api/upload
+			if (url.pathname === '/api/upload' && request.method === 'POST') {
+				return await handleUpload(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/profile?user_id=X
+			if (url.pathname === '/api/profile' && request.method === 'GET') {
+				return await handleProfile(url, env, corsHeaders);
 			}
 
 			// Route: GET /api/view-materials?course_id=1
@@ -331,6 +347,168 @@ async function handleViewMaterials(url: URL, env: Env, corsHeaders: Record<strin
 				message: 'Failed to fetch materials',
 				error: error.message,
 			}),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/logout
+ */
+async function handleLogout(corsHeaders: Record<string, string>): Promise<Response> {
+	// Logout is handled client-side by clearing sessionStorage
+	// This endpoint just confirms the logout
+	return new Response(
+		JSON.stringify({
+			success: true,
+			message: 'Logged out successfully',
+		}),
+		{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+	);
+}
+
+/**
+ * Handle GET /api/profile?user_id=X
+ */
+async function handleProfile(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const userId = url.searchParams.get('user_id');
+
+	if (!userId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		// Query user data
+		const user = await env.DB.prepare(`
+			SELECT 
+				user_id, username, email, first_name, last_name,
+				role, major_id, phone, profile_image,
+				created_at, last_login
+			FROM users
+			WHERE user_id = ?
+		`)
+			.bind(userId)
+			.first();
+
+		if (!user) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'User not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Return user profile
+		const profile = {
+			userId: user.user_id,
+			username: user.username,
+			email: user.email,
+			firstName: user.first_name,
+			lastName: user.last_name,
+			fullName: `${user.first_name} ${user.last_name}`,
+			role: user.role,
+			majorId: user.major_id,
+			phone: user.phone,
+			profileImage: user.profile_image,
+			createdAt: user.created_at,
+			lastLogin: user.last_login,
+		};
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Profile fetched successfully',
+				user: profile,
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Profile error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to fetch profile', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/upload
+ * Upload file to R2 and save metadata to D1
+ */
+async function handleUpload(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const formData = await request.formData();
+
+		// Get form fields
+		const file = formData.get('file') as File;
+		const title = formData.get('title') as string;
+		const courseId = formData.get('courseId') as string;
+		const userId = formData.get('userId') as string;
+		const description = formData.get('description') as string || '';
+		const type = formData.get('type') as string || 'document';
+
+		// Validate
+		if (!file || !title || !courseId || !userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing required fields' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Generate unique filename
+		const timestamp = Date.now();
+		const extension = file.name.split('.').pop();
+		const r2Key = `course-${courseId}/${timestamp}-${file.name}`;
+
+		// Upload to R2
+		await env.BUCKET.put(r2Key, file.stream(), {
+			httpMetadata: {
+				contentType: file.type,
+			},
+		});
+
+		// Get public URL
+		const fileUrl = `https://pub-cd42bce9da7242b69d703b8bf1e9e4b6.r2.dev/${r2Key}`;
+
+		// Save to D1 database
+		const result = await env.DB.prepare(`
+			INSERT INTO content (
+				course_id, uploader_id, title, description,
+				type, file_url, file_size, mime_type,
+				is_approved, upload_date
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
+		`)
+			.bind(
+				courseId,
+				userId,
+				title,
+				description,
+				type,
+				r2Key,
+				file.size,
+				file.type
+			)
+			.run();
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'File uploaded successfully',
+				data: {
+					id: result.meta.last_row_id,
+					title: title,
+					fileUrl: fileUrl,
+					r2Key: r2Key,
+				},
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Upload error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Upload failed', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}

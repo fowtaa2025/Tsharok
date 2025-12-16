@@ -999,16 +999,15 @@
                     const formData = new FormData();
                     formData.append('file', file);
                     formData.append('courseId', currentCourseId);
+                    formData.append('userId', userData.userId || userData.id || '1');  // Add userId
                     formData.append('title', name);  // API expects 'title' not 'fileName'
                     formData.append('description', description);
+                    formData.append('type', currentFileType || 'document');  // Add file type
 
-                    // Upload to R2 via Cloudflare Pages Function
-                    const response = await fetch('/api/upload', {
+                    // Upload to Cloudflare Worker API
+                    const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/upload', {
                         method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: formData
+                        body: formData  // No need for Authorization header in current implementation
                     });
 
                     console.log('Upload response status:', response.status);
@@ -1017,48 +1016,22 @@
                     const result = await response.json();
                     console.log('Upload result:', result);
 
-                    if (result.success && result.file) {
-                        // File uploaded to R2 successfully!
-                        // Now save metadata to localStorage
-                        let files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
-
-                        files.push({
-                            name: name,
-                            description: description || '',
-                            type: currentFileType,
-                            rating: 0,
-                            date: new Date().toISOString(),
-                            originalName: file.name,
-                            r2Url: result.file.url,  // R2 URL from API
-                            r2Key: result.file.key,  // R2 key from API
-                            mimeType: file.type,
-                            extension: extension,
-                            size: file.size,
-                            uploadedBy: userData.fullName || userData.name || userData.username || 'Student',
-                            uploaderId: userData.id || null,
-                            storageType: 'r2'  // Mark as R2 storage
-                        });
-
-                        // Save metadata only (not the file data!)
-                        localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
-                        console.log('File saved to localStorage:', files[files.length - 1]);
-
-                        // Create notification
-                        createNotification(name, currentFileType, extension);
-
-                        // Close modal and reload
-                        closeModal();
-
-                        // Force reload files
-                        setTimeout(() => {
-                            loadFiles();
-                            console.log('Files reloaded after upload');
-                        }, 100);
+                    if (result.success) {
+                        // File uploaded successfully!
                         showToast(
                             currentFileType === 'video' ?
                                 '✅ Video uploaded to cloud storage!' :
                                 '✅ Document uploaded to cloud storage!'
                         );
+
+                        // Close modal
+                        closeModal();
+
+                        // Reload files from API
+                        setTimeout(() => {
+                            loadFiles();
+                            console.log('Files reloaded after upload');
+                        }, 500);
                     } else {
                         // Show detailed error
                         const errorMsg = result.error || result.message || 'Upload failed - Unknown error';
