@@ -701,7 +701,7 @@
             async function loadFiles() {
                 try {
                     // Try to fetch from database API first (works on localhost with backend)
-                    const response = await fetch(`/api/view-materials.php?course_id=${currentCourseId}`);
+                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=${currentCourseId}`);
 
                     let files = [];
 
