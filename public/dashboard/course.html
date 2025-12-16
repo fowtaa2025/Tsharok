@@ -700,42 +700,54 @@
             // Load files for this course
             async function loadFiles() {
                 try {
-                    // Fetch files from database API with correct parameter name
+                    // Try to fetch from database API first (works on localhost with backend)
                     const response = await fetch(`/api/view-materials.php?course_id=${currentCourseId}`);
-                    const result = await response.json();
 
-                    if (!result.success) {
-                        console.error('Failed to load files:', result.message || result.error);
-                        return;
+                    let files = [];
+
+                    // If API is available and returns success
+                    if (response.ok) {
+                        const result = await response.json();
+
+                        if (result.success && result.data?.materials) {
+                            // Convert database format to frontend format
+                            files = result.data.materials.map((file, index) => ({
+                                id: file.id,
+                                name: file.title,
+                                description: file.description || '',
+                                type: file.type,
+                                rating: file.statistics?.avg_rating || '0.0',
+                                date: file.upload_date,
+                                originalName: file.title,
+                                r2Url: file.file_url,
+                                r2Key: file.file_url,
+                                mimeType: file.mime_type,
+                                extension: file.file_url ? file.file_url.split('.').pop() : 'file',
+                                size: file.file_size,
+                                uploadedBy: file.uploader?.name || 'Student',
+                                uploaderId: file.uploader?.id,
+                                storageType: 'r2',
+                                originalIndex: index
+                            }));
+                            console.log('Loaded files from API:', files);
+                        }
                     }
 
-                    const files = result.data?.materials || [];
-                    console.log('Loading files for course', currentCourseId, ':', files);
+                    // Fallback to localStorage if API failed or returned no files
+                    if (files.length === 0) {
+                        console.log('API unavailable or empty, using localStorage fallback');
+                        const storedFiles = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
+                        files = storedFiles.map((file, index) => ({
+                            ...file,
+                            originalIndex: index
+                        }));
+                        console.log('Loaded files from localStorage:', files);
+                    }
 
-                    // Convert database format to frontend format
-                    const formattedFiles = files.map((file, index) => ({
-                        id: file.id,
-                        name: file.title,
-                        description: file.description || '',
-                        type: file.type,
-                        rating: file.statistics?.avg_rating || '0.0',
-                        date: file.upload_date,
-                        originalName: file.title,
-                        r2Url: file.file_url,
-                        r2Key: file.file_url,
-                        mimeType: file.mime_type,
-                        extension: file.file_url ? file.file_url.split('.').pop() : 'file',
-                        size: file.file_size,
-                        uploadedBy: file.uploader?.name || 'Student',
-                        uploaderId: file.uploader?.id,
-                        storageType: 'r2',
-                        originalIndex: index
-                    }));
-
-                    const sortedFiles = sortFiles(formattedFiles, currentSortOption);
+                    const sortedFiles = sortFiles(files, currentSortOption);
 
                     // Calculate and display overall course rating
-                    calculateOverallCourseRating(formattedFiles);
+                    calculateOverallCourseRating(sortedFiles);
 
                     const docsGrid = document.getElementById('documentsGrid');
                     const videoGrid = document.getElementById('videoGrid');
