@@ -700,16 +700,16 @@
             // Load files for this course
             async function loadFiles() {
                 try {
-                    // Fetch files from database API instead of localStorage
-                    const response = await fetch(`/api/content?courseId=${currentCourseId}`);
+                    // Fetch files from database API with correct parameter name
+                    const response = await fetch(`/api/view-materials.php?course_id=${currentCourseId}`);
                     const result = await response.json();
 
                     if (!result.success) {
-                        console.error('Failed to load files:', result.error);
+                        console.error('Failed to load files:', result.message || result.error);
                         return;
                     }
 
-                    const files = result.files || [];
+                    const files = result.data?.materials || [];
                     console.log('Loading files for course', currentCourseId, ':', files);
 
                     // Convert database format to frontend format
@@ -718,16 +718,16 @@
                         name: file.title,
                         description: file.description || '',
                         type: file.type,
-                        rating: file.average_rating || '0.0',
+                        rating: file.statistics?.avg_rating || '0.0',
                         date: file.upload_date,
                         originalName: file.title,
                         r2Url: file.file_url,
-                        r2Key: file.file_key,
+                        r2Key: file.file_url,
                         mimeType: file.mime_type,
-                        extension: file.file_key ? file.file_key.split('.').pop() : 'file',
+                        extension: file.file_url ? file.file_url.split('.').pop() : 'file',
                         size: file.file_size,
-                        uploadedBy: file.uploader_name || 'Student',
-                        uploaderId: file.uploader_id,
+                        uploadedBy: file.uploader?.name || 'Student',
+                        uploaderId: file.uploader?.id,
                         storageType: 'r2',
                         originalIndex: index
                     }));
