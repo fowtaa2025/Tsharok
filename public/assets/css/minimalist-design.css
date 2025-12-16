@@ -1,0 +1,393 @@
+/* ================================================
+   Style 24: Minimalist Professional Design System
+   ================================================ */
+
+:root {
+    /* Primary Colors */
+    --primary-teal: #00897b;
+    --primary-dark: #263238;
+    --primary-light: #fafafa;
+    
+    /* Gray Scale */
+    --gray-50: #fafafa;
+    --gray-100: #eceff1;
+    --gray-200: #cfd8dc;
+    --gray-300: #b0bec5;
+    --gray-400: #90a4ae;
+    --gray-500: #78909c;
+    --gray-600: #546e7a;
+    --gray-700: #455a64;
+    --gray-800: #37474f;
+    --gray-900: #263238;
+    
+    /* Typography */
+    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', sans-serif;
+    --letter-spacing-tight: -1px;
+    --letter-spacing-normal: 0.5px;
+    --letter-spacing-wide: 1px;
+    --letter-spacing-wider: 1.5px;
+    --letter-spacing-widest: 2px;
+    
+    /* Borders */
+    --border-width: 1px;
+    --border-width-thick: 2px;
+    --border-width-accent: 8px;
+    --border-color: var(--gray-100);
+    
+    /* Spacing */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+}
+
+/* ================================================
+   Global Overrides - Zero Border Radius
+   ================================================ */
+
+* {
+    border-radius: 0 !important;
+}
+
+/* Remove all border-radius from common elements */
+button,
+input,
+select,
+textarea,
+.btn,
+.button,
+.card,
+.badge,
+.pill,
+.modal,
+.dropdown,
+.tab,
+img,
+video {
+    border-radius: 0 !important;
+}
+
+/* ================================================
+   Typography
+   ================================================ */
+
+body {
+    font-family: var(--font-family);
+    color: var(--gray-900);
+    background-color: var(--gray-50);
+}
+
+.minimalist-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    letter-spacing: var(--letter-spacing-tight);
+    text-transform: none;
+}
+
+.minimalist-subtitle {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--primary-teal);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-widest);
+}
+
+.minimalist-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ================================================
+   Buttons
+   ================================================ */
+
+.btn-minimalist-primary {
+    background-color: var(--primary-teal);
+    color: white;
+    border: none;
+    border-radius: 0;
+    padding: 1rem 2.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-minimalist-primary:hover {
+    background-color: #00796b;
+}
+
+.btn-minimalist-secondary {
+    background-color: transparent;
+    color: var(--primary-teal);
+    border: var(--border-width-thick) solid var(--primary-teal);
+    border-radius: 0;
+    padding: 1rem 2.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-minimalist-secondary:hover {
+    background-color: var(--primary-teal);
+    color: white;
+}
+
+/* ================================================
+   Cards
+   ================================================ */
+
+.minimalist-card {
+    background-color: white;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 0;
+    padding: var(--space-lg);
+    transition: all 0.3s ease;
+}
+
+.minimalist-card:hover {
+    border-color: var(--primary-teal);
+    transform: translateY(-2px);
+}
+
+.minimalist-card-header {
+    background-color: var(--gray-50);
+    border-left: var(--border-width-accent) solid var(--primary-teal);
+    padding: var(--space-xl);
+}
+
+/* ================================================
+   File Cards
+   ================================================ */
+
+.minimalist-file-card {
+    background-color: white;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 0;
+    padding: var(--space-lg);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.minimalist-file-card:hover {
+    border-color: var(--primary-teal);
+}
+
+.minimalist-file-icon {
+    width: 48px;
+    height: 48px;
+    background-color: var(--primary-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-sm);
+}
+
+.minimalist-file-icon i {
+    color: white;
+    font-size: 20px;
+}
+
+/* ================================================
+   Badges & Pills
+   ================================================ */
+
+.minimalist-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--primary-teal);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    border-radius: 0;
+}
+
+.minimalist-rating-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50% !important; /* Exception for circular design */
+    background-color: var(--primary-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.minimalist-rating-label {
+    color: var(--gray-500);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ================================================
+   Tabs
+   ================================================ */
+
+.minimalist-tabs {
+    display: flex;
+    gap: 0;
+}
+
+.minimalist-tab {
+    padding: 1rem 2.5rem;
+    background-color: transparent;
+    color: var(--gray-600);
+    border: var(--border-width-thick) solid transparent;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.minimalist-tab:hover {
+    background-color: var(--gray-50);
+    color: var(--primary-teal);
+}
+
+.minimalist-tab-active {
+    background-color: var(--primary-teal);
+    color: white;
+    border-color: var(--primary-teal);
+}
+
+/* ================================================
+   Forms
+   ================================================ */
+
+.minimalist-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: var(--border-width-thick) solid var(--border-color);
+    border-radius: 0;
+    background-color: white;
+    color: var(--gray-900);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.minimalist-input:focus {
+    outline: none;
+    border-color: var(--primary-teal);
+}
+
+.minimalist-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--gray-700);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ================================================
+   Navigation
+   ================================================ */
+
+.minimalist-nav {
+    background-color: white;
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.minimalist-nav-link {
+    color: var(--gray-700);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    transition: color 0.3s ease;
+}
+
+.minimalist-nav-link:hover {
+    color: var(--primary-teal);
+}
+
+/* ================================================
+   Course Header
+   ================================================ */
+
+.minimalist-course-header {
+    background-color: var(--gray-50);
+    border-left: var(--border-width-accent) solid var(--primary-teal);
+    padding: var(--space-xl);
+}
+
+/* ================================================
+   Utility Classes
+   ================================================ */
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.letter-spacing-wide {
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.letter-spacing-wider {
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.letter-spacing-widest {
+    letter-spacing: var(--letter-spacing-widest);
+}
+
+.border-left-accent {
+    border-left: var(--border-width-accent) solid var(--primary-teal);
+}
+
+.bg-minimalist-primary {
+    background-color: var(--primary-teal);
+}
+
+.bg-minimalist-light {
+    background-color: var(--gray-50);
+}
+
+.text-minimalist-primary {
+    color: var(--primary-teal);
+}
+
+.text-minimalist-dark {
+    color: var(--primary-dark);
+}
+
+/* ================================================
+   Responsive Design
+   ================================================ */
+
+@media (max-width: 768px) {
+    .minimalist-title {
+        font-size: 2rem;
+    }
+    
+    .minimalist-course-header {
+        padding: var(--space-md);
+    }
+    
+    .btn-minimalist-primary,
+    .btn-minimalist-secondary {
+        padding: 0.875rem 2rem;
+        font-size: 0.75rem;
+    }
+}

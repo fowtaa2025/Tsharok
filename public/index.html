@@ -8,6 +8,7 @@
     <title>Tsharok - Interactive Learning Platform for Students</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/minimalist-design.css">
     <link rel="stylesheet" href="assets/css/design-system.css">
     <link rel="stylesheet" href="assets/css/animations.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -16,16 +17,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap"
         rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#2C3E50',
-                        secondary: '#34495E',
-                        accent: '#3498DB',
+                        primary: '#00897b',
+                        secondary: '#263238',
+                        accent: '#00897b',
                     }
                 }
             }
@@ -33,7 +34,7 @@
     </script>
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Poppins', 'Cairo', sans-serif;
         }
 
         .hero-content {
@@ -42,17 +43,16 @@
 
         .animate-fade-in {
             animation: fadeInModal 0.3s ease-out;
+            border-radius: 0;
         }
 
         @keyframes fadeInModal {
             from {
                 opacity: 0;
-                transform: scale(0.95);
             }
 
             to {
                 opacity: 1;
-                transform: scale(1);
             }
         }
 
@@ -61,10 +61,16 @@
         input[type="password"],
         input[type="text"] {
             color: #1f2937 !important;
+            border-radius: 0 !important;
         }
 
         input::placeholder {
             color: #9ca3af !important;
+        }
+
+        /* Minimalist buttons */
+        button {
+            border-radius: 0 !important;
         }
     </style>
 </head>

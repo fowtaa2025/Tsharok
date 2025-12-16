@@ -7,18 +7,21 @@
     <title>My Profile - Tsharok</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/design-system.css">
-    <link rel="stylesheet" href="../assets/css/custom.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/minimalist-design.css">
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#2C3E50',
-                        secondary: '#34495E',
+                        primary: '#00897b',
+                        secondary: '#263238',
                     }
                 }
             }
@@ -26,7 +29,7 @@
     </script>
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Poppins', 'Cairo', sans-serif;
             font-size: 16px;
         }
 
@@ -127,11 +130,11 @@
                     <div class="text-center">
                         <div class="relative inline-block mb-6">
                             <div id="profileImageDisplay"
-                                class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-5xl text-white shadow-2xl">
+                                class="w-32 h-32 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-5xl text-white shadow-2xl">
                                 <i class="fas fa-user"></i>
                             </div>
                             <button onclick="document.getElementById('profileImageInput').click()"
-                                class="absolute bottom-0 right-0 w-12 h-12 bg-white text-blue-600 rounded-full hover:bg-gray-100 transition flex items-center justify-center shadow-lg border-4 border-white">
+                                class="absolute bottom-0 right-0 w-12 h-12 bg-white text-primary rounded-full hover:bg-gray-100 transition flex items-center justify-center shadow-lg border-4 border-white">
                                 <i class="fas fa-camera text-lg"></i>
                             </button>
                             <input type="file" id="profileImageInput" class="hidden" accept="image/*"
@@ -140,7 +143,7 @@
                         <h3 class="text-3xl font-bold text-gray-900 mb-2" data-user-name>Student Name</h3>
                         <p class="text-gray-500 text-lg mb-4" data-user-email>student@email.com</p>
                         <span
-                            class="inline-block px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full font-semibold shadow-lg">
+                            class="inline-block px-6 py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-full font-semibold shadow-lg">
                             <i class="fas fa-graduation-cap mr-2"></i>
                             <span data-user-role>Student</span>
                         </span>
@@ -152,7 +155,7 @@
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="text-2xl font-bold text-gray-900">Personal Information</h2>
                         <button id="editButton" onclick="toggleEdit()"
-                            class="px-5 py-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition font-semibold border-2 border-blue-600">
+                            class="px-5 py-2.5 text-primary hover:bg-gray-50 rounded-xl transition font-semibold border-2 border-blue-600">
                             <i class="fas fa-edit mr-2"></i>
                             <span>Edit</span>
                         </button>
@@ -166,7 +169,7 @@
                                     First Name <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="firstName"
-                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 font-medium"
+                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-gray-50 font-medium"
                                     value="John" disabled required>
                             </div>
 
@@ -176,7 +179,7 @@
                                     Last Name <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="lastName"
-                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 font-medium"
+                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-gray-50 font-medium"
                                     value="Doe" disabled required>
                             </div>
 
@@ -186,7 +189,7 @@
                                     Email <span class="text-red-500">*</span>
                                 </label>
                                 <input type="email" id="email"
-                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 font-medium"
+                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-gray-50 font-medium"
                                     value="john.doe@email.com" disabled required>
                             </div>
 
@@ -196,7 +199,7 @@
                                     Date of Birth
                                 </label>
                                 <input type="date" id="dob"
-                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 font-medium"
+                                    class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-gray-50 font-medium"
                                     value="2000-01-01" disabled>
                             </div>
                         </div>
@@ -207,7 +210,7 @@
                                 Bio
                             </label>
                             <textarea id="bio" rows="4"
-                                class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 resize-none font-medium"
+                                class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-gray-50 resize-none font-medium"
                                 disabled
                                 placeholder="Tell us about yourself...">Passionate computer science student interested in web development and artificial intelligence.</textarea>
                         </div>
@@ -215,7 +218,7 @@
                         <!-- Save/Cancel Buttons -->
                         <div id="formActions" class="hidden flex gap-4 pt-4">
                             <button type="submit"
-                                class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition shadow-lg hover:shadow-xl">
+                                class="flex-1 bg-gradient-to-r from-teal-500 to-teal-600 text-white py-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition shadow-lg hover:shadow-xl">
                                 <i class="fas fa-save mr-2"></i>
                                 Save Changes
                             </button>
@@ -231,16 +234,16 @@
                 <div class="bg-white rounded-2xl shadow-xl p-8">
                     <h4 class="font-bold text-2xl text-gray-900 mb-6">Account Actions</h4>
                     <a href="settings.html#security"
-                        class="block w-full text-left px-6 py-5 text-gray-700 hover:bg-blue-50 rounded-xl transition flex items-center border-2 border-gray-200 hover:border-blue-500 group">
+                        class="block w-full text-left px-6 py-5 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center border-2 border-gray-200 hover:border-blue-500 group">
                         <div
-                            class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-blue-200 transition">
-                            <i class="fas fa-key text-blue-600 text-xl"></i>
+                            class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-blue-200 transition">
+                            <i class="fas fa-key text-primary text-xl"></i>
                         </div>
                         <div>
                             <div class="font-bold text-gray-900 text-lg">Change Password</div>
                             <div class="text-sm text-gray-500">Update your account password</div>
                         </div>
-                        <i class="fas fa-chevron-right ml-auto text-gray-400 group-hover:text-blue-600 transition"></i>
+                        <i class="fas fa-chevron-right ml-auto text-gray-400 group-hover:text-primary transition"></i>
                     </a>
                 </div>
             </div>
@@ -293,10 +296,10 @@
 
                 if (editButton.querySelector('span').textContent === 'Edit') {
                     editButton.querySelector('span').textContent = 'Editing...';
-                    editButton.classList.add('bg-blue-100');
+                    editButton.classList.add('bg-gray-100');
                 } else {
                     editButton.querySelector('span').textContent = 'Edit';
-                    editButton.classList.remove('bg-blue-100');
+                    editButton.classList.remove('bg-gray-100');
                 }
             }
 
@@ -365,7 +368,7 @@
                 const colors = {
                     success: 'bg-green-500',
                     error: 'bg-red-500',
-                    info: 'bg-blue-500'
+                    info: 'bg-primary'
                 };
 
                 const notification = document.createElement('div');
@@ -388,7 +391,7 @@
     <!-- Mobile Floating Chatbot Button -->
     <div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50">
         <button onclick="toggleMobileChatbot()"
-            class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
+            class="w-16 h-16 bg-primary rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
             <i class="fas fa-robot text-2xl"></i>
         </button>
     </div>
@@ -399,11 +402,10 @@
         <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] flex flex-col"
             onclick="event.stopPropagation()">
             <!-- Header -->
-            <div
-                class="bg-gradient-to-br from-blue-600 to-blue-500 p-4 rounded-t-3xl flex items-center justify-between">
+            <div class="bg-primary p-4 rounded-t-3xl flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <i class="fas fa-robot text-xl text-blue-600"></i>
+                        <i class="fas fa-robot text-xl text-primary"></i>
                     </div>
                     <div class="text-white">
                         <div class="font-bold">Tsharok Assistant</div>
@@ -418,8 +420,7 @@
             <!-- Messages Area -->
             <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="mobileChatbotMessages">
                 <div class="flex gap-2 mb-3">
-                    <div
-                        class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-robot text-white text-sm"></i>
                     </div>
                     <div class="flex-1">
@@ -430,15 +431,15 @@
                         </div>
                         <div class="flex flex-wrap gap-2 mt-2">
                             <button onclick="sendQuickReplyMobile('How do I add a course?')"
-                                class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                class="px-3 py-2 bg-white border-2 border-primary text-primary rounded-full text-xs font-medium hover:bg-primary hover:text-white transition">
                                 Add Course
                             </button>
                             <button onclick="sendQuickReplyMobile('Show my schedule')"
-                                class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                class="px-3 py-2 bg-white border-2 border-primary text-primary rounded-full text-xs font-medium hover:bg-primary hover:text-white transition">
                                 My Schedule
                             </button>
                             <button onclick="sendQuickReplyMobile('Help with assignments')"
-                                class="px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition">
+                                class="px-3 py-2 bg-white border-2 border-primary text-primary rounded-full text-xs font-medium hover:bg-primary hover:text-white transition">
                                 Assignments
                             </button>
                         </div>
@@ -450,11 +451,11 @@
             <div class="p-4 bg-white border-t border-gray-200">
                 <div class="flex gap-2 items-center">
                     <input type="text"
-                        class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-blue-600 transition"
+                        class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-primary transition"
                         id="mobileChatbotInput" placeholder="Type your message..."
                         onkeypress="handleChatKeyPressMobile(event)">
                     <button onclick="sendMessageMobile()"
-                        class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-500 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                        class="w-12 h-12 bg-primary rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
