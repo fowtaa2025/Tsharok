@@ -615,7 +615,7 @@
             // Calculate overall course rating from all files (documents + videos)
             function calculateOverallCourseRating(files) {
                 // Safety check: ensure files is an array
-                if (!files || !Array.isArray(files)) {
+                if (!files || !Array.isArray(files) || files.length === 0) {
                     // If no files, use course default rating
                     const course = allCoursesData[currentCourseId];
                     const defaultRating = course ? (course.rating || 0) : 0;
@@ -623,12 +623,12 @@
                     return;
                 }
 
-                // Get ratings from files loaded from API
+                // Get ratings from ALL files (documents + videos)
                 let allFileRatings = [];
 
                 files.forEach(file => {
                     const rating = parseFloat(file.rating);
-                    if (rating > 0) {
+                    if (!isNaN(rating) && rating > 0) {
                         allFileRatings.push(rating);
                     }
                 });
@@ -636,11 +636,12 @@
                 // Update the course rating display
                 const courseRatingEl = document.getElementById('courseRating');
                 if (allFileRatings.length === 0) {
-                    // If no file ratings, use course default rating
+                    // If no valid file ratings, use course default rating
                     const course = allCoursesData[currentCourseId];
                     const defaultRating = course ? (course.rating || 0) : 0;
                     courseRatingEl.textContent = defaultRating.toFixed(1) + '★';
                 } else {
+                    // Calculate average from ALL file ratings
                     const overallRating = allFileRatings.reduce((sum, r) => sum + r, 0) / allFileRatings.length;
                     courseRatingEl.textContent = overallRating.toFixed(1) + '★';
                 }
@@ -752,7 +753,7 @@
 
                         // Get file type icon and color
                         const fileIcon = file.type === 'video' ? 'fa-play-circle' : getFileIcon(file.extension);
-                        const iconBg = file.type === 'video' ? 'from-red-500 to-pink-500' : 'from-indigo-500 to-purple-500';
+                        const iconBg = file.type === 'video' ? 'from-red-500 to-pink-500' : 'from-primary to-primary';
 
                         const cardHTML = `
                         <a href="file.html?courseId=${currentCourseId}&fileId=${file.id}&name=${encodeURIComponent(file.name)}" class="file-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer block h-48">

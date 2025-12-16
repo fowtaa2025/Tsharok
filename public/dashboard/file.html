@@ -836,7 +836,7 @@
                 ).join('');
 
                 const initials = (comment.author || 'S').charAt(0).toUpperCase();
-                const colors = ['bg-primary', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
                 const randomColor = colors[Math.abs(comment.author?.charCodeAt(0) || 0) % colors.length];
                 const likes = comment.likes || 0;
                 const isLiked = comment.likedByMe ? 'fas text-red-500' : 'far text-gray-400';
@@ -911,7 +911,7 @@
             // Get reply HTML
             function getReplyHTML(reply, commentIndex, replyIndex) {
                 const initials = (reply.author || 'S').charAt(0).toUpperCase();
-                const colors = ['bg-primary', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500'];
+                const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
                 const randomColor = colors[Math.abs(reply.author?.charCodeAt(0) || 0) % colors.length];
 
                 return `
