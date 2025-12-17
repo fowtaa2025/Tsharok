@@ -520,9 +520,12 @@ async function markAsHelpful(reviewId) {
         icon.classList.add('fas', 'text-indigo-600');
         btn.disabled = true;
 
-        const response = await axios.post('/api/helpful.php', {
-            reviewId: reviewId,
-            courseId: currentCourseId
+        const response = await axios.post('https://tsharok-api.fow-taa-2025.workers.dev/api/comments/like', {
+            commentId: reviewId
+        }, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('userId')}`
+            }
         });
 
         if (response.data.success) {
@@ -560,10 +563,13 @@ async function submitReply(reviewId, content) {
     }
 
     try {
-        const response = await axios.post('/api/reply-comment.php', {
-            reviewId: reviewId,
-            courseId: currentCourseId,
-            content: content
+        const response = await axios.post('https://tsharok-api.fow-taa-2025.workers.dev/api/comments/reply', {
+            commentId: reviewId,
+            text: content
+        }, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('userId')}`
+            }
         });
 
         if (response.data.success) {

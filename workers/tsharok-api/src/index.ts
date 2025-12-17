@@ -65,6 +65,16 @@ export default {
 				return await handleAddComment(request, env, corsHeaders);
 			}
 
+			// Route: POST /api/comments/like
+			if (url.pathname === '/api/comments/like' && request.method === 'POST') {
+				return await handleCommentLike(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/comments/reply
+			if (url.pathname === '/api/comments/reply' && request.method === 'POST') {
+				return await handleCommentReply(request, env, corsHeaders);
+			}
+
 			// Route: GET /api/ratings
 			if (url.pathname === '/api/ratings' && request.method === 'GET') {
 				return await handleGetRatings(url, env, corsHeaders);
@@ -712,6 +722,192 @@ async function handleAddComment(request: Request, env: Env, corsHeaders: Record<
 		console.error('Add comment error:', error);
 		return new Response(
 			JSON.stringify({ success: false, message: 'Failed to submit rating and comment', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/comments/like
+ * Toggle like on a comment
+ */
+async function handleCommentLike(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const authHeader = request.headers.get('Authorization');
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'Authentication required' }),
+			{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		const data = await request.json() as any;
+		const commentId = data.commentId;
+		const token = authHeader.substring(7);
+		const userId = parseInt(token);  // Simple token = userId for now
+
+		if (!commentId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'commentId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if comment exists
+		const commentExists = await env.DB.prepare('SELECT id FROM comments WHERE id = ?')
+			.bind(commentId)
+			.first();
+
+		if (!commentExists) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Comment not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if user already liked
+		const existingLike = await env.DB.prepare(
+			'SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?'
+		)
+			.bind(commentId, userId)
+			.first();
+
+		let liked = false;
+		if (existingLike) {
+			// Unlike - remove like
+			await env.DB.prepare('DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?')
+				.bind(commentId, userId)
+				.run();
+			liked = false;
+		} else {
+			// Like - add like
+			await env.DB.prepare(
+				"INSERT INTO comment_likes (comment_id, user_id, created_at) VALUES (?, ?, datetime('now'))"
+			)
+				.bind(commentId, userId)
+				.run();
+			liked = true;
+		}
+
+		// Get updated like count
+		const likeCountResult = await env.DB.prepare(
+			'SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?'
+		)
+			.bind(commentId)
+			.first();
+
+		const likeCount = (likeCountResult as any).count || 0;
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				liked: liked,
+				likes: likeCount,
+				message: liked ? 'Comment liked' : 'Comment unliked',
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Comment like error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to toggle like', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/comments/reply
+ * Add a reply to a comment
+ */
+async function handleCommentReply(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const authHeader = request.headers.get('Authorization');
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'Authentication required' }),
+			{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		const data = await request.json() as any;
+		const commentId = data.commentId;
+		const text = data.text?.trim();
+		const token = authHeader.substring(7);
+		const userId = parseInt(token);  // Simple token = userId for now
+
+		if (!commentId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'commentId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (!text) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Reply text is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (text.length > 1000) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Reply text is too long (max 1000 characters)' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if comment exists
+		const commentExists = await env.DB.prepare('SELECT id FROM comments WHERE id = ?')
+			.bind(commentId)
+			.first();
+
+		if (!commentExists) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Comment not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Insert reply
+		const replyResult = await env.DB.prepare(
+			`INSERT INTO comment_replies (comment_id, user_id, content, created_at, updated_at) 
+			 VALUES (?, ?, ?, datetime('now'), datetime('now'))`
+		)
+			.bind(commentId, userId, text)
+			.run();
+
+		const replyId = replyResult.meta.last_row_id;
+
+		// Get reply with user info
+		const reply = await env.DB.prepare(
+			`SELECT 
+				cr.id,
+				cr.comment_id,
+				cr.user_id,
+				cr.content as text,
+				cr.created_at,
+				u.first_name || ' ' || u.last_name as author,
+				u.username
+			 FROM comment_replies cr
+			 JOIN users u ON cr.user_id = u.user_id
+			 WHERE cr.id = ?`
+		)
+			.bind(replyId)
+			.first();
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				reply: reply,
+				message: 'Reply added successfully',
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Comment reply error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to add reply', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
