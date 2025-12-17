@@ -800,9 +800,9 @@
                         html += getCommentHTML({
                             id: comment.id,
                             author: comment.userName,
-                            text: comment.comment,
+                            text: comment.content,
                             date: formatDate(comment.createdAt),
-                            rating: comment.rating || 0,
+                            rating: comment.score || 0,
                             likes: comment.likes || 0,
                             likedByMe: comment.likedByMe || false,
                             replies: comment.replies || []
@@ -999,27 +999,31 @@
 
             // Toggle like on comment
             async function toggleLike(commentId) {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token') || sessionStorage.getItem('userId');
                 if (!token) {
                     showToast('Please login to like comments', 'error');
                     return;
                 }
 
                 try {
+                    console.log('Toggling like for comment:', commentId, 'with token:', token);
                     const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/comments/like', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify({ commentId })
+                        body: JSON.stringify({ commentId: parseInt(commentId) })
                     });
 
                     const result = await response.json();
+                    console.log('Like response:', result);
+
                     if (result.success) {
                         showToast(result.message, 'success');
                         loadComments(); // Reload to show updated like count
                     } else {
+                        console.error('Like failed:', result);
                         showToast(result.message || 'Failed to toggle like', 'error');
                     }
                 } catch (error) {
