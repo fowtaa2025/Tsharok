@@ -8,6 +8,33 @@ export interface Env {
 	BUCKET: R2Bucket;
 }
 
+/**
+ * Extract userId from JWT token
+ * Simple JWT decode - extracts payload without verification (for now)
+ */
+function getUserIdFromToken(token: string): number | null {
+	try {
+		// JWT format: header.payload.signature
+		const parts = token.split('.');
+		if (parts.length !== 3) {
+			// Not a JWT, try as plain userId
+			const userId = parseInt(token);
+			return isNaN(userId) ? null : userId;
+		}
+
+		// Decode payload (base64url to JSON)
+		const payload = parts[1];
+		const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+		const data = JSON.parse(decoded);
+
+		// Extract userId (might be 'userId', 'user_id', 'sub', or 'id')
+		return parseInt(data.userId || data.user_id || data.sub || data.id || '0');
+	} catch (error) {
+		console.error('Error decoding token:', error);
+		return null;
+	}
+}
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
@@ -744,7 +771,14 @@ async function handleCommentLike(request: Request, env: Env, corsHeaders: Record
 		const data = await request.json() as any;
 		const commentId = data.commentId;
 		const token = authHeader.substring(7);
-		const userId = parseInt(token);  // Simple token = userId for now
+		const userId = getUserIdFromToken(token);
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Invalid token' }),
+				{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
 
 		if (!commentId) {
 			return new Response(
@@ -834,7 +868,14 @@ async function handleCommentReply(request: Request, env: Env, corsHeaders: Recor
 		const commentId = data.commentId;
 		const text = data.text?.trim();
 		const token = authHeader.substring(7);
-		const userId = parseInt(token);  // Simple token = userId for now
+		const userId = getUserIdFromToken(token);
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Invalid token' }),
+				{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
 
 		if (!commentId) {
 			return new Response(
