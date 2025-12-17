@@ -659,7 +659,7 @@
             };
 
             // Load user's added courses
-            function loadMyCourses() {
+            async function loadMyCourses() {
                 const container = document.getElementById('my-courses-container');
                 const noCoursesMsg = document.getElementById('no-courses-message');
 
@@ -680,11 +680,50 @@
 
                 let html = '';
 
-                addedCourseIds.forEach(id => {
+                // Fetch ratings for all courses concurrently
+                const coursePromises = addedCourseIds.map(async id => {
                     const course = allCoursesData[id];
-                    if (course) {
-                        const levelText = course.level === 'Elective' ? 'Elective' : `Level ${course.level}`;
-                        html += getCardHTML(id, course, levelText);
+                    if (!course) return null;
+
+                    // Fetch course rating from Worker API
+                    let courseRating = '0.0';
+                    try {
+                        // Get all files for this course to calculate average
+                        const files = JSON.parse(localStorage.getItem(`course_${id}_files`) || '[]');
+
+                        if (files.length > 0) {
+                            const ratingPromises = files.map(async file => {
+                                try {
+                                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${file.id}`);
+                                    const data = await response.json();
+                                    return data.success ? data.data.averageRating : 0;
+                                } catch (error) {
+                                    console.error(`Failed to fetch rating for file ${file.id}:`, error);
+                                    return 0;
+                                }
+                            });
+
+                            const ratings = await Promise.all(ratingPromises);
+                            const validRatings = ratings.filter(r => r > 0);
+
+                            if (validRatings.length > 0) {
+                                const avgRating = validRatings.reduce((sum, r) => sum + r, 0) / validRatings.length;
+                                courseRating = avgRating.toFixed(1);
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Failed to calculate rating for course ${id}:`, error);
+                    }
+
+                    const levelText = course.level === 'Elective' ? 'Elective' : `Level ${course.level}`;
+                    return { id, course, levelText, courseRating };
+                });
+
+                const courses = await Promise.all(coursePromises);
+
+                courses.forEach(item => {
+                    if (item) {
+                        html += getCardHTML(item.id, item.course, item.levelText, item.courseRating);
                     }
                 });
 
@@ -799,10 +838,7 @@
             }
 
             // Card template - Bottom Bar style
-            function getCardHTML(id, course, levelText) {
-                // Calculate the actual Knowledge Rating for this course
-                const knowledgeRating = calculateCourseRating(id);
-
+            function getCardHTML(id, course, levelText, courseRating = '0.0') {
                 return `
                 <div class="flex-shrink-0 bg-white rounded-xl shadow-md overflow-hidden w-64 hover:shadow-lg transition snap-start cursor-pointer" data-course-id="${id}">
                     <a href="course.html?id=${id}" class="block">
@@ -819,7 +855,7 @@
                         </div>
                         <div class="bg-gray-100 px-4 py-1.5 flex items-center justify-between">
                             <span class="text-sm text-gray-600 font-medium">${levelText}</span>
-                            <span class="text-yellow-500 text-base font-bold">${knowledgeRating}★</span>
+                            <span class="text-yellow-500 text-base font-bold">${courseRating}★</span>
                         </div>
                     </a>
                 </div>
