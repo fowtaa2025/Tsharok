@@ -606,7 +606,7 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 	try {
 		const offset = (page - 1) * limit;
 
-		// Get comments with ratings
+		// Get comments with ratings and like info
 		const query = `
 			SELECT 
 				c.id,
@@ -618,7 +618,9 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 				u.first_name || ' ' || u.last_name as user_name,
 				u.profile_image as user_avatar,
 				r.score,
-				CASE WHEN c.user_id = ? THEN 1 ELSE 0 END as is_own_comment
+				CASE WHEN c.user_id = ? THEN 1 ELSE 0 END as is_own_comment,
+				(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes,
+				CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 1 ELSE 0 END as likedByMe
 			FROM comments c
 			INNER JOIN users u ON c.user_id = u.user_id
 			LEFT JOIN ratings r ON c.user_id = r.user_id AND c.content_id = r.content_id
@@ -627,7 +629,7 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 			LIMIT ? OFFSET ?
 		`;
 
-		const params = [userId, contentId, limit + 1, offset];
+		const params = [userId, userId, contentId, limit + 1, offset];
 		const result = await env.DB.prepare(query).bind(...params).all();
 
 		const comments = result.results as any[];
@@ -648,6 +650,8 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 			createdAt: comment.created_at,
 			updatedAt: comment.updated_at,
 			isOwnComment: Boolean(comment.is_own_comment),
+			likes: comment.likes || 0,
+			likedByMe: Boolean(comment.likedByMe),
 		}));
 
 		return new Response(
