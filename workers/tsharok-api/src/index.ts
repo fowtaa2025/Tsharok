@@ -625,11 +625,13 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 			INNER JOIN users u ON c.user_id = u.user_id
 			LEFT JOIN ratings r ON c.user_id = r.user_id AND c.content_id = r.content_id
 			WHERE c.content_id = ?
-			ORDER BY c.created_at DESC
+			ORDER BY 
+				CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 0 ELSE 1 END,
+				c.created_at DESC
 			LIMIT ? OFFSET ?
 		`;
 
-		const params = [userId, userId, contentId, limit + 1, offset];
+		const params = [userId, userId, contentId, userId, limit + 1, offset];
 		const result = await env.DB.prepare(query).bind(...params).all();
 
 		const comments = result.results as any[];
