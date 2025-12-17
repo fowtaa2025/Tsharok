@@ -814,6 +814,42 @@
                 }
             }
 
+            // Update average rating display
+            async function updateAverageRating() {
+                try {
+                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${currentFileId}`);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const avgRating = result.data.averageRating || 0;
+                        const totalRatings = result.data.totalRatings || 0;
+
+                        // Update rating value
+                        document.getElementById('avgRatingValue').textContent = avgRating.toFixed(1);
+                        document.getElementById('totalRatings').textContent = totalRatings;
+
+                        // Update stars
+                        const starsContainer = document.getElementById('avgRatingStars');
+                        const fullStars = Math.floor(avgRating);
+                        const hasHalfStar = avgRating % 1 >= 0.5;
+
+                        let starsHTML = '';
+                        for (let i = 0; i < 5; i++) {
+                            if (i < fullStars) {
+                                starsHTML += '<i class="fas fa-star text-lg text-yellow-500"></i>';
+                            } else if (i === fullStars && hasHalfStar) {
+                                starsHTML += '<i class="fas fa-star-half-alt text-lg text-yellow-500"></i>';
+                            } else {
+                                starsHTML += '<i class="far fa-star text-lg text-gray-300"></i>';
+                            }
+                        }
+                        starsContainer.innerHTML = starsHTML;
+                    }
+                } catch (error) {
+                    console.error('Error updating average rating:', error);
+                }
+            }
+
             // Get comment HTML
             function getCommentHTML(comment, index) {
                 const starsHTML = Array(5).fill(0).map((_, i) =>
