@@ -24,22 +24,22 @@ let autocompleteTimeout = null;
 /**
  * Initialize on page load
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Get search query from URL
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q');
-    
+
     if (query) {
         currentFilters.searchQuery = query;
         document.getElementById('mainSearchInput').value = query;
     }
-    
+
     // Load filter options
     loadFilterOptions();
-    
+
     // Perform initial search
     performSearch();
-    
+
     // Setup event listeners
     setupEventListeners();
 });
@@ -51,62 +51,62 @@ function setupEventListeners() {
     // Main search input
     const searchInput = document.getElementById('mainSearchInput');
     searchInput.addEventListener('input', handleSearchInput);
-    searchInput.addEventListener('keypress', function(e) {
+    searchInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             performSearch(true);
         }
     });
-    
+
     // Clear search button
-    document.getElementById('clearSearch').addEventListener('click', function() {
+    document.getElementById('clearSearch').addEventListener('click', function () {
         document.getElementById('mainSearchInput').value = '';
         currentFilters.searchQuery = '';
         this.classList.add('hidden');
         performSearch(true);
     });
-    
+
     // Filter selects
-    document.getElementById('categoryFilter').addEventListener('change', function() {
+    document.getElementById('categoryFilter').addEventListener('change', function () {
         currentFilters.category = this.value;
     });
-    
-    document.getElementById('levelFilter').addEventListener('change', function() {
+
+    document.getElementById('levelFilter').addEventListener('change', function () {
         currentFilters.level = this.value;
     });
-    
-    document.getElementById('ratingFilter').addEventListener('change', function() {
+
+    document.getElementById('ratingFilter').addEventListener('change', function () {
         currentFilters.minRating = parseFloat(this.value);
     });
-    
-    document.getElementById('semesterFilter').addEventListener('change', function() {
+
+    document.getElementById('semesterFilter').addEventListener('change', function () {
         currentFilters.semester = this.value;
     });
-    
+
     // Sort dropdown
-    document.getElementById('sortBy').addEventListener('change', function() {
+    document.getElementById('sortBy').addEventListener('change', function () {
         currentFilters.sortBy = this.value;
         performSearch(true);
     });
-    
+
     // Apply filters button
-    document.getElementById('applyFilters').addEventListener('click', function() {
+    document.getElementById('applyFilters').addEventListener('click', function () {
         performSearch(true);
     });
-    
+
     // Clear filters buttons
     document.getElementById('clearFilters').addEventListener('click', clearAllFilters);
     document.getElementById('clearActiveFilters').addEventListener('click', clearAllFilters);
-    
+
     // Pagination
-    document.getElementById('prevPage').addEventListener('click', function() {
+    document.getElementById('prevPage').addEventListener('click', function () {
         if (currentFilters.page > 1) {
             currentFilters.page--;
             performSearch();
             window.scrollTo(0, 0);
         }
     });
-    
-    document.getElementById('nextPage').addEventListener('click', function() {
+
+    document.getElementById('nextPage').addEventListener('click', function () {
         if (currentFilters.page < totalPages) {
             currentFilters.page++;
             performSearch();
@@ -121,7 +121,7 @@ function setupEventListeners() {
 function handleSearchInput(e) {
     const query = e.target.value;
     currentFilters.searchQuery = query;
-    
+
     // Show/hide clear button
     const clearBtn = document.getElementById('clearSearch');
     if (query.length > 0) {
@@ -129,10 +129,10 @@ function handleSearchInput(e) {
     } else {
         clearBtn.classList.add('hidden');
     }
-    
+
     // Debounce autocomplete
     clearTimeout(autocompleteTimeout);
-    
+
     if (query.length >= 2) {
         autocompleteTimeout = setTimeout(() => {
             loadAutocomplete(query);
@@ -147,10 +147,10 @@ function handleSearchInput(e) {
  */
 async function loadAutocomplete(query) {
     try {
-        const response = await axios.get('/api/search-suggestions.php', {
+        const response = await axios.get('https://tsharok-api.fow-taa-2025.workers.dev/api/search/suggestions', {
             params: { q: query, limit: 8 }
         });
-        
+
         if (response.data.success) {
             displayAutocomplete(response.data.data.suggestions);
         }
@@ -164,12 +164,12 @@ async function loadAutocomplete(query) {
  */
 function displayAutocomplete(suggestions) {
     const dropdown = document.getElementById('autocompleteDropdown');
-    
+
     if (suggestions.length === 0) {
         hideAutocomplete();
         return;
     }
-    
+
     const html = suggestions.map(suggestion => `
         <div class="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b last:border-b-0" 
              onclick="selectSuggestion('${escapeHtml(suggestion)}')">
@@ -177,10 +177,10 @@ function displayAutocomplete(suggestions) {
             ${escapeHtml(suggestion)}
         </div>
     `).join('');
-    
+
     dropdown.innerHTML = html;
     dropdown.classList.remove('hidden');
-    
+
     // Close dropdown when clicking outside
     document.addEventListener('click', closeAutocompleteOutside);
 }
@@ -199,7 +199,7 @@ function hideAutocomplete() {
 function closeAutocompleteOutside(e) {
     const dropdown = document.getElementById('autocompleteDropdown');
     const searchInput = document.getElementById('mainSearchInput');
-    
+
     if (!dropdown.contains(e.target) && e.target !== searchInput) {
         hideAutocomplete();
     }
@@ -220,11 +220,11 @@ function selectSuggestion(suggestion) {
  */
 async function loadFilterOptions() {
     try {
-        const response = await axios.get('/api/filter-options.php');
-        
+        const response = await axios.get('https://tsharok-api.fow-taa-2025.workers.dev/api/search/filters');
+
         if (response.data.success) {
             const options = response.data.data;
-            
+
             // Populate category filter
             if (options.categories && options.categories.length > 0) {
                 const categoryFilter = document.getElementById('categoryFilter');
@@ -235,7 +235,7 @@ async function loadFilterOptions() {
                     categoryFilter.appendChild(option);
                 });
             }
-            
+
             // Populate semester filter
             if (options.semesters && options.semesters.length > 0) {
                 const semesterFilter = document.getElementById('semesterFilter');
@@ -257,15 +257,15 @@ async function loadFilterOptions() {
  */
 async function performSearch(resetPage = false) {
     if (isLoading) return;
-    
+
     if (resetPage) {
         currentFilters.page = 1;
     }
-    
+
     isLoading = true;
     showLoading();
     hideEmptyState();
-    
+
     try {
         // Build params
         const params = {
@@ -273,37 +273,37 @@ async function performSearch(resetPage = false) {
             limit: 12,
             sortBy: currentFilters.sortBy
         };
-        
+
         if (currentFilters.searchQuery) {
             params.q = currentFilters.searchQuery;
         }
-        
+
         if (currentFilters.category !== 'all') {
             params.category = currentFilters.category;
         }
-        
+
         if (currentFilters.level !== 'all') {
             params.level = currentFilters.level;
         }
-        
+
         if (currentFilters.minRating > 0) {
             params.minRating = currentFilters.minRating;
         }
-        
+
         if (currentFilters.semester !== 'all') {
             params.semester = currentFilters.semester;
         }
-        
+
         // Call API
-        const response = await axios.get('/api/search.php', { params });
-        
+        const response = await axios.get('https://tsharok-api.fow-taa-2025.workers.dev/api/search', { params });
+
         if (response.data.success) {
             const data = response.data.data;
-            
+
             // Update results
             totalResults = data.pagination.totalResults;
             totalPages = data.pagination.totalPages;
-            
+
             displayResults(data.courses);
             updateResultsHeader();
             updateActiveFilters();
@@ -311,7 +311,7 @@ async function performSearch(resetPage = false) {
         } else {
             showEmptyState();
         }
-        
+
     } catch (error) {
         console.error('Search error:', error);
         showToast('Failed to load search results', 'error');
@@ -339,12 +339,12 @@ window.addEventListener('languageChanged', () => {
  */
 function displayResults(courses) {
     const grid = document.getElementById('resultsGrid');
-    
+
     if (courses.length === 0) {
         showEmptyState();
         return;
     }
-    
+
     const html = courses.map(course => createCourseCard(course)).join('');
     grid.innerHTML = html;
 }
@@ -354,7 +354,7 @@ function displayResults(courses) {
  */
 function createCourseCard(course) {
     const stars = generateStarRating(course.averageRating);
-    
+
     return `
         <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
             <a href="course-details.html?id=${course.courseId}">
@@ -429,21 +429,21 @@ function generateStarRating(rating) {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
+
     let html = '';
-    
+
     for (let i = 0; i < fullStars; i++) {
         html += '<i class="fas fa-star"></i>';
     }
-    
+
     if (hasHalfStar) {
         html += '<i class="fas fa-star-half-alt"></i>';
     }
-    
+
     for (let i = 0; i < emptyStars; i++) {
         html += '<i class="far fa-star"></i>';
     }
-    
+
     return html;
 }
 
@@ -465,13 +465,13 @@ function getLevelBadgeClass(level) {
 function updateResultsHeader() {
     const title = document.getElementById('resultsTitle');
     const count = document.getElementById('resultsCount');
-    
+
     if (currentFilters.searchQuery) {
         title.textContent = `Search results for "${currentFilters.searchQuery}"`;
     } else {
         title.textContent = 'All Courses';
     }
-    
+
     count.textContent = `${totalResults} ${totalResults === 1 ? 'course' : 'courses'} found`;
 }
 
@@ -481,29 +481,29 @@ function updateResultsHeader() {
 function updateActiveFilters() {
     const container = document.getElementById('activeFilters');
     const list = document.getElementById('activeFiltersList');
-    
+
     const badges = [];
-    
+
     if (currentFilters.searchQuery) {
         badges.push(createFilterBadge('Search', currentFilters.searchQuery, 'searchQuery'));
     }
-    
+
     if (currentFilters.category !== 'all') {
         badges.push(createFilterBadge('Category', currentFilters.category, 'category'));
     }
-    
+
     if (currentFilters.level !== 'all') {
         badges.push(createFilterBadge('Level', currentFilters.level, 'level'));
     }
-    
+
     if (currentFilters.minRating > 0) {
         badges.push(createFilterBadge('Rating', `${currentFilters.minRating}+ stars`, 'minRating'));
     }
-    
+
     if (currentFilters.semester !== 'all') {
         badges.push(createFilterBadge('Semester', currentFilters.semester, 'semester'));
     }
-    
+
     if (badges.length > 0) {
         list.innerHTML = badges.join('');
         container.classList.remove('hidden');
@@ -530,7 +530,7 @@ function createFilterBadge(label, value, key) {
  * Remove specific filter
  */
 function removeFilter(key) {
-    switch(key) {
+    switch (key) {
         case 'searchQuery':
             currentFilters.searchQuery = '';
             document.getElementById('mainSearchInput').value = '';
@@ -552,7 +552,7 @@ function removeFilter(key) {
             document.getElementById('semesterFilter').value = 'all';
             break;
     }
-    
+
     performSearch(true);
 }
 
@@ -569,7 +569,7 @@ function clearAllFilters() {
         sortBy: 'relevance',
         page: 1
     };
-    
+
     // Reset UI
     document.getElementById('mainSearchInput').value = '';
     document.getElementById('categoryFilter').value = 'all';
@@ -578,7 +578,7 @@ function clearAllFilters() {
     document.getElementById('semesterFilter').value = 'all';
     document.getElementById('sortBy').value = 'relevance';
     document.getElementById('clearSearch').classList.add('hidden');
-    
+
     performSearch(true);
 }
 
@@ -590,28 +590,28 @@ function updatePagination(pagination) {
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
     const pageNumbers = document.getElementById('pageNumbers');
-    
+
     if (pagination.totalPages <= 1) {
         paginationContainer.classList.add('hidden');
         return;
     }
-    
+
     paginationContainer.classList.remove('hidden');
-    
+
     // Update buttons
     prevBtn.disabled = currentFilters.page === 1;
     nextBtn.disabled = currentFilters.page === pagination.totalPages;
-    
+
     // Generate page numbers
     const pages = [];
     const maxVisible = 5;
     let startPage = Math.max(1, currentFilters.page - Math.floor(maxVisible / 2));
     let endPage = Math.min(pagination.totalPages, startPage + maxVisible - 1);
-    
+
     if (endPage - startPage < maxVisible - 1) {
         startPage = Math.max(1, endPage - maxVisible + 1);
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
         pages.push(`
             <button 
@@ -622,7 +622,7 @@ function updatePagination(pagination) {
             </button>
         `);
     }
-    
+
     pageNumbers.innerHTML = pages.join('');
 }
 
@@ -675,19 +675,19 @@ function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
     const icon = document.getElementById('toastIcon');
     const messageEl = document.getElementById('toastMessage');
-    
+
     const icons = {
         success: '<i class="fas fa-check-circle text-green-500 text-2xl"></i>',
         error: '<i class="fas fa-exclamation-circle text-red-500 text-2xl"></i>',
         info: '<i class="fas fa-info-circle text-blue-500 text-2xl"></i>'
     };
-    
+
     icon.innerHTML = icons[type] || icons.info;
     messageEl.textContent = message;
-    
+
     toast.classList.remove('hidden', 'translate-y-32');
     toast.classList.add('translate-y-0');
-    
+
     setTimeout(hideToast, 3000);
 }
 
@@ -698,7 +698,7 @@ function hideToast() {
     const toast = document.getElementById('toast');
     toast.classList.remove('translate-y-0');
     toast.classList.add('translate-y-32');
-    
+
     setTimeout(() => {
         toast.classList.add('hidden');
     }, 300);
