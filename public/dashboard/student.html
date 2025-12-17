@@ -864,9 +864,24 @@
 
             // Remove course from dashboard
             function removeCourseFromDashboard(courseId) {
-                let addedCourses = JSON.parse(localStorage.getItem('addedCourses') || '[]');
+                console.log('Attempting to remove course:', courseId);
+
+                // Get current user to use the same storage key as loadMyCourses
+                const user = getCurrentUser();
+                const userId = user?.userId || user?.id || 'guest';
+                const storageKey = `addedCourses_${userId}`;
+
+                console.log('Using storage key:', storageKey);
+
+                let addedCourses = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                console.log('Current courses before delete:', addedCourses);
+
                 addedCourses = addedCourses.filter(id => id !== courseId);
-                localStorage.setItem('addedCourses', JSON.stringify(addedCourses));
+                console.log('Courses after delete:', addedCourses);
+
+                localStorage.setItem(storageKey, JSON.stringify(addedCourses));
+                console.log('Saved to localStorage, reloading courses...');
+
                 loadMyCourses();
             }
 
