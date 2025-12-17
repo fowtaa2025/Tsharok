@@ -1282,7 +1282,7 @@
             if (dashboardSearchInput) {
                 dashboardSearchInput.addEventListener('input', function (e) {
                     const searchTerm = e.target.value.toLowerCase();
-                    const courseCards = document.querySelectorAll('#my-courses-container .card');
+                    const courseCards = document.querySelectorAll('#my-courses-container > a');
 
                     // Show/hide clear button
                     clearDashboardSearch.classList.toggle('hidden', searchTerm === '');
@@ -1293,8 +1293,8 @@
                     }
 
                     courseCards.forEach(card => {
-                        const courseName = card.querySelector('.course-title')?.textContent.toLowerCase() || '';
-                        const courseCode = card.querySelector('.course-code')?.textContent.toLowerCase() || '';
+                        const courseName = card.querySelector('.course-title, h3, .text-lg')?.textContent.toLowerCase() || '';
+                        const courseCode = card.querySelector('.course-code, .text-gray-500')?.textContent.toLowerCase() || '';
 
                         if (courseName.includes(searchTerm) || courseCode.includes(searchTerm)) {
                             card.style.display = '';
@@ -1307,12 +1307,12 @@
                 // Press Enter to go to first matched course
                 dashboardSearchInput.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
-                        const visibleCards = Array.from(document.querySelectorAll('#my-courses-container .card'))
+                        const visibleCards = Array.from(document.querySelectorAll('#my-courses-container > a'))
                             .filter(card => card.style.display !== 'none');
 
                         if (visibleCards.length > 0) {
-                            // Click the first visible course card
-                            visibleCards[0].click();
+                            // Navigate to the first visible course
+                            window.location.href = visibleCards[0].href;
                         }
                     }
                 });
@@ -1320,7 +1320,7 @@
                 clearDashboardSearch.addEventListener('click', function () {
                     dashboardSearchInput.value = '';
                     clearDashboardSearch.classList.add('hidden');
-                    document.querySelectorAll('#my-courses-container .card').forEach(card => card.style.display = '');
+                    document.querySelectorAll('#my-courses-container > a').forEach(card => card.style.display = '');
                 });
             }
         </script>
