@@ -164,14 +164,12 @@
                     <!-- Center - Search -->
                     <div class="flex-1 max-w-2xl mx-8">
                         <div class="relative">
-                            <input type="text" placeholder="Search"
+                            <input type="text" id="courseSearchInput" placeholder="Search files in this course..."
                                 class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                            <button class="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
+                            <button id="clearCourseSearch"
+                                class="hidden absolute right-2 top-2 text-gray-400 hover:text-gray-600">
                                 <i class="fas fa-times"></i>
-                            </button>
-                            <button class="absolute right-10 top-2 text-gray-400 hover:text-gray-600">
-                                <i class="fas fa-filter"></i>
                             </button>
                         </div>
                     </div>
@@ -1186,6 +1184,42 @@
                 loadCourse();
                 loadUserName();
             });
+
+            // Search functionality for Course Files
+            const courseSearchInput = document.getElementById('courseSearchInput');
+            const clearCourseSearch = document.getElementById('clearCourseSearch');
+
+            if (courseSearchInput) {
+                courseSearchInput.addEventListener('input', function (e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const fileCards = document.querySelectorAll('.file-card');
+
+                    // Show/hide clear button
+                    clearCourseSearch.classList.toggle('hidden', searchTerm === '');
+
+                    if (searchTerm === '') {
+                        fileCards.forEach(card => card.style.display = '');
+                        return;
+                    }
+
+                    fileCards.forEach(card => {
+                        const fileName = card.querySelector('.file-name')?.textContent.toLowerCase() || '';
+                        const fileType = card.querySelector('.file-type')?.textContent.toLowerCase() || '';
+
+                        if (fileName.includes(searchTerm) || fileType.includes(searchTerm)) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+
+                clearCourseSearch.addEventListener('click', function () {
+                    courseSearchInput.value = '';
+                    clearCourseSearch.classList.add('hidden');
+                    document.querySelectorAll('.file-card').forEach(card => card.style.display = '');
+                });
+            }
         </script>
     </div><!-- End of bg-shapes-container -->
     <!-- Mobile Floating Chatbot Button -->

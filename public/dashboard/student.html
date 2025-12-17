@@ -150,14 +150,12 @@
                     <!-- Center - Search -->
                     <div class="flex-1 max-w-2xl mx-8">
                         <div class="relative">
-                            <input type="text" placeholder="Search"
+                            <input type="text" id="dashboardSearchInput" placeholder="Search my courses..."
                                 class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                            <button class="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
+                            <button id="clearDashboardSearch"
+                                class="hidden absolute right-2 top-2 text-gray-400 hover:text-gray-600">
                                 <i class="fas fa-times"></i>
-                            </button>
-                            <button class="absolute right-10 top-2 text-gray-400 hover:text-gray-600">
-                                <i class="fas fa-filter"></i>
                             </button>
                         </div>
                     </div>
@@ -1276,6 +1274,42 @@
             }
 
             scheduleCalendarRefresh();
+
+            // Search functionality for My Courses
+            const dashboardSearchInput = document.getElementById('dashboardSearchInput');
+            const clearDashboardSearch = document.getElementById('clearDashboardSearch');
+
+            if (dashboardSearchInput) {
+                dashboardSearchInput.addEventListener('input', function (e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const courseCards = document.querySelectorAll('#my-courses-container .card');
+
+                    // Show/hide clear button
+                    clearDashboardSearch.classList.toggle('hidden', searchTerm === '');
+
+                    if (searchTerm === '') {
+                        courseCards.forEach(card => card.style.display = '');
+                        return;
+                    }
+
+                    courseCards.forEach(card => {
+                        const courseName = card.querySelector('.course-title')?.textContent.toLowerCase() || '';
+                        const courseCode = card.querySelector('.course-code')?.textContent.toLowerCase() || '';
+
+                        if (courseName.includes(searchTerm) || courseCode.includes(searchTerm)) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+
+                clearDashboardSearch.addEventListener('click', function () {
+                    dashboardSearchInput.value = '';
+                    clearDashboardSearch.classList.add('hidden');
+                    document.querySelectorAll('#my-courses-container .card').forEach(card => card.style.display = '');
+                });
+            }
         </script>
 
         <!-- Chatbot Functions -->
