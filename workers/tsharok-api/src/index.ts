@@ -594,7 +594,10 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 	const contentId = url.searchParams.get('contentId');
 	const page = parseInt(url.searchParams.get('page') || '1');
 	const limit = parseInt(url.searchParams.get('limit') || '10');
-	const userId = url.searchParams.get('userId') || '0';
+	const userIdParam = url.searchParams.get('userId') || '0';
+
+	// Decode JWT if it's a token, otherwise use as-is
+	const userId = getUserIdFromToken(userIdParam) || 0;
 
 	if (!contentId) {
 		return new Response(
