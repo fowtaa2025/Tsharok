@@ -688,27 +688,34 @@
                     // Fetch course rating from Worker API
                     let courseRating = '0.0';
                     try {
-                        // Get all files for this course to calculate average
-                        const files = JSON.parse(localStorage.getItem(`course_${id}_files`) || '[]');
+                        // Fetch files from Worker API (they have database IDs)
+                        const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=${id}`);
 
-                        if (files.length > 0) {
-                            const ratingPromises = files.map(async file => {
-                                try {
-                                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${file.id}`);
-                                    const data = await response.json();
-                                    return data.success ? data.data.averageRating : 0;
-                                } catch (error) {
-                                    console.error(`Failed to fetch rating for file ${file.id}:`, error);
-                                    return 0;
+                        if (response.ok) {
+                            const result = await response.json();
+
+                            if (result.success && result.data?.materials && result.data.materials.length > 0) {
+                                const files = result.data.materials;
+
+                                // Fetch ratings for each file
+                                const ratingPromises = files.map(async file => {
+                                    try {
+                                        const ratingResponse = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${file.id}`);
+                                        const ratingData = await ratingResponse.json();
+                                        return ratingData.success ? ratingData.data.averageRating : 0;
+                                    } catch (error) {
+                                        console.error(`Failed to fetch rating for file ${file.id}:`, error);
+                                        return 0;
+                                    }
+                                });
+
+                                const ratings = await Promise.all(ratingPromises);
+                                const validRatings = ratings.filter(r => r > 0);
+
+                                if (validRatings.length > 0) {
+                                    const avgRating = validRatings.reduce((sum, r) => sum + r, 0) / validRatings.length;
+                                    courseRating = avgRating.toFixed(1);
                                 }
-                            });
-
-                            const ratings = await Promise.all(ratingPromises);
-                            const validRatings = ratings.filter(r => r > 0);
-
-                            if (validRatings.length > 0) {
-                                const avgRating = validRatings.reduce((sum, r) => sum + r, 0) / validRatings.length;
-                                courseRating = avgRating.toFixed(1);
                             }
                         }
                     } catch (error) {
