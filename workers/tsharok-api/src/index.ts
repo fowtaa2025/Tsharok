@@ -127,6 +127,11 @@ export default {
 				return await handleEnroll(request, env, corsHeaders);
 			}
 
+			// Route: GET /api/ratings
+			if (url.pathname === '/api/ratings' && request.method === 'GET') {
+				return await handleGetRatings(url, env, corsHeaders);
+			}
+
 			// Default: Not Found
 			return new Response(
 				JSON.stringify({ success: false, message: 'Endpoint not found' }),
@@ -709,6 +714,55 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 }
 
 /**
+ * Handle GET /api/ratings
+ * Get average rating for content
+ */
+async function handleGetRatings(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const contentId = url.searchParams.get('contentId');
+
+	if (!contentId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'contentId parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		// Get average rating and count
+		const result = await env.DB.prepare(
+			`SELECT 
+				AVG(score) as averageRating,
+				COUNT(*) as totalRatings
+			FROM ratings
+			WHERE content_id = ?`
+		)
+			.bind(contentId)
+			.first();
+
+		const averageRating = result ? (result.averageRating as number) || 0 : 0;
+		const totalRatings = result ? (result.totalRatings as number) || 0 : 0;
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Ratings retrieved successfully',
+				data: {
+					averageRating: averageRating,
+					totalRatings: totalRatings,
+				},
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get ratings error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to retrieve ratings', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
  * Handle POST /api/comments/add
  * Add a new rating and comment for content
  */
@@ -985,52 +1039,6 @@ async function handleCommentReply(request: Request, env: Env, corsHeaders: Recor
 		console.error('Comment reply error:', error);
 		return new Response(
 			JSON.stringify({ success: false, message: 'Failed to add reply', error: error.message }),
-			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
-}
-
-/**
- * Handle GET /api/ratings
- * Get rating statistics for content
- */
-async function handleGetRatings(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const contentId = url.searchParams.get('contentId');
-
-	if (!contentId) {
-		return new Response(
-			JSON.stringify({ success: false, message: 'contentId parameter is required' }),
-			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
-
-	try {
-		// Get average and count
-		const stats = await env.DB.prepare(
-			`SELECT 
-				COALESCE(AVG(score), 0) as average_score,
-				COUNT(*) as total_ratings
-			 FROM ratings
-			 WHERE content_id = ?`
-		)
-			.bind(contentId)
-			.first();
-
-		return new Response(
-			JSON.stringify({
-				success: true,
-				message: 'Ratings retrieved successfully',
-				data: {
-					averageRating: Math.round((stats?.average_score as number) * 10) / 10,
-					totalRatings: stats?.total_ratings || 0,
-				},
-			}),
-			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	} catch (error: any) {
-		console.error('Get ratings error:', error);
-		return new Response(
-			JSON.stringify({ success: false, message: 'Failed to retrieve ratings', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
