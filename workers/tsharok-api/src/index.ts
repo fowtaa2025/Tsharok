@@ -644,6 +644,26 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 			comments.pop();
 		}
 
+		// Fetch replies for each comment
+		for (const comment of comments) {
+			const repliesResult = await env.DB.prepare(
+				`SELECT 
+					cr.id,
+					cr.content as text,
+					cr.created_at,
+					u.first_name || ' ' || u.last_name as author,
+					u.username
+				FROM comment_replies cr
+				JOIN users u ON cr.user_id = u.user_id
+				WHERE cr.comment_id = ?
+				ORDER BY cr.created_at ASC`
+			)
+				.bind(comment.id)
+				.all();
+
+			comment.replies = repliesResult.results || [];
+		}
+
 		// Format comments
 		const formattedComments = comments.map((comment) => ({
 			id: comment.id,
@@ -657,6 +677,13 @@ async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string,
 			isOwnComment: Boolean(comment.is_own_comment),
 			likes: comment.likes || 0,
 			likedByMe: Boolean(comment.likedByMe),
+			replies: (comment.replies || []).map((reply: any) => ({
+				id: reply.id,
+				text: reply.text,
+				author: reply.author,
+				username: reply.username,
+				createdAt: reply.created_at,
+			})),
 		}));
 
 		return new Response(
