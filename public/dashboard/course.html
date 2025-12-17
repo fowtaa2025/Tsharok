@@ -744,6 +744,22 @@
                         console.log('Loaded files from localStorage:', files);
                     }
 
+                    // Fetch ratings for each file from Worker API
+                    await Promise.all(files.map(async (file) => {
+                        try {
+                            const ratingResponse = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${file.id}`);
+                            if (ratingResponse.ok) {
+                                const ratingData = await ratingResponse.json();
+                                if (ratingData.success) {
+                                    file.rating = ratingData.data.averageRating.toFixed(1);
+                                }
+                            }
+                        } catch (error) {
+                            console.error(`Failed to fetch rating for file ${file.id}:`, error);
+                            // Keep default rating if fetch fails
+                        }
+                    }));
+
                     const sortedFiles = sortFiles(files, currentSortOption);
 
                     // Calculate and display overall course rating

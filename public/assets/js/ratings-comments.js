@@ -10,7 +10,7 @@ if (typeof moment !== 'undefined') {
 }
 
 // Global state
-let currentCourseId = null;
+let currentContentId = null;
 let currentUserRating = null;
 let currentPage = 1;
 let currentFilter = 'all';
@@ -20,16 +20,16 @@ let isLoading = false;
 /**
  * Initialize on page load
  */
-document.addEventListener('DOMContentLoaded', function() {
-    // Get course ID from URL
+document.addEventListener('DOMContentLoaded', function () {
+    // Get content ID from URL
     const urlParams = new URLSearchParams(window.location.search);
-    currentCourseId = urlParams.get('id') || 1;
-    
+    currentContentId = urlParams.get('id') || 1;
+
     // Load course data
     loadCourseDetails();
     loadRatings();
     loadReviews();
-    
+
     // Setup event listeners
     setupEventListeners();
     setupStarRating();
@@ -41,26 +41,26 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupEventListeners() {
     // Write review button
     document.getElementById('writeReviewBtn')?.addEventListener('click', openRatingModal);
-    
+
     // Close modal
     document.getElementById('closeModalBtn')?.addEventListener('click', closeRatingModal);
     document.getElementById('cancelReviewBtn')?.addEventListener('click', closeRatingModal);
-    
+
     // Review form
     document.getElementById('reviewForm')?.addEventListener('submit', submitReview);
-    
+
     // Character counter
     document.getElementById('reviewContent')?.addEventListener('input', updateCharCount);
-    
+
     // Filter and sort
     document.getElementById('ratingFilter')?.addEventListener('change', handleFilterChange);
     document.getElementById('sortReviews')?.addEventListener('change', handleSortChange);
-    
+
     // Load more
     document.getElementById('loadMoreReviews')?.addEventListener('click', loadMoreReviews);
-    
+
     // Close modal on backdrop click
-    document.getElementById('ratingModal')?.addEventListener('click', function(e) {
+    document.getElementById('ratingModal')?.addEventListener('click', function (e) {
         if (e.target.id === 'ratingModal') {
             closeRatingModal();
         }
@@ -73,27 +73,27 @@ function setupEventListeners() {
 function setupStarRating() {
     const starContainer = document.getElementById('modalStarRating');
     if (!starContainer) return;
-    
+
     const stars = starContainer.querySelectorAll('.star');
     let selectedRating = 0;
-    
+
     stars.forEach((star, index) => {
         // Hover effect
-        star.addEventListener('mouseenter', function() {
+        star.addEventListener('mouseenter', function () {
             highlightStars(index + 1);
         });
-        
+
         // Click to select
-        star.addEventListener('click', function() {
+        star.addEventListener('click', function () {
             selectedRating = index + 1;
             document.getElementById('ratingValue').value = selectedRating;
             updateRatingText(selectedRating);
             highlightStars(selectedRating, true);
         });
     });
-    
+
     // Reset on mouse leave
-    starContainer.addEventListener('mouseleave', function() {
+    starContainer.addEventListener('mouseleave', function () {
         if (selectedRating > 0) {
             highlightStars(selectedRating, true);
         } else {
@@ -146,7 +146,7 @@ function updateCharCount() {
     const content = document.getElementById('reviewContent').value;
     const count = content.length;
     document.getElementById('charCount').textContent = count;
-    
+
     if (count > 1000) {
         document.getElementById('reviewContent').value = content.substring(0, 1000);
         document.getElementById('charCount').textContent = '1000';
@@ -159,10 +159,10 @@ function updateCharCount() {
 async function loadCourseDetails() {
     try {
         const response = await axios.get(`/api/course-details.php?id=${currentCourseId}`);
-        
+
         if (response.data.success) {
             const course = response.data.data;
-            
+
             // Update UI
             document.getElementById('courseTitle').textContent = course.title;
             document.getElementById('courseDescription').textContent = course.description;
@@ -186,20 +186,20 @@ async function loadCourseDetails() {
 async function loadRatings() {
     try {
         showLoader('ratingsLoader');
-        
-        const response = await axios.get(`/api/ratings.php?courseId=${currentCourseId}`);
-        
+
+        const response = await axios.get(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${currentContentId}`);
+
         if (response.data.success) {
             const data = response.data.data;
-            
+
             // Update average rating
             document.getElementById('averageRating').textContent = data.averageRating.toFixed(1);
             document.getElementById('totalRatingsCount').textContent = `(${data.totalRatings} ratings)`;
             document.getElementById('totalReviews').textContent = `Based on ${data.totalRatings} reviews`;
-            
+
             // Update star display
             displayStars('averageStars', data.averageRating);
-            
+
             // Update distribution
             updateRatingDistribution(data.distribution);
         }
@@ -216,16 +216,16 @@ async function loadRatings() {
  */
 function updateRatingDistribution(distribution) {
     const total = distribution.reduce((sum, item) => sum + item.count, 0);
-    
+
     distribution.forEach((item, index) => {
         const rating = 5 - index; // 5 stars to 1 star
         const percentage = total > 0 ? (item.count / total * 100) : 0;
-        
+
         const element = document.getElementById(`rating${rating}`);
         if (element) {
             const bar = element.querySelector('.rating-bar-fill');
             const count = element.querySelector('.text-right');
-            
+
             bar.style.width = `${percentage}%`;
             count.textContent = item.count;
         }
@@ -238,28 +238,28 @@ function updateRatingDistribution(distribution) {
 function displayStars(elementId, rating) {
     const container = document.getElementById(elementId);
     if (!container) return;
-    
+
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
+
     let html = '';
-    
+
     // Full stars
     for (let i = 0; i < fullStars; i++) {
         html += '<i class="fas fa-star text-yellow-400"></i>';
     }
-    
+
     // Half star
     if (hasHalfStar) {
         html += '<i class="fas fa-star-half-alt text-yellow-400"></i>';
     }
-    
+
     // Empty stars
     for (let i = 0; i < emptyStars; i++) {
         html += '<i class="far fa-star text-yellow-400"></i>';
     }
-    
+
     container.innerHTML = html;
 }
 
@@ -268,33 +268,33 @@ function displayStars(elementId, rating) {
  */
 async function loadReviews(reset = false) {
     if (isLoading) return;
-    
+
     try {
         isLoading = true;
         if (reset) currentPage = 1;
-        
+
         showLoader('reviewsLoader');
-        
-        const response = await axios.get('/api/comments.php', {
+
+        const userId = sessionStorage.getItem('userId') || '0';
+        const response = await axios.get('https://tsharok-api.fow-taa-2025.workers.dev/api/comments', {
             params: {
-                courseId: currentCourseId,
+                contentId: currentContentId,
+                userId: userId,
                 page: currentPage,
-                filter: currentFilter,
-                sort: currentSort,
                 limit: 10
             }
         });
-        
+
         if (response.data.success) {
-            const reviews = response.data.data.reviews;
+            const comments = response.data.data.comments;
             const hasMore = response.data.data.hasMore;
-            
+
             if (reset) {
-                displayReviews(reviews);
+                displayReviews(comments);
             } else {
-                appendReviews(reviews);
+                appendReviews(comments);
             }
-            
+
             // Show/hide load more button
             const loadMoreBtn = document.getElementById('loadMoreReviews');
             if (loadMoreBtn) {
@@ -316,7 +316,7 @@ async function loadReviews(reset = false) {
 function displayReviews(reviews) {
     const container = document.getElementById('reviewsList');
     if (!container) return;
-    
+
     if (reviews.length === 0) {
         container.innerHTML = `
             <div class="text-center py-12">
@@ -326,9 +326,9 @@ function displayReviews(reviews) {
         `;
         return;
     }
-    
+
     container.innerHTML = reviews.map(review => createReviewCard(review)).join('');
-    
+
     // Setup action buttons
     setupReviewActions();
 }
@@ -339,14 +339,14 @@ function displayReviews(reviews) {
 function appendReviews(reviews) {
     const container = document.getElementById('reviewsList');
     if (!container) return;
-    
+
     const fragment = document.createDocumentFragment();
     reviews.forEach(review => {
         const div = document.createElement('div');
         div.innerHTML = createReviewCard(review);
         fragment.appendChild(div.firstChild);
     });
-    
+
     container.appendChild(fragment);
     setupReviewActions();
 }
@@ -356,13 +356,13 @@ function appendReviews(reviews) {
  */
 function createReviewCard(review) {
     const starsHtml = Array(5).fill(0).map((_, i) => {
-        return i < review.rating 
-            ? '<i class="fas fa-star text-yellow-400"></i>' 
+        return i < review.rating
+            ? '<i class="fas fa-star text-yellow-400"></i>'
             : '<i class="far fa-star text-gray-300"></i>';
     }).join('');
-    
+
     const isOwnReview = review.isOwnReview || false;
-    
+
     return `
         <div class="comment-card border-b pb-6" data-review-id="${review.id}">
             <div class="flex items-start gap-4">
@@ -454,45 +454,45 @@ function createReviewCard(review) {
 function setupReviewActions() {
     // Helpful buttons
     document.querySelectorAll('.helpful-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             markAsHelpful(this.dataset.id);
         });
     });
-    
+
     // Reply buttons
     document.querySelectorAll('.reply-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             toggleReplySection(this.dataset.id);
         });
     });
-    
+
     // Cancel reply
     document.querySelectorAll('.cancel-reply').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const replySection = this.closest('.reply-section');
             replySection.classList.add('hidden');
         });
     });
-    
+
     // Submit reply
     document.querySelectorAll('.submit-reply').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const reviewId = this.closest('[data-review-id]').dataset.reviewId;
             const input = this.closest('.reply-section').querySelector('.reply-input');
             submitReply(reviewId, input.value);
         });
     });
-    
+
     // Edit review
     document.querySelectorAll('.edit-review').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             editReview(this.dataset.id);
         });
     });
-    
+
     // Delete review
     document.querySelectorAll('.delete-review').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             deleteReview(this.dataset.id);
         });
     });
@@ -514,17 +514,17 @@ async function markAsHelpful(reviewId) {
     try {
         const btn = document.querySelector(`.helpful-btn[data-id="${reviewId}"]`);
         const icon = btn.querySelector('i');
-        
+
         // Optimistic UI update
         icon.classList.remove('far');
         icon.classList.add('fas', 'text-indigo-600');
         btn.disabled = true;
-        
+
         const response = await axios.post('/api/helpful.php', {
             reviewId: reviewId,
             courseId: currentCourseId
         });
-        
+
         if (response.data.success) {
             // Update count with animation
             const span = btn.querySelector('span');
@@ -537,14 +537,14 @@ async function markAsHelpful(reviewId) {
         }
     } catch (error) {
         console.error('Error marking as helpful:', error);
-        
+
         // Revert UI on error
         const btn = document.querySelector(`.helpful-btn[data-id="${reviewId}"]`);
         const icon = btn.querySelector('i');
         icon.classList.remove('fas', 'text-indigo-600');
         icon.classList.add('far');
         btn.disabled = false;
-        
+
         const errorMsg = error.response?.data?.message || 'Failed to mark as helpful';
         showToast(errorMsg, 'error');
     }
@@ -558,14 +558,14 @@ async function submitReply(reviewId, content) {
         showToast('Please write a reply', 'error');
         return;
     }
-    
+
     try {
         const response = await axios.post('/api/reply-comment.php', {
             reviewId: reviewId,
             courseId: currentCourseId,
             content: content
         });
-        
+
         if (response.data.success) {
             showToast('Reply posted successfully', 'success');
             // Reload reviews
@@ -583,23 +583,23 @@ async function submitReply(reviewId, content) {
 async function editReview(reviewId) {
     try {
         const response = await axios.get(`/api/get-review.php?id=${reviewId}`);
-        
+
         if (response.data.success) {
             const review = response.data.data;
-            
+
             // Populate modal with existing data
             document.getElementById('ratingValue').value = review.rating;
             document.getElementById('reviewTitle').value = review.title || '';
             document.getElementById('reviewContent').value = review.comment;
             document.getElementById('wouldRecommend').checked = review.wouldRecommend;
-            
+
             highlightStars(review.rating, true);
             updateRatingText(review.rating);
             updateCharCount();
-            
+
             // Change form to edit mode
             document.getElementById('reviewForm').dataset.editId = reviewId;
-            
+
             openRatingModal();
         }
     } catch (error) {
@@ -615,7 +615,7 @@ async function deleteReview(reviewId) {
     if (!confirm('⚠️ Are you sure you want to delete this review?\n\nThis action cannot be undone.')) {
         return;
     }
-    
+
     try {
         // Optimistic UI - fade out review
         const reviewCard = document.querySelector(`[data-review-id="${reviewId}"]`);
@@ -623,17 +623,17 @@ async function deleteReview(reviewId) {
             reviewCard.style.opacity = '0.5';
             reviewCard.style.pointerEvents = 'none';
         }
-        
+
         const response = await axios.delete('/api/delete-review.php', {
             data: {
                 reviewId: reviewId,
                 courseId: currentCourseId
             }
         });
-        
+
         if (response.data.success) {
             showToast('Review deleted successfully 🗑️', 'success');
-            
+
             // Remove from DOM with animation
             if (reviewCard) {
                 reviewCard.style.transition = 'all 0.3s ease';
@@ -642,7 +642,7 @@ async function deleteReview(reviewId) {
                     reviewCard.remove();
                 }, 300);
             }
-            
+
             // Reload data
             await Promise.all([
                 loadReviews(true),
@@ -651,14 +651,14 @@ async function deleteReview(reviewId) {
         }
     } catch (error) {
         console.error('Error deleting review:', error);
-        
+
         // Revert UI on error
         const reviewCard = document.querySelector(`[data-review-id="${reviewId}"]`);
         if (reviewCard) {
             reviewCard.style.opacity = '1';
             reviewCard.style.pointerEvents = 'auto';
         }
-        
+
         const errorMsg = error.response?.data?.message || 'Failed to delete review';
         showToast(errorMsg, 'error');
     }
@@ -689,48 +689,54 @@ function closeRatingModal() {
  */
 async function submitReview(e) {
     e.preventDefault();
-    
+
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
     const editId = form.dataset.editId;
     const formData = new FormData(form);
-    
+
     const data = {
-        courseId: currentCourseId,
-        rating: parseInt(formData.get('rating')),
-        title: formData.get('title'),
-        comment: formData.get('comment'),
-        wouldRecommend: formData.get('recommend') === 'on'
+        userId: sessionStorage.getItem('userId'),
+        contentId: currentContentId,
+        score: parseInt(formData.get('rating')),
+        content: formData.get('comment')
     };
-    
-    if (!data.rating) {
+
+    if (!data.userId) {
+        showToast('Please login to submit a review', 'error');
+        return;
+    }
+
+
+    if (!data.score) {
         showToast('Please select a rating', 'error');
         return;
     }
-    
-    if (!data.comment || data.comment.trim().length < 10) {
-        showToast('Review must be at least 10 characters', 'error');
+
+
+    if (!data.content || data.content.trim().length < 10) {
+        showToast('Comment must be at least 10 characters', 'error');
         return;
     }
-    
+
     try {
         // Disable submit button
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-        
-        const endpoint = editId ? '/api/update-review.php' : '/api/add-rating.php';
+
+        const endpoint = editId ? '/api/update-review.php' : 'https://tsharok-api.fow-taa-2025.workers.dev/api/comments/add';
         const method = editId ? 'put' : 'post';
-        
+
         if (editId) {
             data.reviewId = editId;
         }
-        
+
         const response = await axios[method](endpoint, data);
-        
+
         if (response.data.success) {
             showToast(editId ? 'Review updated successfully! 🎉' : 'Review posted successfully! 🎉', 'success');
             closeRatingModal();
-            
+
             // Reload data without page refresh
             await Promise.all([
                 loadReviews(true),
@@ -781,18 +787,18 @@ function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const icon = document.getElementById('toastIcon');
     const messageEl = document.getElementById('toastMessage');
-    
+
     const icons = {
         success: '<i class="fas fa-check-circle text-green-500 text-2xl"></i>',
         error: '<i class="fas fa-exclamation-circle text-red-500 text-2xl"></i>',
         info: '<i class="fas fa-info-circle text-blue-500 text-2xl"></i>'
     };
-    
+
     icon.innerHTML = icons[type] || icons.info;
     messageEl.textContent = message;
-    
+
     toast.style.transform = 'translateY(0)';
-    
+
     setTimeout(() => {
         toast.style.transform = 'translateY(8rem)';
     }, 3000);
@@ -816,10 +822,10 @@ function formatDate(dateString) {
     }
     // Fallback
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
     });
 }
 
@@ -834,7 +840,7 @@ function formatTimeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
-    
+
     const intervals = {
         year: 31536000,
         month: 2592000,
@@ -843,14 +849,14 @@ function formatTimeAgo(dateString) {
         hour: 3600,
         minute: 60
     };
-    
+
     for (const [unit, secondsInUnit] of Object.entries(intervals)) {
         const interval = Math.floor(seconds / secondsInUnit);
         if (interval >= 1) {
             return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
         }
     }
-    
+
     return 'just now';
 }
 
