@@ -1304,6 +1304,19 @@
                     });
                 });
 
+                // Press Enter to go to first matched course
+                dashboardSearchInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        const visibleCards = Array.from(document.querySelectorAll('#my-courses-container .card'))
+                            .filter(card => card.style.display !== 'none');
+
+                        if (visibleCards.length > 0) {
+                            // Click the first visible course card
+                            visibleCards[0].click();
+                        }
+                    }
+                });
+
                 clearDashboardSearch.addEventListener('click', function () {
                     dashboardSearchInput.value = '';
                     clearDashboardSearch.classList.add('hidden');
