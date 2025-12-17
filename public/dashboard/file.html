@@ -1032,6 +1032,80 @@
                 }
             }
 
+            // Toggle reply form visibility
+            function toggleReplyForm(commentIndex) {
+                console.log('toggleReplyForm called with index:', commentIndex);
+                const form = document.getElementById(`replyForm-${commentIndex}`);
+                if (form) {
+                    form.classList.toggle('hidden');
+                    console.log('Reply form toggled, now visible:', !form.classList.contains('hidden'));
+                } else {
+                    console.error('Reply form not found for index:', commentIndex);
+                }
+            }
+
+            // Add reply to comment
+            async function addReply(commentIndex) {
+                console.log('addReply called with index:', commentIndex);
+                const replyInput = document.getElementById(`replyInput-${commentIndex}`);
+                const text = replyInput?.value.trim();
+
+                if (!text) {
+                    console.log('No reply text entered');
+                    showToast('Please enter a reply', 'error');
+                    return;
+                }
+
+                const token = localStorage.getItem('token') || sessionStorage.getItem('userId');
+                if (!token) {
+                    console.log('No token found');
+                    showToast('Please login to reply', 'error');
+                    return;
+                }
+
+                // Get comment ID from the data attribute
+                const commentDiv = document.querySelector(`[data-comment-index="${commentIndex}"]`);
+                const commentId = commentDiv?.getAttribute('data-comment-id');
+
+                if (!commentId) {
+                    console.error('Comment ID not found for index:', commentIndex);
+                    showToast('Failed to find comment', 'error');
+                    return;
+                }
+
+                console.log('Posting reply to comment:', commentId, 'with text:', text);
+
+                try {
+                    const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/comments/reply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            commentId: parseInt(commentId),
+                            text: text
+                        })
+                    });
+
+                    const result = await response.json();
+                    console.log('Reply response:', result);
+
+                    if (result.success) {
+                        showToast('Reply added successfully!', 'success');
+                        replyInput.value = '';
+                        toggleReplyForm(commentIndex);
+                        loadComments(); // Reload to show new reply
+                    } else {
+                        console.error('Reply failed:', result);
+                        showToast(result.message || 'Failed to add reply', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding reply:', error);
+                    showToast('Failed to add reply', 'error');
+                }
+            }
+
             // Add comment
             function addComment() {
                 const input = document.getElementById('commentInput');
