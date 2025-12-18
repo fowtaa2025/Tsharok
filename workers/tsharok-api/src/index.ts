@@ -3,6 +3,51 @@
  * Handles backend API requests for the Tsharok LMS
  */
 
+import {
+	handleGetCourses,
+	handleGetCourseDetails,
+	handleGetMyCourses,
+	handleUnenroll,
+	handleGetMajors,
+	handleGetFilterOptions
+} from './course-handlers';
+
+import {
+	handleContentInteractions,
+	handleContentUpload,
+	handleFileUploadHandler
+} from './content-handlers';
+
+import {
+	handleAddRating,
+	handleGetReview,
+	handleUpdateReview,
+	handleDeleteReview
+} from './review-handlers';
+
+import {
+	handleCheckAuth,
+	handleForgotPassword,
+	handleResetPassword,
+	handleVerifyEmail,
+	handleResendVerification
+} from './auth-handlers';
+
+import {
+	handleAdminLogin,
+	handleGetPendingContent,
+	handleApproveContent,
+	handleRejectContent,
+	handleModerationStats
+} from './admin-handlers';
+
+import {
+	handleGetAvailableLanguages,
+	handleGetTranslations,
+	handleSetLanguage,
+	handleAdminTranslations
+} from './i18n-handlers';
+
 export interface Env {
 	DB: D1Database;
 	BUCKET: R2Bucket;
@@ -130,6 +175,141 @@ export default {
 			// Route: GET /api/ratings
 			if (url.pathname === '/api/ratings' && request.method === 'GET') {
 				return await handleGetRatings(url, env, corsHeaders);
+			}
+
+			// Route: GET /api/courses - Course catalog
+			if (url.pathname === '/api/courses' && request.method === 'GET') {
+				return await handleGetCourses(url, env, corsHeaders);
+			}
+
+			// Route: GET /api/course-details - Individual course details
+			if (url.pathname === '/api/course-details' && request.method === 'GET') {
+				return await handleGetCourseDetails(url, env, corsHeaders);
+			}
+
+			// Route: GET /api/my-courses - User's enrolled courses
+			if (url.pathname === '/api/my-courses' && request.method === 'GET') {
+				return await handleGetMyCourses(request, url, env, corsHeaders);
+			}
+
+			// Route: POST /api/unenroll - Unenroll from course
+			if (url.pathname === '/api/unenroll' && request.method === 'POST') {
+				return await handleUnenroll(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/majors - Get available majors
+			if (url.pathname === '/api/majors' && request.method === 'GET') {
+				return await handleGetMajors(env, corsHeaders);
+			}
+
+			// Route: GET /api/filter-options - Get filter options
+			if (url.pathname === '/api/filter-options' && request.method === 'GET') {
+				return await handleGetFilterOptions(env, corsHeaders);
+			}
+
+			// Route: POST /api/content-interactions - Track downloads, views, helpful
+			if (url.pathname === '/api/content-interactions' && request.method === 'POST') {
+				return await handleContentInteractions(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/content-upload - Upload content with metadata
+			if (url.pathname === '/api/content-upload' && request.method === 'POST') {
+				return await handleContentUpload(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/file-upload-handler - Enhanced upload handler
+			if (url.pathname === '/api/file-upload-handler' && request.method === 'POST') {
+				return await handleFileUploadHandler(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/add-rating - Add course rating/review
+			if (url.pathname === '/api/add-rating' && request.method === 'POST') {
+				return await handleAddRating(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/get-review - Get specific review
+			if (url.pathname === '/api/get-review' && request.method === 'GET') {
+				return await handleGetReview(url, env, corsHeaders);
+			}
+
+			// Route: PUT /api/update-review - Update review
+			if (url.pathname === '/api/update-review' && request.method === 'PUT') {
+				return await handleUpdateReview(request, env, corsHeaders);
+			}
+
+			// Route: DELETE /api/delete-review - Delete review
+			if (url.pathname === '/api/delete-review' && request.method === 'DELETE') {
+				return await handleDeleteReview(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/check-auth - Check authentication status
+			if (url.pathname === '/api/check-auth' && request.method === 'GET') {
+				return await handleCheckAuth(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/forgot-password - Request password reset
+			if (url.pathname === '/api/forgot-password' && request.method === 'POST') {
+				return await handleForgotPassword(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/reset-password - Reset password with token
+			if (url.pathname === '/api/reset-password' && request.method === 'POST') {
+				return await handleResetPassword(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/verify-email - Verify email address
+			if (url.pathname === '/api/verify-email' && request.method === 'GET') {
+				return await handleVerifyEmail(url, env, corsHeaders);
+			}
+
+			// Route: POST /api/resend-verification - Resend verification email
+			if (url.pathname === '/api/resend-verification' && request.method === 'POST') {
+				return await handleResendVerification(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/admin-login - Admin authentication
+			if (url.pathname === '/api/admin-login' && request.method === 'POST') {
+				return await handleAdminLogin(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/get-pending-content - Get pending content
+			if (url.pathname === '/api/get-pending-content' && request.method === 'GET') {
+				return await handleGetPendingContent(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/approve-content - Approve content
+			if (url.pathname === '/api/approve-content' && request.method === 'POST') {
+				return await handleApproveContent(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/reject-content - Reject content
+			if (url.pathname === '/api/reject-content' && request.method === 'POST') {
+				return await handleRejectContent(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/moderation-stats - Get moderation statistics
+			if (url.pathname === '/api/moderation-stats' && request.method === 'GET') {
+				return await handleModerationStats(request, env, corsHeaders);
+			}
+
+			// Route: GET /api/get-available-languages - Get available languages
+			if (url.pathname === '/api/get-available-languages' && request.method === 'GET') {
+				return await handleGetAvailableLanguages(env, corsHeaders);
+			}
+
+			// Route: GET /api/get-translations - Get translations for language
+			if (url.pathname === '/api/get-translations' && request.method === 'GET') {
+				return await handleGetTranslations(url, env, corsHeaders);
+			}
+
+			// Route: POST /api/set-language - Set user language preference
+			if (url.pathname === '/api/set-language' && request.method === 'POST') {
+				return await handleSetLanguage(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/admin-translations - Admin translation management
+			if (url.pathname === '/api/admin-translations' && request.method === 'POST') {
+				return await handleAdminTranslations(request, env, corsHeaders);
 			}
 
 			// Default: Not Found
