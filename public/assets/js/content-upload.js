@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // Send request
-            xhr.open('POST', '../api/file-upload-handler.php', true);
+            xhr.open('POST', 'https://tsharok-api.fow-taa-2025.workers.dev/api/file-upload-handler', true);
             xhr.send(formData);
         });
     }
@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
 
                 // Submit form
-                const response = await fetch('../api/content-upload.php', {
+                const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/content-upload', {
                     method: 'POST',
                     body: formData
                 });
