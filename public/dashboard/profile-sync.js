@@ -39,7 +39,7 @@ function updateProfileDisplay(user) {
     }
 }
 
-// Save profile data to localStorage and sessionStorage
+// Save profile data to sessionStorage (isolated per tab)
 function saveProfileData(userData) {
     const user = getCurrentUser();
     if (user) {
@@ -56,10 +56,8 @@ function saveProfileData(userData) {
 
         // Update sessionStorage (isolated per tab)
         sessionStorage.setItem('user', JSON.stringify(updatedUser));
-        sessionStorage.setItem('user', JSON.stringify(updatedUser)); // Duplicated as per instruction
 
-        // Trigger storage event for other tabs/windows
-        window.dispatchEvent(new Event('profileUpdated'));
+        // No cross-tab events - each tab is independent
 
         return updatedUser;
     }
@@ -85,15 +83,9 @@ function getCurrentUser() {
     return null;
 }
 
-// Listen for profile updates from other pages
-window.addEventListener('storage', function (e) {
-    if (e.key === 'user') {
-        const user = getCurrentUser();
-        if (user) {
-            updateProfileDisplay(user);
-        }
-    }
-});
+// Storage event listener removed - sessions are now isolated per tab
+// Each tab maintains its own session without cross-tab synchronization
+
 
 // Listen for custom profile update event
 window.addEventListener('profileUpdated', function () {
