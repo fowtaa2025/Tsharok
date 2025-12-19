@@ -577,6 +577,13 @@
                     if (uploaderAvatar && typeof getUserInitial === 'function') {
                         const uploaderInitial = getUserInitial(uploaderName);
                         uploaderAvatar.textContent = uploaderInitial;
+                    }
+
+                    // Show edit button if current user is the uploader
+                    const currentUser = getCurrentUser();
+                    const editDescBtn = document.getElementById('editDescBtn');
+                    if (currentUser && (currentUser.userId === file.uploader_id || currentUser.id === file.uploader_id)) {
+                        editDescBtn.classList.remove('hidden');
 
                         // Use consistent color scheme
                         const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
@@ -1366,22 +1373,41 @@
             }
 
             // Save description
-            function saveDescription() {
+            async function saveDescription() {
                 const inputEl = document.getElementById('descriptionInput');
                 const descEl = document.getElementById('fileDescription');
                 const newDesc = inputEl.value.trim();
 
-                // Update in localStorage
-                const files = JSON.parse(localStorage.getItem(`course_${currentCourseId}_files`) || '[]');
-                if (files[currentFileId]) {
-                    files[currentFileId].description = newDesc || 'No description available for this file.';
-                    localStorage.setItem(`course_${currentCourseId}_files`, JSON.stringify(files));
-                }
+                try {
+                    const user = getCurrentUser();
+                    const token = sessionStorage.getItem('token');
 
-                // Update display
-                descEl.textContent = newDesc || 'No description available for this file.';
-                cancelEditDescription();
-                showToast('Description saved!', 'success');
+                    const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/update-description', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            contentId: currentFileId,
+                            description: newDesc
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Update display
+                        descEl.textContent = newDesc || 'No description available for this file.';
+                        cancelEditDescription();
+                        showToast('Description saved!', 'success');
+                    } else {
+                        showToast(result.message || 'Failed to save description', 'error');
+                    }
+                } catch (error) {
+                    console.error('Save description error:', error);
+                    showToast('Failed to save description', 'error');
+                }
             }
 
             // Language toggle

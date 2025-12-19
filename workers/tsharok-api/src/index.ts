@@ -334,8 +334,12 @@ export default {
 			}
 
 			// Route: POST /api/notifications/mark-all-read - Mark all notifications as read
-			if (url.pathname === '/api/notifications/mark-all-read' && request.method === 'POST') {
+			else if (url.pathname === '/api/notifications/mark-all-read' && request.method === 'POST') {
 				return await handleMarkAllNotificationsRead(request, env, corsHeaders);
+			}
+			// Route: POST /api/update-description - Update content description
+			else if (url.pathname === '/api/update-description' && request.method === 'POST') {
+				return await handleUpdateDescription(request, env, corsHeaders);
 			}
 
 			// Default: Not Found
@@ -1653,6 +1657,73 @@ function truncateText(text: string, length: number): string {
 function capitalize(str: string): string {
 	if (!str) return '';
 	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+/**
+ * Handle POST /api/update-description - Update content description
+ */
+async function handleUpdateDescription(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const data = await request.json() as any;
+		const { contentId, description } = data;
+
+		if (!contentId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'contentId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Get user ID from auth token
+		const authHeader = request.headers.get('Authorization');
+		let userId: number | null = null;
+		if (authHeader) {
+			const token = authHeader.replace('Bearer ', '');
+			userId = getUserIdFromToken(token);
+		}
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Authentication required' }),
+				{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if user is the uploader
+		const content = await env.DB.prepare(`
+			SELECT uploader_id FROM content WHERE id = ?
+		`).bind(contentId).first();
+
+		if (!content) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Content not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (content.uploader_id !== userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'You can only edit your own content' }),
+				{ status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Update description
+		await env.DB.prepare(`
+			UPDATE content SET description = ? WHERE id = ?
+		`).bind(description || null, contentId).run();
+
+		return new Response(
+			JSON.stringify({ success: true, message: 'Description updated successfully' }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Update description error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to update description', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 /**
