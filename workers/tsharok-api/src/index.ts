@@ -337,6 +337,10 @@ export default {
 			else if (url.pathname === '/api/notifications/mark-all-read' && request.method === 'POST') {
 				return await handleMarkAllNotificationsRead(request, env, corsHeaders);
 			}
+			// Route: GET /api/courses - Get course details
+			else if (url.pathname === '/api/courses' && request.method === 'GET') {
+				return await handleGetCourse(url, env, corsHeaders);
+			}
 			// Route: POST /api/update-description - Update content description
 			else if (url.pathname === '/api/update-description' && request.method === 'POST') {
 				return await handleUpdateDescription(request, env, corsHeaders);
