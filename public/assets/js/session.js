@@ -9,11 +9,17 @@ async function checkAuth() {
         const token = sessionStorage.getItem('token');
         const userStr = sessionStorage.getItem('user');
 
+        console.log('=== CHECK AUTH ===');
+        console.log('Token from sessionStorage:', token ? 'exists' : 'missing');
+        console.log('User from sessionStorage:', userStr ? 'exists' : 'missing');
+
         if (!token || !userStr) {
+            console.log('No token or user - not authenticated');
             return { authenticated: false };
         }
 
         // Verify token with API
+        console.log('Verifying token with /api/auth...');
         const response = await fetch('/api/auth', {
             method: 'GET',
             headers: {
@@ -21,18 +27,23 @@ async function checkAuth() {
             }
         });
 
+        console.log('Auth response status:', response.status);
+
         if (!response.ok) {
             // Token is invalid, clear storage
+            console.log('Token invalid - clearing sessionStorage');
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
             return { authenticated: false };
         }
 
         const result = await response.json();
+        console.log('Auth result:', result);
 
         if (result.success && result.user) {
             // Store user data in sessionStorage (isolated per tab)
             sessionStorage.setItem('user', JSON.stringify(result.user));
+            console.log('Authentication successful!');
 
             return {
                 authenticated: true,
@@ -40,6 +51,7 @@ async function checkAuth() {
             };
         }
 
+        console.log('Authentication failed - no success or user in response');
         return { authenticated: false };
 
 
