@@ -1818,6 +1818,14 @@ async function createContentNotifications(
 		console.log('Content Title:', contentTitle);
 		console.log('Uploader ID:', uploaderId);
 
+		// Fetch course name
+		const course = await env.DB.prepare(`
+			SELECT title FROM courses WHERE course_id = ?
+		`).bind(courseId).first();
+
+		const courseName = course?.title || 'your course';
+		console.log('Course Name:', courseName);
+
 		const enrolled = await env.DB.prepare(`
 			SELECT student_id
 			FROM enrollments
@@ -1841,7 +1849,7 @@ async function createContentNotifications(
 				student.student_id,
 				courseId,
 				contentId,
-				`${contentTitle} was uploaded to your course`
+				`${contentTitle} was uploaded to ${courseName}`
 			).run();
 		}
 
