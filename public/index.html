@@ -438,10 +438,11 @@
 
                 if (data.success && data.user) {
                     console.log('Login successful! User:', data.user);
+                    console.log('Token from response:', data.token);
 
                     // Store in sessionStorage (isolated per tab)
                     sessionStorage.setItem('user', JSON.stringify(data.user));
-                    sessionStorage.setItem('token', data.user.sessionToken || '');
+                    sessionStorage.setItem('token', data.token || '');  // FIX: Use data.token
 
                     console.log('Stored in sessionStorage:');
                     console.log('- user:', sessionStorage.getItem('user'));
