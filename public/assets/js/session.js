@@ -13,11 +13,10 @@ async function checkAuth() {
             return { authenticated: false };
         }
 
-        // Validate token with backend
-        const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/validate-session', {
-            method: 'POST',
+        // Verify token with API
+        const response = await fetch('/api/auth', {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         });
