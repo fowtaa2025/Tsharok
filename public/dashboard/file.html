@@ -74,7 +74,7 @@
                         <!-- Profile Dropdown -->
                         <div class="relative">
                             <button onclick="toggleProfileMenu()" id="profileButton"
-                                class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold hover:opacity-90 transition">
+                                class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold hover:opacity-90 transition">
                                 <span id="profileInitial">S</span>
                             </button>
 
@@ -391,7 +391,7 @@
                     const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
                     const userColor = colors[Math.abs(fullName.charCodeAt(0) || 0) % colors.length];
                     if (profileButton) {
-                        profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
+                        profileButton.className = `w-10 h-10 rounded-lg ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
                     }
 
                     // Update comment input avatar to match
