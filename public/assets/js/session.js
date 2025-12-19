@@ -155,15 +155,46 @@ async function requireAuth(allowedRoles = []) {
 }
 
 /**
+ * Get user's full name with fallback
+ */
+function getUserFullName(user) {
+    if (!user) return 'Student';
+    return user.fullName || user.name || user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username || 'Student';
+}
+
+/**
+ * Get user's initial for avatar
+ */
+function getUserInitial(userName) {
+    if (!userName) return 'S';
+    return userName.charAt(0).toUpperCase();
+}
+
+/**
+ * Create avatar HTML with user initial
+ */
+function createAvatarElement(userName, isCircular = true, sizeClass = 'w-10 h-10') {
+    const initial = getUserInitial(userName);
+    const shapeClass = isCircular ? 'rounded-full' : 'rounded-lg';
+    const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+    const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
+
+    return `<div class="${sizeClass} ${shapeClass} ${userColor} flex items-center justify-center text-white font-bold">${initial}</div>`;
+}
+
+/**
  * Update user profile display
  */
 function updateProfileDisplay(user) {
     if (!user) return;
 
+    const fullName = getUserFullName(user);
+    const initial = getUserInitial(fullName);
+
     // Update profile name
     const nameElements = document.querySelectorAll('[data-user-name]');
     nameElements.forEach(el => {
-        el.textContent = user.fullName || `${user.firstName} ${user.lastName}`;
+        el.textContent = fullName;
         el.classList.add('loaded'); // Add loaded class to trigger fade-in
     });
 
@@ -173,7 +204,7 @@ function updateProfileDisplay(user) {
         if (user.profileImage) {
             el.src = user.profileImage;
         } else {
-            el.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || user.username)}&background=4F46E5&color=fff`;
+            el.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=4F46E5&color=fff`;
         }
         el.classList.add('loaded');
     });
@@ -181,17 +212,39 @@ function updateProfileDisplay(user) {
     // Update username
     const usernameElements = document.querySelectorAll('[data-user-username]');
     usernameElements.forEach(el => {
-        el.textContent = user.username;
+        el.textContent = user.username || fullName;
+        el.classList.add('loaded');
+    });
+
+    // Update email
+    const emailElements = document.querySelectorAll('[data-user-email]');
+    emailElements.forEach(el => {
+        el.textContent = user.email || '';
         el.classList.add('loaded');
     });
 
     // Update role
     const roleElements = document.querySelectorAll('[data-user-role]');
     roleElements.forEach(el => {
-        el.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        el.textContent = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Student';
         el.classList.add('loaded');
     });
+
+    // Update avatar initials in navigation
+    const profileInitial = document.getElementById('profileInitial');
+    if (profileInitial) {
+        profileInitial.textContent = initial;
+    }
+
+    // Update avatar button color
+    const profileButton = document.getElementById('profileButton');
+    if (profileButton) {
+        const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+        const userColor = colors[Math.abs(fullName.charCodeAt(0) || 0) % colors.length];
+        profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
+    }
 }
+
 
 /**
  * Handle logout button clicks
@@ -255,3 +308,7 @@ window.logout = logout;
 window.getCurrentUser = getCurrentUser;
 window.requireAuth = requireAuth;
 window.updateProfileDisplay = updateProfileDisplay;
+window.getUserFullName = getUserFullName;
+window.getUserInitial = getUserInitial;
+window.createAvatarElement = createAvatarElement;
+

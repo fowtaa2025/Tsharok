@@ -268,8 +268,16 @@
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-gray-500"><i class="fas fa-user-circle mr-2"></i>Uploaded by</span>
-                                <span id="uploadedBy" class="text-gray-800 font-medium">Student</span>
+                                <div class="flex items-center gap-2">
+                                    <!-- Uploader Avatar (rectangular/square) -->
+                                    <div id="uploaderAvatar"
+                                        class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">
+                                        S
+                                    </div>
+                                    <span id="uploadedBy" class="text-gray-800 font-medium">Student</span>
+                                </div>
                             </div>
+
                             <div class="flex items-center justify-between">
                                 <span class="text-gray-500"><i class="fas fa-calendar mr-2"></i>Upload Date</span>
                                 <span id="uploadDate" class="text-gray-800">-</span>
@@ -554,9 +562,25 @@
                     document.getElementById('fileExtension').textContent = ext.toUpperCase() || '-';
                     document.getElementById('uploadDate').textContent = formatDate(file.upload_date);
                     document.getElementById('fileSize').textContent = formatFileSize(file.file_size);
-                    document.getElementById('uploadedBy').textContent = file.uploader_name || 'Student';
+
+                    // Update uploader name and avatar
+                    const uploaderName = file.uploader_name || 'Student';
+                    document.getElementById('uploadedBy').textContent = uploaderName;
+
+                    // Update uploader avatar (rectangular)
+                    const uploaderAvatar = document.getElementById('uploaderAvatar');
+                    if (uploaderAvatar && typeof getUserInitial === 'function') {
+                        const uploaderInitial = getUserInitial(uploaderName);
+                        uploaderAvatar.textContent = uploaderInitial;
+
+                        // Use consistent color scheme
+                        const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+                        const uploaderColor = colors[Math.abs(uploaderName.charCodeAt(0) || 0) % colors.length];
+                        uploaderAvatar.className = `w-8 h-8 rounded-lg ${uploaderColor} flex items-center justify-center text-white font-bold text-sm`;
+                    }
 
                     // Display file content
+
                     displayFileContent({
                         r2Url: file.file_url,
                         type: file.type,
