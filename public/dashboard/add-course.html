@@ -695,7 +695,7 @@
 
                 if (user && user.userId) {
                     try {
-                        const token = localStorage.getItem('token') || user?.sessionToken;
+                        const token = sessionStorage.getItem('token') || user?.sessionToken;
                         const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/my-courses?userId=${user.userId}`, {
                             headers: {
                                 'Authorization': `Bearer ${token}`
@@ -780,7 +780,7 @@
                     // Remove course
                     try {
                         const user = getCurrentUser();
-                        const token = localStorage.getItem('token') || user?.sessionToken;
+                        const token = sessionStorage.getItem('token') || user?.sessionToken;
 
                         const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/unenroll', {
                             method: 'POST',
@@ -788,7 +788,10 @@
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}`
                             },
-                            body: JSON.stringify({ courseId })
+                            body: JSON.stringify({
+                                courseId: courseId,
+                                userId: user.userId || user.id
+                            })
                         });
 
                         const result = await response.json();
@@ -812,7 +815,7 @@
                     // Add course
                     try {
                         const user = getCurrentUser();
-                        const token = localStorage.getItem('token') || user?.sessionToken;
+                        const token = sessionStorage.getItem('token') || user?.sessionToken;
 
                         const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/enroll', {
                             method: 'POST',
@@ -820,7 +823,10 @@
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}`
                             },
-                            body: JSON.stringify({ courseId })
+                            body: JSON.stringify({
+                                courseId: courseId,
+                                userId: user.userId || user.id
+                            })
                         });
 
                         const result = await response.json();

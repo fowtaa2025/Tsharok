@@ -312,13 +312,24 @@ export default {
 				return await handleAdminTranslations(request, env, corsHeaders);
 			}
 
+			// Route: GET /api/my-courses - User's enrolled courses
+			else if (url.pathname === '/api/my-courses' && request.method === 'GET') {
+				return await handleGetMyCourses(request, url, env, corsHeaders);
+			}
+			// Route: POST /api/enroll
+			else if (url.pathname === '/api/enroll' && request.method === 'POST') {
+				return await handleEnroll(request, env, corsHeaders);
+			}
+			// Route: POST /api/unenroll - Unenroll from course
+			else if (url.pathname === '/api/unenroll' && request.method === 'POST') {
+				return await handleUnenroll(request, env, corsHeaders);
+			}
 			// Route: GET /api/notifications - Get user notifications
-			if (url.pathname === '/api/notifications' && request.method === 'GET') {
+			else if (url.pathname === '/api/notifications' && request.method === 'GET') {
 				return await handleGetNotifications(url, request, env, corsHeaders);
 			}
-
 			// Route: POST /api/notifications/mark-read - Mark notification as read
-			if (url.pathname === '/api/notifications/mark-read' && request.method === 'POST') {
+			else if (url.pathname === '/api/notifications/mark-read' && request.method === 'POST') {
 				return await handleMarkNotificationRead(request, env, corsHeaders);
 			}
 
@@ -1801,11 +1812,20 @@ async function createContentNotifications(
 	env: Env
 ): Promise<void> {
 	try {
+		console.log('=== CREATE CONTENT NOTIFICATIONS ===');
+		console.log('Course ID:', courseId);
+		console.log('Content ID:', contentId);
+		console.log('Content Title:', contentTitle);
+		console.log('Uploader ID:', uploaderId);
+
 		const enrolled = await env.DB.prepare(`
 			SELECT student_id
 			FROM enrollments
 			WHERE course_id = ? AND student_id != ? AND status = 'active'
 		`).bind(courseId, uploaderId).all();
+
+		console.log('Enrolled students found:', enrolled.results?.length || 0);
+		console.log('Enrolled students:', enrolled.results);
 
 		if (!enrolled.results || enrolled.results.length === 0) {
 			console.log('No students to notify for course', courseId);
@@ -1813,6 +1833,7 @@ async function createContentNotifications(
 		}
 
 		for (const student of enrolled.results as any[]) {
+			console.log('Creating notification for student:', student.student_id);
 			await env.DB.prepare(`
 				INSERT INTO notifications (user_id, course_id, content_id, type, title, message)
 				VALUES (?, ?, ?, 'content_upload', 'New content uploaded', ?)
