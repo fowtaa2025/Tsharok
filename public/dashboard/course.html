@@ -752,7 +752,7 @@
                         const courseRatingEl = document.getElementById('courseRating');
                         if (ratings.length > 0) {
                             const avgRating = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-                            courseRatingEl.textContent = avgRating.toFixed(1) + '★
+                            courseRatingEl.textContent = avgRating.toFixed(1) + '★';
                         } else {
                             courseRatingEl.textContent = '0.0';
                         }
