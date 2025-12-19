@@ -46,9 +46,17 @@ function saveProfileData(userData) {
         // Merge new data with existing user data
         const updatedUser = { ...user, ...userData };
 
-        // Save to both localStorage and sessionStorage
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        // Ensure firstName and lastName are present for fullName construction
+        const firstName = userData.firstName || updatedUser.firstName || '';
+        const lastName = userData.lastName || updatedUser.lastName || '';
+
+        updatedUser.firstName = firstName;
+        updatedUser.lastName = lastName;
+        updatedUser.fullName = `${firstName} ${lastName}`.trim(); // Trim to handle cases where one is empty
+
+        // Update sessionStorage (isolated per tab)
         sessionStorage.setItem('user', JSON.stringify(updatedUser));
+        sessionStorage.setItem('user', JSON.stringify(updatedUser)); // Duplicated as per instruction
 
         // Trigger storage event for other tabs/windows
         window.dispatchEvent(new Event('profileUpdated'));

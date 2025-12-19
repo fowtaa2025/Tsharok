@@ -334,14 +334,14 @@
                     showNotification('Profile updated successfully!', 'success');
                     toggleEdit();
 
-                    // Update localStorage
+                    // Update sessionStorage (isolated per tab)
                     const user = getCurrentUser();
                     if (user) {
                         user.firstName = formData.firstName;
                         user.lastName = formData.lastName;
-                        user.username = formData.username;
+                        user.dob = formData.dob;
+                        user.bio = formData.bio;
                         user.fullName = `${formData.firstName} ${formData.lastName}`;
-                        localStorage.setItem('user', JSON.stringify(user));
                         sessionStorage.setItem('user', JSON.stringify(user));
                     }
                 } catch (error) {

@@ -430,10 +430,10 @@
 
                 const data = await response.json();
 
-                if (data.success) {
-                    // Store JWT token and user data
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                if (data.success && data.user) {
+                    // Store in sessionStorage (isolated per tab)
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                    sessionStorage.setItem('token', data.user.sessionToken || '');
                     localStorage.setItem('isLoggedIn', 'true');
 
                     showMessage('loginMessage', 'Login successful! Redirecting...', false);
