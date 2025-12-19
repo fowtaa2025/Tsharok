@@ -283,8 +283,7 @@
                             data-user-name>student name</span>
                         <div class="relative">
                             <button onclick="toggleProfileDropdown()" id="profileButton"
-                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);"
-                                class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold hover:scale-110 transition-transform cursor-pointer">
+                                class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold hover:scale-110 transition-transform cursor-pointer">
                                 <span id="profileInitial">S</span>
                             </button>
                             <!-- Dropdown -->
@@ -674,7 +673,15 @@
                     const fullName = typeof getUserFullName === 'function' ? getUserFullName(user) : (user.fullName || user.name || user.username || 'Student');
                     const initial = typeof getUserInitial === 'function' ? getUserInitial(fullName) : fullName.charAt(0).toUpperCase();
                     const profileInitial = document.getElementById('profileInitial');
+                    const profileButton = document.getElementById('profileButton');
                     if (profileInitial) profileInitial.textContent = initial;
+
+                    // Apply dynamic color scheme
+                    if (profileButton) {
+                        const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+                        const userColor = colors[Math.abs(fullName.charCodeAt(0) || 0) % colors.length];
+                        profileButton.className = `w-12 h-12 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:scale-110 transition-transform cursor-pointer`;
+                    }
 
                     // Update name display
                     const nameElements = document.querySelectorAll('[data-user-name]');
