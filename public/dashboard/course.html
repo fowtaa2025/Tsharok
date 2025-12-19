@@ -418,33 +418,38 @@
                 // Check if user is logged in and update display
                 const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
                 if (user) {
-                    if (user.fullName) {
-                        const nameElements = document.querySelectorAll('[data-user-name]');
-                        nameElements.forEach(el => {
-                            el.textContent = user.fullName;
-                        });
-                    }
+                    // Use the session.js function for consistent name handling
+                    const fullName = typeof getUserFullName === 'function' ? getUserFullName(user) : (user.fullName || user.name || user.username || 'Student');
+
+                    // Update name elements
+                    const nameElements = document.querySelectorAll('[data-user-name]');
+                    nameElements.forEach(el => {
+                        el.textContent = fullName;
+                    });
+
+                    // Update email elements
                     if (user.email) {
                         const emailElements = document.querySelectorAll('[data-user-email]');
                         emailElements.forEach(el => {
                             el.textContent = user.email;
                         });
                     }
-                    // Update profile initial and color
-                    const userName = user.fullName || user.name || 'S';
-                    const initial = userName.charAt(0).toUpperCase();
+
+                    // Update profile initial and color using session.js functions
+                    const initial = typeof getUserInitial === 'function' ? getUserInitial(fullName) : fullName.charAt(0).toUpperCase();
                     const profileInitial = document.getElementById('profileInitial');
                     const profileButton = document.getElementById('profileButton');
                     if (profileInitial) profileInitial.textContent = initial;
 
-                    // Use same color scheme as comments for consistency
-                    const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
-                    const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
+                    // Use varied color scheme
+                    const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+                    const userColor = colors[Math.abs(fullName.charCodeAt(0) || 0) % colors.length];
                     if (profileButton) {
                         profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
                     }
                 }
             });
+
 
             // Course data with descriptions - Complete list matching student.html
             const allCoursesData = {

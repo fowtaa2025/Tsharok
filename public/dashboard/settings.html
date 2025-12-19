@@ -424,10 +424,19 @@
                 if (user) {
                     updateProfileDisplay(user);
 
-                    // Update profile initial
-                    const initial = (user.fullName || user.name || 'S').charAt(0).toUpperCase();
+                    // Update profile initial using session.js functions
+                    const fullName = typeof getUserFullName === 'function' ? getUserFullName(user) : (user.fullName || user.name || user.username || 'Student');
+                    const initial = typeof getUserInitial === 'function' ? getUserInitial(fullName) : fullName.charAt(0).toUpperCase();
                     const profileInitial = document.getElementById('profileInitial');
+                    const profileButton = document.getElementById('profileButton');
                     if (profileInitial) profileInitial.textContent = initial;
+
+                    // Use varied color scheme
+                    if (profileButton) {
+                        const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+                        const userColor = colors[Math.abs(fullName.charCodeAt(0) || 0) % colors.length];
+                        profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold`;
+                    }
                 }
 
                 // Load saved settings from localStorage

@@ -563,16 +563,16 @@
                         el.textContent = user.email || 'student@email.com';
                     });
 
-                    // Update profile initial and color
-                    const userName = user.fullName || user.name || 'S';
-                    const initial = userName.charAt(0).toUpperCase();
+                    // Update profile initial and color using session.js functions
+                    const fullName = typeof getUserFullName === 'function' ? getUserFullName(user) : (user.fullName || user.name || user.username || 'Student');
+                    const initial = typeof getUserInitial === 'function' ? getUserInitial(fullName) : fullName.charAt(0).toUpperCase();
                     const profileInitial = document.getElementById('profileInitial');
                     const profileButton = document.getElementById('profileButton');
                     if (profileInitial) profileInitial.textContent = initial;
 
-                    // Use same color scheme as comments for consistency
-                    const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
-                    const userColor = colors[Math.abs(userName.charCodeAt(0) || 0) % colors.length];
+                    // Use varied color scheme
+                    const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+                    const userColor = colors[Math.abs(fullName.charCodeAt(0) || 0) % colors.length];
                     if (profileButton) {
                         profileButton.className = `w-10 h-10 rounded-full ${userColor} flex items-center justify-center text-white font-bold hover:opacity-90 transition`;
                     }

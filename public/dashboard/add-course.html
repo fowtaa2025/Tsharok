@@ -668,17 +668,18 @@
 
             // Load and display all courses in one grid
             function loadCourses() {
-                // Update profile initial
+                // Update profile initial using session.js functions
                 const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
                 if (user) {
-                    const initial = (user.fullName || user.name || 'S').charAt(0).toUpperCase();
+                    const fullName = typeof getUserFullName === 'function' ? getUserFullName(user) : (user.fullName || user.name || user.username || 'Student');
+                    const initial = typeof getUserInitial === 'function' ? getUserInitial(fullName) : fullName.charAt(0).toUpperCase();
                     const profileInitial = document.getElementById('profileInitial');
                     if (profileInitial) profileInitial.textContent = initial;
 
                     // Update name display
                     const nameElements = document.querySelectorAll('[data-user-name]');
                     nameElements.forEach(el => {
-                        el.textContent = user.fullName || user.name || 'Student';
+                        el.textContent = fullName;
                     });
                 }
 
