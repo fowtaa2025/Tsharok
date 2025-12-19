@@ -264,16 +264,20 @@
                 <div class="space-y-8">
                     <!-- Recent Notifications -->
                     <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex items-center mb-6">
-                            <i class="fas fa-bell text-2xl text-gray-700 mr-3"></i>
-                            <h2 class="text-xl font-semibold text-gray-900">Recent Notification</h2>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-bell text-2xl text-gray-700 mr-3"></i>
+                                <h2 class="text-xl font-semibold text-gray-900">Recent Notification</h2>
+                            </div>
+                            <span id="unreadBadge"
+                                class="hidden px-2 py-1 bg-red-500 text-white text-xs rounded-full"></span>
                         </div>
 
                         <div id="notificationsContainer" class="space-y-4">
                             <!-- Notifications will be loaded dynamically -->
                             <div class="text-center py-8 text-gray-400">
-                                <i class="fas fa-bell-slash text-4xl mb-3"></i>
-                                <p>No notifications yet</p>
+                                <i class="fas fa-spinner fa-spin text-4xl mb-3"></i>
+                                <p>Loading notifications...</p>
                             </div>
                         </div>
                     </div>
@@ -327,24 +331,6 @@
                 <!-- Right Column: Chatbot Panel (50% width, full height) -->
                 <div class="hidden lg:block">
                     <div class="bg-white rounded-2xl shadow-lg sticky top-24 flex flex-col" style="height: 931px;">
-                        <!-- Recent Notifications -->
-                        <div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-bell text-2xl text-primary"></i>
-                                    <h2 class="text-xl font-semibold text-gray-900">Recent Notification</h2>
-                                </div>
-                                <span id="unreadBadge"
-                                    class="hidden px-2 py-1 bg-red-500 text-white text-xs rounded-full"></span>
-                            </div>
-                            <div id="notificationsContainer" class="space-y-3">
-                                <!-- Notifications will be loaded here dynamically -->
-                                <div class="text-center py-8 text-gray-500">
-                                    <i class="fas fa-spinner fa-spin text-4xl mb-3 opacity-50"></i>
-                                    <p class="text-sm">Loading notifications...</p>
-                                </div>
-                            </div>
-                        </div>
                         <!-- Header -->
                         <div class="bg-gradient-to-br from-teal-600 to-teal-500 p-4 rounded-t-2xl">
                             <div class="flex items-center gap-3">
