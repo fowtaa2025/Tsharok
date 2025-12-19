@@ -312,6 +312,21 @@ export default {
 				return await handleAdminTranslations(request, env, corsHeaders);
 			}
 
+			// Route: GET /api/notifications - Get user notifications
+			if (url.pathname === '/api/notifications' && request.method === 'GET') {
+				return await handleGetNotifications(url, request, env, corsHeaders);
+			}
+
+			// Route: POST /api/notifications/mark-read - Mark notification as read
+			if (url.pathname === '/api/notifications/mark-read' && request.method === 'POST') {
+				return await handleMarkNotificationRead(request, env, corsHeaders);
+			}
+
+			// Route: POST /api/notifications/mark-all-read - Mark all notifications as read
+			if (url.pathname === '/api/notifications/mark-all-read' && request.method === 'POST') {
+				return await handleMarkAllNotificationsRead(request, env, corsHeaders);
+			}
+
 			// Default: Not Found
 			return new Response(
 				JSON.stringify({ success: false, message: 'Endpoint not found' }),
@@ -757,6 +772,15 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
 				extension
 			)
 			.run();
+
+		// Create notifications for enrolled students
+		await createContentNotifications(
+			parseInt(courseId),
+			result.meta.last_row_id as number,
+			title,
+			parseInt(userId),
+			env
+		);
 
 		return new Response(
 			JSON.stringify({
@@ -1618,4 +1642,190 @@ function truncateText(text: string, length: number): string {
 function capitalize(str: string): string {
 	if (!str) return '';
 	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+/**
+ * Handle GET /api/notifications - Get notifications for a user
+ */
+async function handleGetNotifications(url: URL, request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const authHeader = request.headers.get('Authorization');
+		let userId: number | null = null;
+
+		if (authHeader) {
+			const token = authHeader.replace('Bearer ', '');
+			userId = getUserIdFromToken(token);
+		}
+
+		if (!userId) {
+			userId = parseInt(url.searchParams.get('userId') || '0');
+		}
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'userId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		const result = await env.DB.prepare(`
+			SELECT 
+				n.id, n.user_id, n.course_id, n.content_id,
+				n.type, n.title, n.message, n.is_read, n.created_at,
+				c.title as course_name,
+				co.title as content_title
+			FROM notifications n
+			LEFT JOIN courses c ON n.course_id = c.course_id
+			LEFT JOIN content co ON n.content_id = co.id
+			WHERE n.user_id = ?
+			ORDER BY n.created_at DESC
+			LIMIT 50
+		`).bind(userId).all();
+
+		const unreadResult = await env.DB.prepare(`
+			SELECT COUNT(*) as count
+			FROM notifications
+			WHERE user_id = ? AND is_read = 0
+		`).bind(userId).first();
+
+		const notifications = result.results.map((notif: any) => ({
+			id: notif.id,
+			userId: notif.user_id,
+			courseId: notif.course_id,
+			contentId: notif.content_id,
+			type: notif.type,
+			title: notif.title,
+			message: notif.message,
+			isRead: Boolean(notif.is_read),
+			createdAt: notif.created_at,
+			courseName: notif.course_name,
+			contentTitle: notif.content_title,
+		}));
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				notifications: notifications,
+				unreadCount: unreadResult?.count || 0,
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get notifications error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to get notifications', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/notifications/mark-read
+ */
+async function handleMarkNotificationRead(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const data = await request.json() as any;
+
+		if (!data.notificationId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'notificationId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		await env.DB.prepare(`UPDATE notifications SET is_read = 1 WHERE id = ?`)
+			.bind(data.notificationId)
+			.run();
+
+		return new Response(
+			JSON.stringify({ success: true, message: 'Notification marked as read' }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Mark notification read error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to mark notification as read', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/notifications/mark-all-read
+ */
+async function handleMarkAllNotificationsRead(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const data = await request.json() as any;
+		let userId = data.userId;
+
+		if (!userId) {
+			const authHeader = request.headers.get('Authorization');
+			if (authHeader) {
+				const token = authHeader.replace('Bearer ', '');
+				userId = getUserIdFromToken(token);
+			}
+		}
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'userId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		await env.DB.prepare(`UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0`)
+			.bind(userId)
+			.run();
+
+		return new Response(
+			JSON.stringify({ success: true, message: 'All notifications marked as read' }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Mark all notifications read error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to mark all notifications as read', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Create notifications for enrolled students when new content is uploaded
+ */
+async function createContentNotifications(
+	courseId: number,
+	contentId: number,
+	contentTitle: string,
+	uploaderId: number,
+	env: Env
+): Promise<void> {
+	try {
+		const enrolled = await env.DB.prepare(`
+			SELECT student_id
+			FROM enrollments
+			WHERE course_id = ? AND student_id != ? AND status = 'active'
+		`).bind(courseId, uploaderId).all();
+
+		if (!enrolled.results || enrolled.results.length === 0) {
+			console.log('No students to notify for course', courseId);
+			return;
+		}
+
+		for (const student of enrolled.results as any[]) {
+			await env.DB.prepare(`
+				INSERT INTO notifications (user_id, course_id, content_id, type, title, message)
+				VALUES (?, ?, ?, 'content_upload', 'New content uploaded', ?)
+			`).bind(
+				student.student_id,
+				courseId,
+				contentId,
+				`${contentTitle} was uploaded to your course`
+			).run();
+		}
+
+		console.log(`Created ${enrolled.results.length} notifications for course ${courseId}`);
+	} catch (error: any) {
+		console.error('Error creating content notifications:', error);
+	}
 }
