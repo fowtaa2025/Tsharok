@@ -828,7 +828,8 @@
                     const sortedFiles = sortFiles(files, currentSortOption);
 
                     // Calculate and display overall course rating
-                    calculateOverallCourseRating(sortedFiles);
+                    // DEPRECATED: Now using fetchCourseRatingFromAPI() instead
+                    // calculateOverallCourseRating(sortedFiles);
 
                     const docsGrid = document.getElementById('documentsGrid');
                     const videoGrid = document.getElementById('videoGrid');
