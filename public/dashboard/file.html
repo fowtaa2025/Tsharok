@@ -886,7 +886,7 @@
                 ).join('');
 
                 const initials = (comment.author || 'S').charAt(0).toUpperCase();
-                const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
+                const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
                 const randomColor = colors[Math.abs(comment.author?.charCodeAt(0) || 0) % colors.length];
                 const likes = comment.likes || 0;
                 const isLiked = comment.likedByMe ? 'fas text-red-500' : 'far text-gray-400';
@@ -904,7 +904,7 @@
                 return `
                 <div class="bg-gray-50 rounded-xl p-4" data-comment-index="${index}" data-comment-id="${comment.id || ''}">
                     <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 ${randomColor} rounded-full flex items-center justify-center flex-shrink-0">
+                        <div class="w-8 h-8 ${randomColor} rounded-lg flex items-center justify-center flex-shrink-0">
                             <span class="text-white text-sm font-bold">${initials}</span>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -961,12 +961,12 @@
             // Get reply HTML
             function getReplyHTML(reply, commentIndex, replyIndex) {
                 const initials = (reply.author || 'S').charAt(0).toUpperCase();
-                const colors = ['bg-primary', 'bg-primary', 'bg-primary', 'bg-primary', 'bg-primary'];
+                const colors = ['bg-primary', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
                 const randomColor = colors[Math.abs(reply.author?.charCodeAt(0) || 0) % colors.length];
 
                 return `
                 <div class="flex items-start gap-2 bg-white rounded-lg p-3">
-                    <div class="w-6 h-6 ${randomColor} rounded-full flex items-center justify-center flex-shrink-0">
+                    <div class="w-6 h-6 ${randomColor} rounded-lg flex items-center justify-center flex-shrink-0">
                         <span class="text-white text-xs font-bold">${initials}</span>
                     </div>
                     <div class="flex-1 min-w-0">
