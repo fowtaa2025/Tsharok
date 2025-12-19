@@ -561,6 +561,39 @@
                 }
 
                 loadFiles();
+                fetchCourseRatingFromAPI();
+}
+
+            // Fetch course rating from Worker API
+            async function fetchCourseRatingFromAPI() {
+                try {
+                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=${currentCourseId}`);
+                    const data = await response.json();
+
+                    if (data.success && data.data?.materials) {
+                        const materials = data.data.materials;
+                       
+                        // Calculate average rating from all materials
+                        const ratings = [];
+                        materials.forEach(material => {
+                            const rating = parseFloat(material.statistics?.avg_rating || 0);
+                            if (!isNaN(rating) && rating > 0) {
+                                ratings.push(rating);
+                            }
+                        });
+
+                        // Update display
+                        const courseRatingEl = document.getElementById('courseRating');
+                        if (ratings.length > 0) {
+                            const avgRating = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+                            courseRatingEl.textContent = avgRating.toFixed(1) + '';
+                        } else {
+                            courseRatingEl.textContent = '0.0';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch course rating:', error);
+                }
             }
 
             // Get file icon based on extension
@@ -693,6 +726,39 @@
             function applyFilter(sortOption) {
                 currentSortOption = sortOption;
                 loadFiles();
+                fetchCourseRatingFromAPI();
+}
+
+            // Fetch course rating from Worker API
+            async function fetchCourseRatingFromAPI() {
+                try {
+                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=${currentCourseId}`);
+                    const data = await response.json();
+
+                    if (data.success && data.data?.materials) {
+                        const materials = data.data.materials;
+                       
+                        // Calculate average rating from all materials
+                        const ratings = [];
+                        materials.forEach(material => {
+                            const rating = parseFloat(material.statistics?.avg_rating || 0);
+                            if (!isNaN(rating) && rating > 0) {
+                                ratings.push(rating);
+                            }
+                        });
+
+                        // Update display
+                        const courseRatingEl = document.getElementById('courseRating');
+                        if (ratings.length > 0) {
+                            const avgRating = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+                            courseRatingEl.textContent = avgRating.toFixed(1) + '';
+                        } else {
+                            courseRatingEl.textContent = '0.0';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch course rating:', error);
+                }
             }
 
             // Load files for this course
@@ -1301,3 +1367,4 @@
 </body>
 
 </html>
+
