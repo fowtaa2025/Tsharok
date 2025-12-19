@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Knowledge Rating</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+        }
+
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #333;
+            background: #f5f5f5;
+        }
+
+        .file {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #007bff;
+            background: white;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        pre {
+            background: #eee;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Knowledge Rating Debug</h1>
+    <button onclick="testAPI()">Test API for Course 40</button>
+    <div id="output"></div>
+
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.innerHTML = '⏳ Loading...';
+
+            try {
+                const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=40');
+                const data = await response.json();
+
+                console.log('Full API Response:', data);
+
+                let html = '<div class="result">';
+                html += '<h3 class="success">✅ API Response Success</h3>';
+
+                // Show materials
+                html += '<h4>Files in Course:</h4>';
+
+                if (data.data && data.data.materials) {
+                    const materials = data.data.materials;
+
+                    // Calculate average
+                    let totalRating = 0;
+                    let countWithRatings = 0;
+
+                    materials.forEach((file, index) => {
+                        html += `<div class="file">`;
+                        html += `<strong>File ${index + 1}: ${file.title}</strong><br>`;
+                        html += `ID: ${file.id}<br>`;
+                        html += `Type: ${file.type}<br>`;
+                        html += `Extension: ${file.file_extension || 'N/A'}<br>`;
+                        html += `<strong>Statistics:</strong><br>`;
+                        html += `&nbsp;&nbsp;avg_rating: ${JSON.stringify(file.statistics.avg_rating)} (type: ${typeof file.statistics.avg_rating})<br>`;
+                        html += `&nbsp;&nbsp;rating_count: ${JSON.stringify(file.statistics.rating_count)} (type: ${typeof file.statistics.rating_count})<br>`;
+
+                        const rating = parseFloat(file.statistics.avg_rating);
+                        if (!isNaN(rating) && rating > 0) {
+                            totalRating += rating;
+                            countWithRatings++;
+                        }
+
+                        html += `</div>`;
+                    });
+
+                    // Show calculation
+                    html += '<h4>Knowledge Rating Calculation:</h4>';
+                    html += `<div class="file">`;
+                    html += `Total files: ${materials.length}<br>`;
+                    html += `Files with ratings: ${countWithRatings}<br>`;
+                    html += `Sum of ratings: ${totalRating.toFixed(2)}<br>`;
+                    html += `<strong>Average (Knowledge Rating): ${countWithRatings > 0 ? (totalRating / countWithRatings).toFixed(1) : '0.0'}</strong><br>`;
+                    html += `</div>`;
+
+                } else {
+                    html += '<p class="error">No materials found in response</p>';
+                }
+
+                html += '<h4>Full JSON Response:</h4>';
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                html += '</div>';
+
+                output.innerHTML = html;
+
+            } catch (error) {
+                output.innerHTML = `<div class="result"><h3 class="error">❌ Error</h3><p>${error.message}</p></div>`;
+                console.error('API Error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

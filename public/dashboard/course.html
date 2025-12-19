@@ -625,7 +625,7 @@
                 let allFileRatings = [];
 
                 files.forEach(file => {
-                    const rating = parseFloat(file.rating);
+                    const rating = parseFloat(file.statistics?.avg_rating || file.rating || 0);
                     if (!isNaN(rating) && rating > 0) {
                         allFileRatings.push(rating);
                     }

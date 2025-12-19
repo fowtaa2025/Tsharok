@@ -549,14 +549,20 @@ async function handleViewMaterials(url: URL, env: Env, corsHeaders: Record<strin
 	try {
 		// Query D1 database
 		const result = await env.DB.prepare(`
-			SELECT 
-				id, title, type, file_url, upload_date,
-				description, file_size, mime_type,
-				is_approved, uploader_id
-			FROM content
-			WHERE course_id = ? AND is_approved = 1
-			ORDER BY upload_date DESC
-		`)
+		SELECT 
+			c.id, c.title, c.type, c.file_url, c.upload_date,
+			c.description, c.file_size, c.mime_type, c.file_extension,
+			c.is_approved, c.uploader_id,
+			u.first_name || ' ' || u.last_name as uploader_name, u.email as uploader_email,
+			COALESCE(AVG(r.score), 0) as avg_rating,
+			COUNT(r.id) as rating_count
+		FROM content c
+		LEFT JOIN users u ON c.uploader_id = u.user_id
+		LEFT JOIN ratings r ON c.id = r.content_id
+		WHERE c.course_id = ? AND c.is_approved = 1
+		GROUP BY c.id
+		ORDER BY c.upload_date DESC
+	`)
 			.bind(courseId)
 			.all();
 
@@ -569,16 +575,17 @@ async function handleViewMaterials(url: URL, env: Env, corsHeaders: Record<strin
 			file_url: material.file_url,
 			file_size: material.file_size,
 			mime_type: material.mime_type,
+			file_extension: material.file_extension,
 			is_approved: Boolean(material.is_approved),
 			upload_date: material.upload_date,
 			uploader: {
 				id: material.uploader_id,
-				name: 'Student',
-				email: null,
+				name: material.uploader_name || 'Student',
+				email: material.uploader_email,
 			},
 			statistics: {
-				avg_rating: null,
-				rating_count: 0,
+				avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
+				rating_count: Number(material.rating_count) || 0,
 			},
 		}));
 
@@ -717,7 +724,7 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
 		// Generate unique filename
 		const timestamp = Date.now();
 		const extension = file.name.split('.').pop();
-		const r2Key = `course-${courseId}/${timestamp}-${file.name}`;
+		const r2Key = `uploads/${courseId}/${timestamp}-${file.name}`;
 
 		// Upload to R2
 		await env.BUCKET.put(r2Key, file.stream(), {
@@ -733,9 +740,9 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
 		const result = await env.DB.prepare(`
 			INSERT INTO content (
 				course_id, uploader_id, title, description,
-				type, file_url, file_size, mime_type,
+				type, file_url, file_key, file_size, mime_type, file_extension,
 				is_approved, upload_date
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
 		`)
 			.bind(
 				courseId,
@@ -743,9 +750,11 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
 				title,
 				description,
 				type,
+				fileUrl,
 				r2Key,
 				file.size,
-				file.type
+				file.type,
+				extension
 			)
 			.run();
 
