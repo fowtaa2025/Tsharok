@@ -18,40 +18,17 @@ async function checkAuth() {
             return { authenticated: false };
         }
 
-        // Verify token with API
-        console.log('Verifying token with /api/auth...');
-        const response = await fetch('/api/auth', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+        try {
+            const user = JSON.parse(userStr);
+            if (user && (user.userId || user.id)) {
+                console.log('Authentication successful from sessionStorage!');
+                return { authenticated: true, user: user };
             }
-        });
-
-        console.log('Auth response status:', response.status);
-
-        if (!response.ok) {
-            // Token is invalid, clear storage
-            console.log('Token invalid - clearing sessionStorage');
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('user');
-            return { authenticated: false };
+        } catch (e) {
+            console.error('Error parsing user from sessionStorage:', e);
         }
 
-        const result = await response.json();
-        console.log('Auth result:', result);
-
-        if (result.success && result.user) {
-            // Store user data in sessionStorage (isolated per tab)
-            sessionStorage.setItem('user', JSON.stringify(result.user));
-            console.log('Authentication successful!');
-
-            return {
-                authenticated: true,
-                user: result.user
-            };
-        }
-
-        console.log('Authentication failed - no success or user in response');
+        console.log('Authentication failed - invalid user data');
         return { authenticated: false };
 
 
