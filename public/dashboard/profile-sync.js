@@ -64,18 +64,12 @@ function saveProfileData(userData) {
     return null;
 }
 
-// Get current user from storage
+// Get current user from sessionStorage (isolated per tab)
 function getCurrentUser() {
     try {
         const sessionUser = sessionStorage.getItem('user');
-        const localUser = localStorage.getItem('user');
-
         if (sessionUser) {
             return JSON.parse(sessionUser);
-        } else if (localUser) {
-            const user = JSON.parse(localUser);
-            sessionStorage.setItem('user', localUser);
-            return user;
         }
     } catch (error) {
         console.error('Error getting user data:', error);

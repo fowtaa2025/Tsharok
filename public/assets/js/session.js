@@ -1,31 +1,31 @@
 // Session Management JavaScript
 
 /**
- * Check if user is authenticated using JWT token
+ * Check if user is authenticated by verifying token with backend
  */
 async function checkAuth() {
     try {
-        // Check for JWT token in localStorage
-        const token = localStorage.getItem('token');
-        const userStr = localStorage.getItem('user');
+        // Only check sessionStorage (isolated per tab)
+        const token = sessionStorage.getItem('token');
+        const userStr = sessionStorage.getItem('user');
 
         if (!token || !userStr) {
             return { authenticated: false };
         }
 
-        // Verify token with API
-        const response = await fetch('/api/auth', {
-            method: 'GET',
+        // Validate token with backend
+        const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/validate-session', {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         });
 
         if (!response.ok) {
             // Token is invalid, clear storage
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
             return { authenticated: false };
         }
 
