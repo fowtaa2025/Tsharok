@@ -643,7 +643,7 @@
                 return avgRating.toFixed(1);
             }
 
-            // Calculate overall course rating from all files (documents + videos)
+            // DEPRECATED: Now using fetchCourseRatingFromAPI() instead`r`n            /*`r`n            // Calculate overall course rating from all files (documents + videos)
             function calculateOverallCourseRating(files) {
                 // Safety check: ensure files is an array
                 if (!files || !Array.isArray(files) || files.length === 0) {
