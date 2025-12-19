@@ -15,7 +15,6 @@ async function checkAuth() {
 
         if (!token || !userStr) {
             console.log('No token or user - not authenticated');
-            alert('DEBUG: No token or user in sessionStorage!\nToken: ' + (token ? 'exists' : 'MISSING') + '\nUser: ' + (userStr ? 'exists' : 'MISSING'));
             return { authenticated: false };
         }
 
@@ -23,16 +22,13 @@ async function checkAuth() {
             const user = JSON.parse(userStr);
             if (user && (user.userId || user.id)) {
                 console.log('Authentication successful from sessionStorage!');
-                alert('DEBUG: Auth SUCCESS!\nUser: ' + user.email + '\nUserID: ' + user.userId);
                 return { authenticated: true, user: user };
             }
         } catch (e) {
             console.error('Error parsing user from sessionStorage:', e);
-            alert('DEBUG: Error parsing user!\nError: ' + e.message);
         }
 
         console.log('Authentication failed - invalid user data');
-        alert('DEBUG: Auth FAILED - invalid user data');
         return { authenticated: false };
 
 
