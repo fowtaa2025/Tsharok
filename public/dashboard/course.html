@@ -843,9 +843,14 @@
                     let videoHTML = '';
 
                     sortedFiles.forEach((file) => {
-                        // Format the date
+                        // Format the date - convert UTC to local timezone
                         const index = file.originalIndex || 0;
-                        const uploadDate = file.date ? new Date(file.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+                        let uploadDate = 'N/A';
+                        if (file.date) {
+                            // Parse the UTC date and convert to local time
+                            const utcDate = new Date(file.date + (file.date.includes('Z') ? '' : 'Z')); // Ensure it's treated as UTC
+                            uploadDate = utcDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        }
 
                         // Use default rating for now (will be fetched from API later)
                         const avgRating = file.rating || '0.0';
