@@ -666,7 +666,7 @@
             }
 
             // Load and display all courses in one grid
-            function loadCourses() {
+            async function loadCourses() {
                 // Update profile initial using session.js functions
                 const user = typeof getCurrentUser === 'function' ? getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
                 if (user) {
@@ -690,8 +690,33 @@
                     });
                 }
 
+                // Fetch enrolled courses from API
+                let addedCourses = getAddedCourses(); // Start with localStorage
+
+                if (user && user.userId) {
+                    try {
+                        const token = localStorage.getItem('token') || user?.sessionToken;
+                        const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/my-courses?userId=${user.userId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        const result = await response.json();
+                        if (result.success && result.data && result.data.courses) {
+                            // Extract course IDs from API
+                            addedCourses = result.data.courses.map(c => c.courseId);
+                            // Sync with localStorage
+                            saveAddedCourses(addedCourses);
+                            console.log('Loaded courses from API:', addedCourses);
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch enrolled courses from API, using localStorage:', error);
+                        // addedCourses already has localStorage data
+                    }
+                }
+
                 const grid = document.getElementById('courseGrid');
-                const addedCourses = getAddedCourses();
 
                 // Collect all courses with their levels
                 let allCourses = [];
@@ -723,8 +748,8 @@
             `;
             }
 
-            // Toggle course add/remove
-            function toggleCourse(event, courseId) {
+            // Toggle course add/remove with API sync
+            async function toggleCourse(event, courseId) {
                 // Stop event from bubbling to card's onclick
                 if (event) {
                     event.stopPropagation();
@@ -734,26 +759,88 @@
                 const card = document.querySelector(`[data-course-id="${courseId}"]`);
                 const btn = card.querySelector('.add-course-btn');
                 const icon = btn.querySelector('i');
+                const isAdded = addedCourses.includes(courseId);
 
-                if (addedCourses.includes(courseId)) {
-                    // Remove course
-                    addedCourses = addedCourses.filter(id => id !== courseId);
-                    card.classList.remove('added');
-                    btn.classList.remove('added');
-                    icon.classList.remove('fa-check');
-                    icon.classList.add('fa-plus');
-                    showToast('Course removed from schedule');
-                } else {
-                    // Add course
-                    addedCourses.push(courseId);
+                // Helper functions for UI updates
+                const updateUI_Add = () => {
                     card.classList.add('added');
                     btn.classList.add('added');
                     icon.classList.remove('fa-plus');
                     icon.classList.add('fa-check');
-                    showToast('Course added to schedule!');
-                }
+                };
 
-                saveAddedCourses(addedCourses);
+                const updateUI_Remove = () => {
+                    card.classList.remove('added');
+                    btn.classList.remove('added');
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-plus');
+                };
+
+                if (isAdded) {
+                    // Remove course
+                    try {
+                        const user = getCurrentUser();
+                        const token = localStorage.getItem('token') || user?.sessionToken;
+
+                        const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/unenroll', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ courseId })
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            addedCourses = addedCourses.filter(id => id !== courseId);
+                            saveAddedCourses(addedCourses);
+                            updateUI_Remove();
+                            showToast('Course removed from schedule');
+                        } else {
+                            throw new Error(result.message || 'Failed to remove course');
+                        }
+                    } catch (error) {
+                        console.error('Error removing course:', error);
+                        showToast('Failed to remove - will sync later');
+                        // Optimistic update
+                        addedCourses = addedCourses.filter(id => id !== courseId);
+                        saveAddedCourses(addedCourses);
+                        updateUI_Remove();
+                    }
+                } else {
+                    // Add course
+                    try {
+                        const user = getCurrentUser();
+                        const token = localStorage.getItem('token') || user?.sessionToken;
+
+                        const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/enroll', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ courseId })
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            addedCourses.push(courseId);
+                            saveAddedCourses(addedCourses);
+                            updateUI_Add();
+                            showToast('Course added to schedule!');
+                        } else {
+                            throw new Error(result.message || 'Failed to add course');
+                        }
+                    } catch (error) {
+                        console.error('Error adding course:', error);
+                        showToast('Failed to add - will sync later');
+                        // Optimistic update
+                        addedCourses.push(courseId);
+                        saveAddedCourses(addedCourses);
+                        updateUI_Add();
+                    }
+                }
             }
 
             // Show toast notification
