@@ -1660,6 +1660,46 @@ function capitalize(str: string): string {
 }
 
 /**
+ * Handle GET /api/courses - Get course details
+ */
+async function handleGetCourse(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const courseId = url.searchParams.get('id');
+
+		if (!courseId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Course ID is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		const course = await env.DB.prepare(`
+			SELECT course_id, code, title, description, level, semester
+			FROM courses
+			WHERE course_id = ?
+		`).bind(courseId).first();
+
+		if (!course) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Course not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		return new Response(
+			JSON.stringify({ success: true, course }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get course error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to fetch course', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
  * Handle POST /api/update-description - Update content description
  */
 async function handleUpdateDescription(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {

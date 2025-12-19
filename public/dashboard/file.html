@@ -551,8 +551,17 @@
 
                     // Update breadcrumb with actual course name
                     document.getElementById('courseBreadcrumb').href = `course.html?id=${currentCourseId}`;
-                    const courseName = getCourseName(currentCourseId);
-                    document.getElementById('courseBreadcrumb').textContent = courseName;
+
+                    // Fetch course name from API
+                    try {
+                        const courseResponse = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/courses?id=${currentCourseId}`);
+                        const courseData = await courseResponse.json();
+                        const courseName = courseData.success && courseData.course ? courseData.course.title : 'Course';
+                        document.getElementById('courseBreadcrumb').textContent = courseName;
+                    } catch (error) {
+                        console.error('Failed to fetch course name:', error);
+                        document.getElementById('courseBreadcrumb').textContent = 'Course';
+                    }
 
                     // Update file info
                     document.getElementById('fileName').textContent = file.title;
