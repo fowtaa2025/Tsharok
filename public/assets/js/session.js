@@ -32,8 +32,7 @@ async function checkAuth() {
         const result = await response.json();
 
         if (result.success && result.user) {
-            // Update user data in localStorage
-            localStorage.setItem('user', JSON.stringify(result.user));
+            // Store user data in sessionStorage (isolated per tab)
             sessionStorage.setItem('user', JSON.stringify(result.user));
 
             return {
@@ -44,23 +43,23 @@ async function checkAuth() {
 
         return { authenticated: false };
 
+
     } catch (error) {
         console.error('Auth check error:', error);
 
-        // Fallback to localStorage for offline mode
-        const token = localStorage.getItem('token');
-        const userStr = localStorage.getItem('user');
+        // Fallback to sessionStorage for offline mode
+        const userStr = sessionStorage.getItem('user');
+        const token = sessionStorage.getItem('token');
 
         if (token && userStr) {
             try {
                 const user = JSON.parse(userStr);
                 if (user && (user.userId || user.id)) {
-                    console.log('Using localStorage user (offline mode)');
-                    sessionStorage.setItem('user', userStr);
+                    console.log('Using sessionStorage (offline mode)');
                     return { authenticated: true, user: user };
                 }
             } catch (e) {
-                console.error('Error parsing localStorage user:', e);
+                console.error('Error parsing sessionStorage user:', e);
             }
         }
 
@@ -72,11 +71,9 @@ async function checkAuth() {
  * Logout user
  */
 async function logout(redirectUrl = '/index.html') {
-    // Clear all auth data
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('isLoggedIn');
+    // Clear session data (sessionStorage only - isolated per tab)
     sessionStorage.clear();
+
 
     // Redirect to specified URL
     if (redirectUrl) {
@@ -100,15 +97,7 @@ function getCurrentUser() {
         }
     }
 
-    // Fallback to localStorage for client-side testing
-    userStr = localStorage.getItem('user');
-    if (userStr) {
-        try {
-            return JSON.parse(userStr);
-        } catch (e) {
-            return null;
-        }
-    }
+    // No fallback to localStorage - sessions are per-tab only
     return null;
 }
 
