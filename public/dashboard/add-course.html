@@ -737,23 +737,50 @@
 
                 const grid = document.getElementById('courseGrid');
 
-                // Collect all courses with their levels
+                // Fetch all available courses from API
                 let allCourses = [];
 
-                // Add courses from levels 1-10
-                for (let level = 1; level <= 10; level++) {
-                    if (coursesByLevel[level]) {
-                        coursesByLevel[level].forEach(course => {
-                            allCourses.push({ ...course, level: level });
+                try {
+                    const token = sessionStorage.getItem('token') || user?.sessionToken;
+                    const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/courses', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.length > 0) {
+                        // Use API courses
+                        allCourses = result.data.map(course => ({
+                            id: course.id,
+                            code: course.code,
+                            name: course.name,
+                            hours: course.hours || course.credit_hours || 3,
+                            rating: course.rating || 0,
+                            level: course.level || 1
+                        }));
+                        console.log('Loaded courses from API:', allCourses.length);
+                    } else {
+                        throw new Error('API returned no courses');
+                    }
+                } catch (error) {
+                    console.warn('Failed to fetch courses from API, using local data:', error);
+
+                    // Fallback to local coursesByLevel data
+                    for (let level = 1; level <= 10; level++) {
+                        if (coursesByLevel[level]) {
+                            coursesByLevel[level].forEach(course => {
+                                allCourses.push({ ...course, level: level });
+                            });
+                        }
+                    }
+
+                    // Add Elective courses from local data
+                    if (coursesByLevel['Elective']) {
+                        coursesByLevel['Elective'].forEach(course => {
+                            allCourses.push({ ...course, level: 'Elective' });
                         });
                     }
-                }
-
-                // Add Elective courses
-                if (coursesByLevel['Elective']) {
-                    coursesByLevel['Elective'].forEach(course => {
-                        allCourses.push({ ...course, level: 'Elective' });
-                    });
                 }
 
                 // Render all courses in one grid
