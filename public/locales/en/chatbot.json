@@ -1,0 +1,14 @@
+{
+    "chatbot": {
+        "title": "Tsharok Assistant",
+        "subtitle": "Always here to help",
+        "greeting": "👋 Hello! I'm your Tsharok Assistant. How can I help you today?",
+        "quickReplies": {
+            "addCourse": "Add Course",
+            "mySchedule": "My Schedule",
+            "assignments": "Assignments"
+        },
+        "inputPlaceholder": "Type your message...",
+        "send": "Send"
+    }
+}
