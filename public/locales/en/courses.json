@@ -31,6 +31,8 @@
         },
         "uploadModal": {
             "title": "Add New File",
+            "titleDocument": "Add New Document",
+            "titleVideo": "Add New Video",
             "subtitle": "Share materials with your classmates",
             "fileNameLabel": "File Name",
             "fileNamePlaceholder": "Enter a name for this file",
@@ -43,6 +45,12 @@
             "acceptedFormatsVideo": "Accepted: MP4, AVI, MOV",
             "cancel": "Cancel",
             "upload": "Upload"
+        },
+        "emptyState": {
+            "noDocuments": "No documents yet",
+            "noDocumentsMessage": "Click \"Add Document\" to share study materials with your classmates",
+            "noVideos": "No videos yet",
+            "noVideosMessage": "Click \"Add Video\" to share educational videos with your classmates"
         }
     }
 }

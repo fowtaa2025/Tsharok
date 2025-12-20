@@ -31,6 +31,8 @@
         },
         "uploadModal": {
             "title": "إضافة ملف جديد",
+            "titleDocument": "إضافة مستند جديد",
+            "titleVideo": "إضافة فيديو جديد",
             "subtitle": "شارك المواد مع زملائك",
             "fileNameLabel": "اسم الملف",
             "fileNamePlaceholder": "أدخل اسماً لهذا الملف",
@@ -43,6 +45,12 @@
             "acceptedFormatsVideo": "المسموح: MP4, AVI, MOV",
             "cancel": "إلغاء",
             "upload": "رفع"
+        },
+        "emptyState": {
+            "noDocuments": "لا توجد مستندات بعد",
+            "noDocumentsMessage": "انقر على \"إضافة مستند\" لمشاركة المواد الدراسية مع زملائك",
+            "noVideos": "لا توجد فيديوهات بعد",
+            "noVideosMessage": "انقر على \"إضافة فيديو\" لمشاركة الفيديوهات التعليمية مع زملائك"
         }
     }
 }

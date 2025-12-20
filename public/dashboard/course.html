@@ -919,8 +919,8 @@
                             <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
                                 <i class="fas fa-file-alt text-4xl text-indigo-400"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No documents yet</h3>
-                            <p class="text-gray-500">Click "Add Document" to share study materials with your classmates</p>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">${t('courses.emptyState.noDocuments')}</h3>
+                            <p class="text-gray-500">${t('courses.emptyState.noDocumentsMessage')}</p>
                         </div>
                     `;
                     }
@@ -930,8 +930,8 @@
                             <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
                                 <i class="fas fa-video text-4xl text-red-400"></i>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No videos yet</h3>
-                            <p class="text-gray-500">Click "Add Video" to share educational videos with your classmates</p>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">${t('courses.emptyState.noVideos')}</h3>
+                            <p class="text-gray-500">${t('courses.emptyState.noVideosMessage')}</p>
                         </div>
                     `;
                     }
@@ -990,15 +990,15 @@
                 const modalIcon = document.getElementById('modalIcon');
 
                 if (type === 'video') {
-                    modalTitle.textContent = 'Add New Video';
+                    modalTitle.textContent = t('courses.uploadModal.titleVideo');
                     fileInput.accept = videoFormats.join(',');
-                    acceptedFormats.textContent = 'Accepted: MP4, AVI, MOV, MKV, WMV, WEBM';
+                    acceptedFormats.textContent = t('courses.uploadModal.acceptedFormatsVideo');
                     uploadIcon.className = 'fas fa-video text-3xl text-indigo-500';
                     if (modalIcon) modalIcon.className = 'fas fa-video text-white text-xl';
                 } else {
-                    modalTitle.textContent = 'Add New Document';
+                    modalTitle.textContent = t('courses.uploadModal.titleDocument');
                     fileInput.accept = documentFormats.join(',');
-                    acceptedFormats.textContent = 'Accepted: PDF, PNG, JPG, DOCX';
+                    acceptedFormats.textContent = t('courses.uploadModal.acceptedFormats');
                     uploadIcon.className = 'fas fa-file-alt text-3xl text-indigo-500';
                     if (modalIcon) modalIcon.className = 'fas fa-file-upload text-white text-xl';
                 }
