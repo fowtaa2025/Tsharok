@@ -1,0 +1,50 @@
+{
+    "nav": {
+        "arabic": "العربية"
+    },
+    "profile": {
+        "myProfile": "My Profile",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "search": {
+        "placeholder": "Search courses..."
+    },
+    "header": {
+        "backToDashboard": "Back to Dashboard",
+        "title": "Add Courses",
+        "subtitle": "Add your courses for this semester"
+    },
+    "filter": {
+        "allLevels": "🎓 All Levels",
+        "level": "📚 Level",
+        "elective": "⭐ Elective"
+    },
+    "loading": {
+        "message": "Loading courses..."
+    },
+    "empty": {
+        "noCoursesFound": "No courses found",
+        "tryAdjusting": "Try adjusting your search or filters"
+    },
+    "toast": {
+        "courseAdded": "Course added successfully!",
+        "courseRemoved": "Course removed!"
+    },
+    "rating": {
+        "title": "Rate This Course",
+        "question": "How would you rate your knowledge?",
+        "selectRating": "Select a rating",
+        "cancel": "Cancel",
+        "saveRating": "Save Rating"
+    },
+    "chatbot": {
+        "title": "Tsharok Assistant",
+        "subtitle": "Always here to help",
+        "greeting": "👋 Hello! I'm your Tsharok Assistant. How can I help you today?",
+        "quickReply1": "Add Course",
+        "quickReply2": "My Schedule",
+        "quickReply3": "Assignments",
+        "inputPlaceholder": "Type your message..."
+    }
+}
