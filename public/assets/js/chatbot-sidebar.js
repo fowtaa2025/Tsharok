@@ -12,12 +12,20 @@
 
     // Create and inject the desktop sidebar chatbot
     function createDesktopChatbot() {
+        // Find the grid container (should have the left column already)
+        const gridContainer = document.querySelector('.grid.lg\\:grid-cols-2');
+
+        if (!gridContainer) {
+            console.warn('Grid container not found for desktop chatbot');
+            return;
+        }
+
+        // Create the chatbot panel HTML (as a grid column)
         const chatbotHTML = `
-            <!-- Desktop Chatbot Sidebar (hidden on mobile) -->
-            <div id="desktopChatbot" class="hidden xl:block fixed right-4 bottom-4 z-40" style="width: 340px;">
-                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div class="hidden lg:block">
+                <div class="bg-white rounded-2xl shadow-lg sticky top-24 flex flex-col" style="height: 931px;">
                     <!-- Header -->
-                    <div class="bg-gradient-to-r from-primary to-teal-600 p-4">
+                    <div class="bg-gradient-to-br from-teal-600 to-teal-500 p-4 rounded-t-2xl">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                                 <i class="fas fa-robot text-2xl text-primary"></i>
@@ -30,7 +38,7 @@
                     </div>
 
                     <!-- Messages Area -->
-                    <div class="flex-1 overflow-y-auto p-3 bg-gray-50" id="chatbotMessagesDesktop" style="height: 350px;">
+                    <div class="flex-1 overflow-y-auto p-3 bg-gray-50" id="chatbotMessagesDesktop">
                         <div class="flex gap-2 mb-3">
                             <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-robot text-white text-sm"></i>
@@ -76,8 +84,8 @@
             </div>
         `;
 
-        // Insert chatbot into body
-        document.body.insertAdjacentHTML('beforeend', chatbotHTML);
+        // Insert chatbot as second column in grid
+        gridContainer.insertAdjacentHTML('beforeend', chatbotHTML);
 
         // Apply translations if i18n is available
         if (typeof window.updatePageTranslations === 'function') {
