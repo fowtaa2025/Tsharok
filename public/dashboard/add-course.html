@@ -710,7 +710,7 @@
                 }
 
                 // Fetch enrolled courses from API
-                let addedCourses = getAddedCourses(); // Start with localStorage
+                let addedCourses = getAddedCourses(); // Start with localStorage (source of truth)
 
                 if (user && user.userId) {
                     try {
@@ -723,11 +723,17 @@
 
                         const result = await response.json();
                         if (result.success && result.data && result.data.courses) {
-                            // Extract course IDs from API
-                            addedCourses = result.data.courses.map(c => c.courseId);
-                            // Sync with localStorage
-                            saveAddedCourses(addedCourses);
-                            console.log('Loaded courses from API:', addedCourses);
+                            // Merge API courses with localStorage (localStorage takes priority for recent changes)
+                            const apiCourseIds = result.data.courses.map(c => c.courseId);
+
+                            // Only use API data if localStorage is empty (first load)
+                            if (addedCourses.length === 0) {
+                                addedCourses = apiCourseIds;
+                                saveAddedCourses(addedCourses);
+                                console.log('Initial load: Loaded courses from API:', addedCourses);
+                            } else {
+                                console.log('Using localStorage courses (source of truth):', addedCourses);
+                            }
                         }
                     } catch (error) {
                         console.error('Failed to fetch enrolled courses from API, using localStorage:', error);
@@ -802,7 +808,7 @@
                 }
 
                 let addedCourses = getAddedCourses();
-                const card = document.querySelector(`[data-course-id="${courseId}"]`);
+                const card = document.querySelector(`[data-course-id=\"${courseId}\"]`);
                 const btn = card.querySelector('.add-course-btn');
                 const icon = btn.querySelector('i');
                 const isAdded = addedCourses.includes(courseId);
@@ -811,6 +817,7 @@
                 const updateUI_Add = () => {
                     card.classList.add('added');
                     btn.classList.add('added');
+                    btn.setAttribute('aria-label', 'Remove course');
                     icon.classList.remove('fa-plus');
                     icon.classList.add('fa-check');
                 };
@@ -818,12 +825,18 @@
                 const updateUI_Remove = () => {
                     card.classList.remove('added');
                     btn.classList.remove('added');
+                    btn.setAttribute('aria-label', 'Add course');
                     icon.classList.remove('fa-check');
                     icon.classList.add('fa-plus');
                 };
 
                 if (isAdded) {
-                    // Remove course
+                    // OPTIMISTIC UPDATE FIRST (before API call)
+                    addedCourses = addedCourses.filter(id => id !== courseId);
+                    saveAddedCourses(addedCourses);
+                    updateUI_Remove();
+
+                    // Then sync with API in background
                     try {
                         const user = getCurrentUser();
                         const token = sessionStorage.getItem('token') || user?.sessionToken;
@@ -842,23 +855,21 @@
 
                         const result = await response.json();
                         if (result.success) {
-                            addedCourses = addedCourses.filter(id => id !== courseId);
-                            saveAddedCourses(addedCourses);
-                            updateUI_Remove();
                             showToast('Course removed from schedule');
                         } else {
-                            throw new Error(result.message || 'Failed to remove course');
+                            console.warn('API remove failed but local state updated:', result.message);
                         }
                     } catch (error) {
-                        console.error('Error removing course:', error);
-                        showToast('Failed to remove - will sync later');
-                        // Optimistic update
-                        addedCourses = addedCourses.filter(id => id !== courseId);
-                        saveAddedCourses(addedCourses);
-                        updateUI_Remove();
+                        console.error('Error syncing removal with API:', error);
+                        // Local state already updated, no need to revert
                     }
                 } else {
-                    // Add course
+                    // OPTIMISTIC UPDATE FIRST (before API call)
+                    addedCourses.push(courseId);
+                    saveAddedCourses(addedCourses);
+                    updateUI_Add();
+
+                    // Then sync with API in background
                     try {
                         const user = getCurrentUser();
                         const token = sessionStorage.getItem('token') || user?.sessionToken;
@@ -877,20 +888,13 @@
 
                         const result = await response.json();
                         if (result.success) {
-                            addedCourses.push(courseId);
-                            saveAddedCourses(addedCourses);
-                            updateUI_Add();
                             showToast('Course added to schedule!');
                         } else {
-                            throw new Error(result.message || 'Failed to add course');
+                            console.warn('API add failed but local state updated:', result.message);
                         }
                     } catch (error) {
-                        console.error('Error adding course:', error);
-                        showToast('Failed to add - will sync later');
-                        // Optimistic update
-                        addedCourses.push(courseId);
-                        saveAddedCourses(addedCourses);
-                        updateUI_Add();
+                        console.error('Error syncing addition with API:', error);
+                        // Local state already updated, no need to revert
                     }
                 }
             }
