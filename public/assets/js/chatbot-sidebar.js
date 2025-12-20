@@ -71,7 +71,7 @@
                     <div class="p-4 bg-white border-t border-gray-200 rounded-b-2xl">
                         <div class="flex gap-2 items-center">
                             <input type="text"
-                                class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-full text-xs outline-none focus:border-primary transition"
+                                class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-full text-sm outline-none focus:border-primary transition"
                                 id="chatbotInputDesktop" data-i18n-placeholder="chatbot.inputPlaceholder" placeholder="Type your message..."
                                 onkeypress="handleChatKeyPressDesktop(event)">
                             <button onclick="sendMessageDesktop()"
