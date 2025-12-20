@@ -231,7 +231,8 @@
                     </div>
 
                     <div id="coursesScrollContainer"
-                        class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 scroll-smooth snap-x snap-mandatory">
+                        class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 scroll-smooth snap-x snap-mandatory"
+                        dir="ltr">
                         <!-- Add Course Card -->
                         <a href="add-course.html"
                             class="flex-shrink-0 w-64 h-26 bg-white rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition snap-start no-underline py-4">
@@ -297,11 +298,11 @@
                             <div class="flex items-center space-x-2">
                                 <button onclick="previousMonth()"
                                     class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition">
-                                    <i class="fas fa-chevron-left text-gray-600"></i>
+                                    <i class="fas rtl:fa-chevron-right ltr:fa-chevron-left text-gray-600"></i>
                                 </button>
                                 <button onclick="nextMonth()"
                                     class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition">
-                                    <i class="fas fa-chevron-right text-gray-600"></i>
+                                    <i class="fas rtl:fa-chevron-left ltr:fa-chevron-right text-gray-600"></i>
                                 </button>
                             </div>
                         </div>
