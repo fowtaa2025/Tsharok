@@ -1048,9 +1048,9 @@
                         // Invalid file
                         display.textContent = '';
                         if (currentFileType === 'video') {
-                            errorDisplay.textContent = '⚠️ Please select a video file (MP4, AVI, MOV, MKV, WMV, WEBM)';
+                            errorDisplay.textContent = t('courses.messages.selectVideoFile');
                         } else {
-                            errorDisplay.textContent = '⚠️ Please select a document file (PDF, PNG, JPG, DOCX)';
+                            errorDisplay.textContent = t('courses.messages.selectDocumentFile');
                         }
                         errorDisplay.classList.remove('hidden');
                         uploadBox.classList.add('border-red-500');
@@ -1070,16 +1070,16 @@
                 const fileInput = document.getElementById('fileInput');
 
                 if (!name.trim()) {
-                    alert('Please enter a file name');
+                    alert(t('courses.messages.enterFileName'));
                     return;
                 }
 
                 if (!fileInput.files.length || !isFileValid) {
                     const errorDisplay = document.getElementById('fileError');
                     if (currentFileType === 'video') {
-                        errorDisplay.textContent = '⚠️ Please select a valid video file';
+                        errorDisplay.textContent = t('courses.messages.selectValidVideo');
                     } else {
-                        errorDisplay.textContent = '⚠️ Please select a valid document file';
+                        errorDisplay.textContent = t('courses.messages.selectValidDocument');
                     }
                     errorDisplay.classList.remove('hidden');
                     return;
@@ -1095,7 +1095,7 @@
 
                 // Show loading state
                 const uploadBtn = document.getElementById('uploadBtn');
-                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading...';
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>' + t('courses.messages.uploading');
                 uploadBtn.disabled = true;
 
                 try {
@@ -1128,7 +1128,7 @@
 
                     if (result.success) {
                         // File uploaded successfully!
-                        showToast(
+                        showToast(t('courses.messages.uploadSuccess'),
                             currentFileType === 'video' ?
                                 '✅ Video uploaded to cloud storage!' :
                                 '✅ Document uploaded to cloud storage!'
@@ -1152,7 +1152,7 @@
                 } catch (error) {
                     console.error('Upload error:', error);
                     const errorMessage = error.message || 'Unknown error occurred';
-                    alert(`Upload failed: ${errorMessage}\n\nPlease check:\n1. You are logged in\n2. File type is allowed\n3. File size is under 100MB\n\nCheck browser console for details.`);
+                    alert(`${t('courses.messages.uploadFailed')}: ${errorMessage}\n\n${t('courses.messages.uploadErrorDetails')}`);
                     uploadBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>Upload';
                     uploadBtn.disabled = false;
                 }
@@ -1189,7 +1189,7 @@
                 const notification = {
                     id: Date.now(),
                     courseId: currentCourseId,
-                    courseName: course ? course.name : `Course ${currentCourseId}`,
+                    courseName: course ? course.name : `Course ${currentCourseId} `,
                     fileName: fileName,
                     fileType: fileType,
                     icon: icon,
@@ -1223,12 +1223,12 @@
                     error: { bg: 'from-red-500 to-rose-600', icon: 'fa-times-circle' }
                 };
                 const style = styles[type] || styles.success;
-                toast.className = `fixed bottom-6 right-6 bg-gradient-to-r ${style.bg} text-white px-6 py-4 rounded-2xl shadow-2xl z-50 max-w-md flex items-center gap-3 transform transition-all duration-300`;
+                toast.className = `fixed bottom - 6 right - 6 bg - gradient - to - r ${style.bg} text - white px - 6 py - 4 rounded - 2xl shadow - 2xl z - 50 max - w - md flex items - center gap - 3 transform transition - all duration - 300`;
                 toast.innerHTML = `
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="fas ${style.icon} text-xl"></i>
-                </div>
-                <span class="font-medium">${message}</span>
+                            < div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center" >
+                                <i class="fas ${style.icon} text-xl"></i>
+                </div >
+                            <span class="font-medium">${message}</span>
             `;
                 toast.style.animation = 'slideInUp 0.3s ease';
                 document.body.appendChild(toast);

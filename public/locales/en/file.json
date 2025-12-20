@@ -58,6 +58,29 @@
             "fileTooLarge": "File is too large to preview in browser",
             "browserLimit": "(Browser storage limit: ~5MB)",
             "originalFile": "Original file:"
+        },
+        "messages": {
+            "pleaseLoginToRate": "Please login to rate",
+            "ratingSaved": "Rating saved!",
+            "failedToSaveRating": "Failed to save rating",
+            "pleaseEnterReply": "Please enter a reply",
+            "replyAdded": "Reply added!",
+            "pleaseLoginToLike": "Please login to like comments",
+            "failedToToggleLike": "Failed to toggle like",
+            "pleaseLoginToReply": "Please login to reply",
+            "failedToFindComment": "Failed to find comment",
+            "replyAddedSuccess": "Reply added successfully!",
+            "failedToAddReply": "Failed to add reply",
+            "pleaseEnterComment": "Please enter a comment",
+            "pleaseLoginToComment": "Please login to comment",
+            "commentPostedSuccess": "Comment posted successfully!",
+            "failedToPostComment": "Failed to post comment",
+            "downloadStarted": "Download started!",
+            "noFileAvailable": "No file data available for download",
+            "linkCopied": "Link copied to clipboard!",
+            "failedToCopyLink": "Failed to copy link",
+            "descriptionSaved": "Description saved!",
+            "failedToSaveDescription": "Failed to save description"
         }
     }
 }

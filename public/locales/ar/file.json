@@ -58,6 +58,29 @@
             "fileTooLarge": "الملف كبير جداً للمعاينة في المتصفح",
             "browserLimit": "(حد تخزين المتصفح: ~5 ميجابايت)",
             "originalFile": "الملف الأصلي:"
+        },
+        "messages": {
+            "pleaseLoginToRate": "الرجاء تسجيل الدخول للتقييم",
+            "ratingSaved": "تم حفظ التقييم!",
+            "failedToSaveRating": "فشل حفظ التقييم",
+            "pleaseEnterReply": "الرجاء إدخال رد",
+            "replyAdded": "تم إضافة الرد!",
+            "pleaseLoginToLike": "الرجاء تسجيل الدخول للإعجاب",
+            "failedToToggleLike": "فشل تبديل الإعجاب",
+            "pleaseLoginToReply": "الرجاء تسجيل الدخول للرد",
+            "failedToFindComment": "فشل العثور على التعليق",
+            "replyAddedSuccess": "تم إضافة الرد بنجاح!",
+            "failedToAddReply": "فشل إضافة الرد",
+            "pleaseEnterComment": "الرجاء إدخال تعليق",
+            "pleaseLoginToComment": "الرجاء تسجيل الدخول للتعليق",
+            "commentPostedSuccess": "تم نشر التعليق بنجاح!",
+            "failedToPostComment": "فشل نشر التعليق",
+            "downloadStarted": "بدأ التحميل!",
+            "noFileAvailable": "لا توجد بيانات ملف متاحة للتحميل",
+            "linkCopied": "تم نسخ الرابط!",
+            "failedToCopyLink": "فشل نسخ الرابط",
+            "descriptionSaved": "تم حفظ الوصف!",
+            "failedToSaveDescription": "فشل حفظ الوصف"
         }
     }
 }

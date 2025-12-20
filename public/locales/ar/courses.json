@@ -51,6 +51,17 @@
             "noDocumentsMessage": "انقر على \"إضافة مستند\" لمشاركة المواد الدراسية مع زملائك",
             "noVideos": "لا توجد فيديوهات بعد",
             "noVideosMessage": "انقر على \"إضافة فيديو\" لمشاركة الفيديوهات التعليمية مع زملائك"
+        },
+        "messages": {
+            "enterFileName": "الرجاء إدخال اسم الملف",
+            "selectValidVideo": "⚠️ الرجاء اختيار ملف فيديو صالح",
+            "selectValidDocument": "⚠️ الرجاء اختيار ملف مستند صالح",
+            "selectVideoFile": "⚠️ الرجاء اختيار ملف فيديو (MP4, AVI, MOV, MKV, WMV, WEBM)",
+            "selectDocumentFile": "⚠ الرجاء اختيار ملف مستند (PDF, PNG, JPG, DOCX)",
+            "uploading": "جارٍ الرفع...",
+            "uploadSuccess": "تم رفع الملف بنجاح!",
+            "uploadFailed": "فشل الرفع",
+            "uploadErrorDetails": "يرجى التحقق من:\n1. أنك مسجّل الدخول\n2. نوع الملف مسموح\n3. حجم الملف أقل من 100 ميجابايت\n\nتحقق من وحدة تحكم المتصفح للتفاصيل."
         }
     }
 }

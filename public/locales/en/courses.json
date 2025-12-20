@@ -51,6 +51,17 @@
             "noDocumentsMessage": "Click \"Add Document\" to share study materials with your classmates",
             "noVideos": "No videos yet",
             "noVideosMessage": "Click \"Add Video\" to share educational videos with your classmates"
+        },
+        "messages": {
+            "enterFileName": "Please enter a file name",
+            "selectValidVideo": "⚠️ Please select a valid video file",
+            "selectValidDocument": "⚠️ Please select a valid document file",
+            "selectVideoFile": "⚠️ Please select a video file (MP4, AVI, MOV, MKV, WMV, WEBM)",
+            "selectDocumentFile": "⚠️ Please select a document file (PDF, PNG, JPG, DOCX)",
+            "uploading": "Uploading...",
+            "uploadSuccess": "File uploaded successfully!",
+            "uploadFailed": "Upload failed",
+            "uploadErrorDetails": "Please check:\n1. You are logged in\n2. File type is allowed\n3. File size is under 100MB\n\nCheck browser console for details."
         }
     }
 }

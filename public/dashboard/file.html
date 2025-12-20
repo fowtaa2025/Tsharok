@@ -783,7 +783,7 @@
 
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    showToast('Please login to rate', 'error');
+                    showToast(t('file.messages.pleaseLoginToRate'), 'error');
                     return;
                 }
 
@@ -803,14 +803,14 @@
                     .then(result => {
                         if (result.success) {
                             updateAverageRating();
-                            showToast('Rating saved!', 'success');
+                            showToast(t('file.messages.ratingSaved'), 'success');
                         } else {
                             throw new Error(result.error || 'Failed to save rating');
                         }
                     })
                     .catch(error => {
                         console.error('Error saving rating:', error);
-                        showToast(error.message || 'Failed to save rating', 'error');
+                        showToast(error.message || t('file.messages.failedToSaveRating'), 'error');
                     });
             }
 
@@ -1043,7 +1043,7 @@
                 const text = replyInput.value.trim();
 
                 if (!text) {
-                    showToast('Please enter a reply', 'error');
+                    showToast(t('file.messages.pleaseEnterReply'), 'error');
                     return;
                 }
 
@@ -1077,7 +1077,7 @@
                     // Reload comments to show the new reply
                     loadComments();
 
-                    showToast('Reply added!', 'success');
+                    showToast(t('file.messages.replyAdded'), 'success');
                 }
             }
 
@@ -1109,7 +1109,7 @@
             async function toggleLike(commentId) {
                 const token = localStorage.getItem('token') || sessionStorage.getItem('userId');
                 if (!token) {
-                    showToast('Please login to like comments', 'error');
+                    showToast(t('file.messages.pleaseLoginToLike'), 'error');
                     return;
                 }
 
@@ -1136,7 +1136,7 @@
                     }
                 } catch (error) {
                     console.error('Error toggling like:', error);
-                    showToast('Failed to toggle like', 'error');
+                    showToast(t('file.messages.failedToToggleLike'), 'error');
                 }
             }
 
@@ -1160,14 +1160,14 @@
 
                 if (!text) {
                     console.log('No reply text entered');
-                    showToast('Please enter a reply', 'error');
+                    showToast(t('file.messages.pleaseEnterReply'), 'error');
                     return;
                 }
 
                 const token = localStorage.getItem('token') || sessionStorage.getItem('userId');
                 if (!token) {
                     console.log('No token found');
-                    showToast('Please login to reply', 'error');
+                    showToast(t('file.messages.pleaseLoginToReply'), 'error');
                     return;
                 }
 
@@ -1177,7 +1177,7 @@
 
                 if (!commentId) {
                     console.error('Comment ID not found for index:', commentIndex);
-                    showToast('Failed to find comment', 'error');
+                    showToast(t('file.messages.failedToFindComment'), 'error');
                     return;
                 }
 
@@ -1200,17 +1200,17 @@
                     console.log('Reply response:', result);
 
                     if (result.success) {
-                        showToast('Reply added successfully!', 'success');
+                        showToast(t('file.messages.replyAddedSuccess'), 'success');
                         replyInput.value = '';
                         toggleReplyForm(commentIndex);
                         loadComments(); // Reload to show new reply
                     } else {
                         console.error('Reply failed:', result);
-                        showToast(result.message || 'Failed to add reply', 'error');
+                        showToast(result.message || t('file.messages.failedToAddReply'), 'error');
                     }
                 } catch (error) {
                     console.error('Error adding reply:', error);
-                    showToast('Failed to add reply', 'error');
+                    showToast(t('file.messages.failedToAddReply'), 'error');
                 }
             }
 
@@ -1221,7 +1221,7 @@
                 const errorEl = document.getElementById('commentRatingError');
 
                 if (!text) {
-                    showToast('Please enter a comment', 'error');
+                    showToast(t('file.messages.pleaseEnterComment'), 'error');
                     return;
                 }
 
@@ -1232,7 +1232,7 @@
 
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    showToast('Please login to comment', 'error');
+                    showToast(t('file.messages.pleaseLoginToComment'), 'error');
                     return;
                 }
 
@@ -1282,11 +1282,11 @@
                             updateAverageRating();
                         }, 500);
 
-                        showToast('Comment posted successfully!', 'success');
+                        showToast(t('file.messages.commentPostedSuccess'), 'success');
                     })
                     .catch(error => {
                         console.error('Error posting comment:', error);
-                        showToast(error.message || 'Failed to post comment', 'error');
+                        showToast(error.message || t('file.messages.failedToPostComment'), 'error');
                     });
             }
 
@@ -1306,9 +1306,9 @@
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    showToast('Download started!', 'success');
+                    showToast(t('file.messages.downloadStarted'), 'success');
                 } else {
-                    showToast('No file data available for download', 'error');
+                    showToast(t('file.messages.noFileAvailable'), 'error');
                 }
             }
 
@@ -1316,9 +1316,9 @@
             function shareFile() {
                 const url = window.location.href;
                 navigator.clipboard.writeText(url).then(() => {
-                    showToast('Link copied to clipboard!', 'success');
+                    showToast(t('file.messages.linkCopied'), 'success');
                 }).catch(() => {
-                    showToast('Failed to copy link', 'error');
+                    showToast(t('file.messages.failedToCopyLink'), 'error');
                 });
             }
 
@@ -1436,13 +1436,13 @@
                         // Update display
                         descEl.textContent = newDesc || 'No description available for this file.';
                         cancelEditDescription();
-                        showToast('Description saved!', 'success');
+                        showToast(t('file.messages.descriptionSaved'), 'success');
                     } else {
-                        showToast(result.message || 'Failed to save description', 'error');
+                        showToast(result.message || t('file.messages.failedToSaveDescription'), 'error');
                     }
                 } catch (error) {
                     console.error('Save description error:', error);
-                    showToast('Failed to save description', 'error');
+                    showToast(t('file.messages.failedToSaveDescription'), 'error');
                 }
             }
 
