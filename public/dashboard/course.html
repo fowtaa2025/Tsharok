@@ -1247,16 +1247,7 @@
             }
 
             // Language toggle
-            function toggleLanguage() {
-                const currentLang = document.documentElement.lang;
-                if (currentLang === 'en') {
-                    document.documentElement.lang = 'ar';
-                    document.documentElement.dir = 'rtl';
-                } else {
-                    document.documentElement.lang = 'en';
-                    document.documentElement.dir = 'ltr';
-                }
-            }
+
 
             // ========== PROFILE MENU FUNCTIONALITY ==========
 
@@ -1279,6 +1270,12 @@
             document.addEventListener('DOMContentLoaded', () => {
                 loadCourse();
                 loadUserName();
+            });
+
+            // Listen for language changes and reload dynamic content
+            window.addEventListener('languageChanged', () => {
+                // Reload all files to regenerate empty states and other dynamic content with new translations
+                loadFiles();
             });
 
             // Search functionality for Course Files
