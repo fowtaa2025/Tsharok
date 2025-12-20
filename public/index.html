@@ -97,8 +97,8 @@
                         class="text-gray-700 hover:text-primary transition font-medium"
                         data-i18n="nav.login">Login</button>
                     <button onclick="toggleLanguage()" id="languageToggle"
-                        class="text-gray-700 hover:text-primary transition font-medium">
-                        <span data-i18n="nav.arabic">عربي</span>
+                        class="text-gray-700 hover:text-primary transition font-medium" data-i18n="nav.arabic">
+                        العربية
                     </button>
                 </div>
 
@@ -119,8 +119,8 @@
                     class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">Register</button>
                 <button onclick="openAuthModal('login')"
                     class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">Login</button>
-                <button onclick="toggleLanguage()"
-                    class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">عربي</button>
+                <button onclick="toggleLanguage()" data-i18n="nav.arabic"
+                    class="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition">العربية</button>
             </div>
         </div>
     </nav>
@@ -141,11 +141,10 @@
             <div class="grid md:grid-cols-2 gap-12 items-center min-h-[70vh]">
                 <!-- Left Side - Welcome Text -->
                 <div class="fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                        <span data-i18n="Welcome To Tsharok">Welcome To Tsharok</span>
+                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight" data-i18n="hero.title">
+                        Welcome To Tsharok
                     </h1>
-                    <p class="text-xl md:text-2xl text-gray-600 mb-8"
-                        data-i18n="where students share knowledge and learn together">
+                    <p class="text-xl md:text-2xl text-gray-600 mb-8" data-i18n="hero.subtitle">
                         where students share knowledge and learn together
                     </p>
                 </div>

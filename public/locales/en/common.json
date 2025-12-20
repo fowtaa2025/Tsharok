@@ -1,0 +1,21 @@
+{
+    "nav": {
+        "about": "About",
+        "register": "Register",
+        "login": "Login",
+        "arabic": "العربية",
+        "english": "English"
+    },
+    "hero": {
+        "title": "Welcome To Tsharok",
+        "subtitle": "where students share knowledge and learn together",
+        "cta": "Get Started"
+    },
+    "footer": {
+        "copyright": "© 2024 Tsharok. All rights reserved.",
+        "aboutLink": "About",
+        "contactLink": "Contact",
+        "privacyLink": "Privacy Policy",
+        "termsLink": "Terms of Service"
+    }
+}

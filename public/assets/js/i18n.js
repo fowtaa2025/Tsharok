@@ -1,12 +1,13 @@
 /**
  * Internationalization (i18n) Module
  * Supports English and Arabic with RTL layout
+ * Loads translations dynamically from JSON files
  * Tsharok LMS
  */
 
-const translations = {
+// Fallback hardcoded translations (for backward compatibility)
+const fallbackTranslations = {
     en: {
-        // Navigation
         nav: {
             home: 'Home',
             features: 'Features',
@@ -17,155 +18,22 @@ const translations = {
             register: 'Register',
             logout: 'Logout',
             dashboard: 'Dashboard',
-            search: 'Search'
+            search: 'Search',
+            arabic: 'العربية'
         },
-
-        // Homepage
         home: {
             hero_title: 'Transform Your Learning Journey with',
-            hero_description: 'Access world-class courses, learn from expert instructors, and achieve your academic goals with our comprehensive learning management system.',
-            search_placeholder: 'Search for courses, topics, or skills...',
-            start_learning: 'Start Learning Now',
-            browse_courses: 'Browse All Courses',
-            students: 'Students',
-            courses: 'Courses',
-            instructors: 'Instructors',
-            success_rate: 'Success Rate'
+            hero_description: 'Access world-class courses, learn from expert instructors, and achieve your academic goals with our comprehensive learning management system.'
         },
-
-        // Search
-        search: {
-            title: 'Search Results',
-            search_for: 'Search results for',
-            all_courses: 'All Courses',
-            found: 'courses found',
-            course: 'course',
-            no_results: 'No courses found',
-            try_adjusting: 'Try adjusting your search or filters',
-            clear_filters: 'Clear Filters',
-            filters: 'Filters',
-            clear_all: 'Clear All',
-            apply_filters: 'Apply Filters',
-            sort_by: 'Sort by',
-            active_filters: 'Active Filters',
-            search_placeholder: 'Search for courses...'
-        },
-
-        // Filters
-        filters: {
-            category: 'Category',
-            all_categories: 'All Categories',
-            level: 'Level',
-            all_levels: 'All Levels',
-            beginner: 'Beginner',
-            intermediate: 'Intermediate',
-            advanced: 'Advanced',
-            rating: 'Minimum Rating',
-            all_ratings: 'All Ratings',
-            semester: 'Semester',
-            all_semesters: 'All Semesters'
-        },
-
-        // Sorting
-        sort: {
-            relevance: 'Relevance',
-            newest: 'Newest First',
-            oldest: 'Oldest First',
-            title_asc: 'Title (A-Z)',
-            title_desc: 'Title (Z-A)',
-            rating_high: 'Highest Rated',
-            rating_low: 'Lowest Rated',
-            popular: 'Most Popular',
-            duration_short: 'Shortest Duration',
-            duration_long: 'Longest Duration'
-        },
-
-        // Course Card
-        course: {
-            students: 'students',
-            weeks: 'weeks',
-            relevance: 'Relevance',
-            enroll: 'Enroll Now',
-            view_details: 'View Details',
-            rating: 'Rating',
-            no_ratings: 'No ratings yet'
-        },
-
-        // Pagination
-        pagination: {
-            previous: 'Previous',
-            next: 'Next',
-            page: 'Page'
-        },
-
-        // Auth
-        auth: {
-            email: 'Email',
-            password: 'Password',
-            remember_me: 'Remember Me',
-            forgot_password: 'Forgot Password?',
-            no_account: "Don't have an account?",
-            have_account: 'Already have an account?',
-            first_name: 'First Name',
-            last_name: 'Last Name',
-            username: 'Username',
-            phone: 'Phone Number',
-            major: 'Major',
-            confirm_password: 'Confirm Password',
-            register: 'Register',
-            login_button: 'Login'
-        },
-
-        // Dashboard
-        dashboard: {
-            welcome: 'Welcome',
-            my_courses: 'My Courses',
-            enrolled_courses: 'Enrolled Courses',
-            progress: 'Progress',
-            announcements: 'Announcements',
-            upcoming: 'Upcoming',
-            calendar: 'Calendar'
-        },
-
-        // Ratings & Reviews
-        reviews: {
-            write_review: 'Write Review',
-            your_rating: 'Your Rating',
-            review_title: 'Review Title',
-            review_content: 'Your Review',
-            would_recommend: 'I would recommend this course',
-            submit: 'Submit Review',
-            helpful: 'Helpful',
-            reply: 'Reply',
-            edit: 'Edit',
-            delete: 'Delete',
-            based_on: 'Based on',
-            reviews: 'reviews'
-        },
-
-        // Common
         common: {
             loading: 'Loading...',
             search: 'Search',
             cancel: 'Cancel',
             save: 'Save',
-            close: 'Close',
-            submit: 'Submit',
-            update: 'Update',
-            delete: 'Delete',
-            confirm: 'Confirm',
-            yes: 'Yes',
-            no: 'No',
-            ok: 'OK',
-            error: 'Error',
-            success: 'Success',
-            warning: 'Warning',
-            info: 'Information'
+            close: 'Close'
         }
     },
-
     ar: {
-        // Navigation
         nav: {
             home: 'الرئيسية',
             features: 'المميزات',
@@ -176,168 +44,123 @@ const translations = {
             register: 'تسجيل',
             logout: 'تسجيل الخروج',
             dashboard: 'لوحة التحكم',
-            search: 'البحث'
+            search: 'البحث',
+            arabic: 'English'
         },
-
-        // Homepage
         home: {
             hero_title: 'حوّل رحلة التعلم الخاصة بك مع',
-            hero_description: 'احصل على مساقات عالمية المستوى، تعلم من مدرسين خبراء، وحقق أهدافك الأكاديمية من خلال نظام إدارة التعلم الشامل لدينا.',
-            search_placeholder: 'ابحث عن مساقات، مواضيع، أو مهارات...',
-            start_learning: 'ابدأ التعلم الآن',
-            browse_courses: 'تصفح جميع المساقات',
-            students: 'طالب',
-            courses: 'مساق',
-            instructors: 'مدرس',
-            success_rate: 'معدل النجاح'
+            hero_description: 'احصل على مساقات عالمية المستوى، تعلم من مدرسين خبراء، وحقق أهدافك الأكاديمية من خلال نظام إدارة التعلم الشامل لدينا.'
         },
-
-        // Search
-        search: {
-            title: 'نتائج البحث',
-            search_for: 'نتائج البحث عن',
-            all_courses: 'جميع المساقات',
-            found: 'مساق موجود',
-            course: 'مساق',
-            no_results: 'لم يتم العثور على مساقات',
-            try_adjusting: 'حاول تعديل البحث أو الفلاتر',
-            clear_filters: 'مسح الفلاتر',
-            filters: 'الفلاتر',
-            clear_all: 'مسح الكل',
-            apply_filters: 'تطبيق الفلاتر',
-            sort_by: 'الترتيب حسب',
-            active_filters: 'الفلاتر النشطة',
-            search_placeholder: 'ابحث عن المساقات...'
-        },
-
-        // Filters
-        filters: {
-            category: 'التصنيف',
-            all_categories: 'جميع التصنيفات',
-            level: 'المستوى',
-            all_levels: 'جميع المستويات',
-            beginner: 'مبتدئ',
-            intermediate: 'متوسط',
-            advanced: 'متقدم',
-            rating: 'الحد الأدنى للتقييم',
-            all_ratings: 'جميع التقييمات',
-            semester: 'الفصل الدراسي',
-            all_semesters: 'جميع الفصول'
-        },
-
-        // Sorting
-        sort: {
-            relevance: 'الأكثر صلة',
-            newest: 'الأحدث أولاً',
-            oldest: 'الأقدم أولاً',
-            title_asc: 'العنوان (أ-ي)',
-            title_desc: 'العنوان (ي-أ)',
-            rating_high: 'الأعلى تقييماً',
-            rating_low: 'الأقل تقييماً',
-            popular: 'الأكثر شعبية',
-            duration_short: 'الأقصر مدة',
-            duration_long: 'الأطول مدة'
-        },
-
-        // Course Card
-        course: {
-            students: 'طالب',
-            weeks: 'أسبوع',
-            relevance: 'الصلة',
-            enroll: 'سجل الآن',
-            view_details: 'عرض التفاصيل',
-            rating: 'التقييم',
-            no_ratings: 'لا يوجد تقييمات بعد'
-        },
-
-        // Pagination
-        pagination: {
-            previous: 'السابق',
-            next: 'التالي',
-            page: 'صفحة'
-        },
-
-        // Auth
-        auth: {
-            email: 'البريد الإلكتروني',
-            password: 'كلمة المرور',
-            remember_me: 'تذكرني',
-            forgot_password: 'نسيت كلمة المرور؟',
-            no_account: 'ليس لديك حساب؟',
-            have_account: 'لديك حساب بالفعل؟',
-            first_name: 'الاسم الأول',
-            last_name: 'اسم العائلة',
-            username: 'اسم المستخدم',
-            phone: 'رقم الهاتف',
-            major: 'التخصص',
-            confirm_password: 'تأكيد كلمة المرور',
-            register: 'تسجيل',
-            login_button: 'دخول'
-        },
-
-        // Dashboard
-        dashboard: {
-            welcome: 'مرحباً',
-            my_courses: 'مساقاتي',
-            enrolled_courses: 'المساقات المسجلة',
-            progress: 'التقدم',
-            announcements: 'الإعلانات',
-            upcoming: 'القادم',
-            calendar: 'التقويم'
-        },
-
-        // Ratings & Reviews
-        reviews: {
-            write_review: 'اكتب تقييم',
-            your_rating: 'تقييمك',
-            review_title: 'عنوان التقييم',
-            review_content: 'تقييمك',
-            would_recommend: 'أوصي بهذا المساق',
-            submit: 'إرسال التقييم',
-            helpful: 'مفيد',
-            reply: 'رد',
-            edit: 'تعديل',
-            delete: 'حذف',
-            based_on: 'بناءً على',
-            reviews: 'تقييم'
-        },
-
-        // Common
         common: {
             loading: 'جاري التحميل...',
             search: 'بحث',
             cancel: 'إلغاء',
             save: 'حفظ',
-            close: 'إغلاق',
-            submit: 'إرسال',
-            update: 'تحديث',
-            delete: 'حذف',
-            confirm: 'تأكيد',
-            yes: 'نعم',
-            no: 'لا',
-            ok: 'موافق',
-            error: 'خطأ',
-            success: 'نجاح',
-            warning: 'تحذير',
-            info: 'معلومات'
+            close: 'إغلاق'
         }
     }
 };
 
-// Current language state
+// Store for dynamically loaded translations
+let translations = { en: {}, ar: {} };
+let translationsLoaded = false;
 let currentLanguage = localStorage.getItem('language') || 'en';
 
 /**
- * Get translation for a key
- * @param {string} key - Translation key (e.g., 'nav.home')
+ * Load translations from JSON files
+ * @param {string} lang - Language code ('en' or 'ar')
+ * @returns {Promise<Object>} - Merged translations object
+ */
+async function loadTranslations(lang) {
+    const files = ['common', 'auth', 'courses', 'admin'];
+    const mergedTranslations = {};
+
+    try {
+        // Load all translation files in parallel
+        const promises = files.map(file =>
+            fetch(`/locales/${lang}/${file}.json`)
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn(`Failed to load ${file}.json for ${lang}`);
+                        return {};
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    console.warn(`Error loading ${file}.json for ${lang}:`, error);
+                    return {};
+                })
+        );
+
+        const results = await Promise.all(promises);
+
+        // Merge all translation files into one object
+        results.forEach((translationData) => {
+            Object.assign(mergedTranslations, translationData);
+        });
+
+        return mergedTranslations;
+    } catch (error) {
+        console.error(`Error loading translations for ${lang}:`, error);
+        return {};
+    }
+}
+
+/**
+ * Initialize translations for both languages
+ */
+async function initializeTranslations() {
+    try {
+        // Load both English and Arabic translations
+        const [enTranslations, arTranslations] = await Promise.all([
+            loadTranslations('en'),
+            loadTranslations('ar')
+        ]);
+
+        // Merge with fallback translations (fallback has lower priority)
+        translations.en = { ...fallbackTranslations.en, ...enTranslations };
+        translations.ar = { ...fallbackTranslations.ar, ...arTranslations };
+
+        translationsLoaded = true;
+
+        // Update page if already initialized
+        if (document.readyState !== 'loading') {
+            updatePageTranslations();
+        }
+
+        console.log('Translations loaded successfully');
+    } catch (error) {
+        console.error('Failed to initialize translations:', error);
+        // Use fallback translations if loading fails
+        translations = fallbackTranslations;
+        translationsLoaded = true;
+    }
+}
+
+/**
+ * Get translation for a key with nested object support
+ * @param {string} key - Translation key (e.g., 'nav.home' or 'common.actions.submit')
  * @returns {string} Translated text
  */
 function t(key) {
     const keys = key.split('.');
     let value = translations[currentLanguage];
 
+    // Traverse nested object
     for (const k of keys) {
         value = value?.[k];
+    }
+
+    // Return value or fallback to English if Arabic translation not found
+    if (!value && currentLanguage === 'ar') {
+        let fallbackValue = translations.en;
+        for (const k of keys) {
+            fallbackValue = fallbackValue?.[k];
+        }
+        if (fallbackValue) {
+            console.warn(`Missing Arabic translation for: ${key}`);
+            return fallbackValue;
+        }
     }
 
     return value || key;
@@ -348,7 +171,7 @@ function t(key) {
  * @param {string} lang - Language code ('en' or 'ar')
  */
 function setLanguage(lang) {
-    if (!translations[lang]) return;
+    if (!['en', 'ar'].includes(lang)) return;
 
     currentLanguage = lang;
     localStorage.setItem('language', lang);
@@ -357,8 +180,20 @@ function setLanguage(lang) {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
+    // Add/remove RTL body class for additional styling
+    if (lang === 'ar') {
+        document.body.classList.add('rtl');
+        document.body.classList.remove('ltr');
+    } else {
+        document.body.classList.add('ltr');
+        document.body.classList.remove('rtl');
+    }
+
     // Update all elements with data-i18n attribute
     updatePageTranslations();
+
+    // Update language toggle button
+    updateLanguageToggle();
 
     // Trigger custom event for other scripts to handle
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
@@ -368,6 +203,7 @@ function setLanguage(lang) {
  * Update all translations on the page
  */
 function updatePageTranslations() {
+    // Update elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translation = t(key);
@@ -388,19 +224,49 @@ function updatePageTranslations() {
         const key = element.getAttribute('data-i18n-html');
         element.innerHTML = t(key);
     });
+
+    // Update elements with data-i18n-placeholder (for placeholder attributes)
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        element.placeholder = t(key);
+    });
+
+    // Update elements with data-i18n-title (for title attributes)
+    document.querySelectorAll('[data-i18n-title]').forEach(element => {
+        const key = element.getAttribute('data-i18n-title');
+        element.title = t(key);
+    });
+
+    // Update elements with data-i18n-aria-label (for aria-label attributes)
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+        const key = element.getAttribute('data-i18n-aria-label');
+        element.setAttribute('aria-label', t(key));
+    });
 }
 
 /**
  * Get current language
+ * @returns {string} Current language code
  */
 function getCurrentLanguage() {
     return currentLanguage;
 }
 
 /**
+ * Check if translations are loaded
+ * @returns {boolean} True if translations are loaded
+ */
+function isTranslationsLoaded() {
+    return translationsLoaded;
+}
+
+/**
  * Initialize i18n on page load
  */
-function initI18n() {
+async function initI18n() {
+    // Load translations from JSON files
+    await initializeTranslations();
+
     // Set initial language
     const lang = localStorage.getItem('language') || 'en';
     setLanguage(lang);
@@ -413,10 +279,16 @@ function initI18n() {
  * Update language toggle button state
  */
 function updateLanguageToggle() {
-    const toggle = document.getElementById('languageToggle');
-    if (toggle) {
-        toggle.textContent = currentLanguage === 'en' ? 'العربية' : 'English';
-    }
+    const toggleButtons = document.querySelectorAll('#languageToggle, [onclick*="toggleLanguage"]');
+
+    toggleButtons.forEach(toggle => {
+        // Update the data-i18n attribute based on current language
+        const targetKey = currentLanguage === 'en' ? 'nav.arabic' : 'nav.english';
+        toggle.setAttribute('data-i18n', targetKey);
+
+        // Update the text content immediately
+        toggle.textContent = t(targetKey);
+    });
 }
 
 /**
@@ -425,9 +297,15 @@ function updateLanguageToggle() {
 function toggleLanguage() {
     const newLang = currentLanguage === 'en' ? 'ar' : 'en';
     setLanguage(newLang);
+}
 
-    // Reload page if needed for complex layouts
-    // location.reload();
+/**
+ * Get all available translations for a namespace
+ * @param {string} namespace - Namespace (e.g., 'common', 'auth')
+ * @returns {Object} All translations in that namespace
+ */
+function getNamespace(namespace) {
+    return translations[currentLanguage]?.[namespace] || {};
 }
 
 // Initialize on DOM load
@@ -437,9 +315,11 @@ if (document.readyState === 'loading') {
     initI18n();
 }
 
-// Export functions
+// Export functions to window for global access
 window.t = t;
 window.setLanguage = setLanguage;
 window.getCurrentLanguage = getCurrentLanguage;
 window.toggleLanguage = toggleLanguage;
-
+window.updatePageTranslations = updatePageTranslations;
+window.isTranslationsLoaded = isTranslationsLoaded;
+window.getNamespace = getNamespace;
