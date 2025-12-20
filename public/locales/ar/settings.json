@@ -1,0 +1,63 @@
+{
+    "settings": {
+        "pageTitle": "الإعدادات",
+        "pageSubtitle": "إدارة تفضيلات حسابك وإعداداتك",
+        "backToDashboard": "العودة إلى لوحة التحكم",
+        "saveAllSettings": "حفظ جميع الإعدادات",
+        "nav": {
+            "notifications": "الإشعارات",
+            "privacy": "الخصوصية",
+            "appearance": "المظهر",
+            "security": "الأمان"
+        },
+        "notifications": {
+            "title": "تفضيلات الإشعارات",
+            "emailNotifications": "إشعارات البريد الإلكتروني",
+            "newCourseMaterials": "مواد دراسية جديدة",
+            "newCourseMaterialsDesc": "احصل على إشعار عند تحميل مواد جديدة",
+            "assignmentReminders": "تذكيرات الواجبات",
+            "assignmentRemindersDesc": "احصل على تذكيرات بشأن المواعيد النهائية القادمة",
+            "courseUpdates": "تحديثات الدورات",
+            "courseUpdatesDesc": "احصل على تحديثات حول تغييرات الدورة",
+            "weeklySummary": "ملخص أسبوعي",
+            "weeklySummaryDesc": "احصل على ملخص أسبوعي لنشاطك",
+            "pushNotifications": "الإشعارات الفورية",
+            "browserNotifications": "إشعارات المتصفح",
+            "browserNotificationsDesc": "السماح بإشعارات المتصفح"
+        },
+        "privacy": {
+            "title": "إعدادات الخصوصية",
+            "profileVisibility": "ظهور الملف الشخصي",
+            "showProfile": "إظهار الملف الشخصي للطلاب الآخرين",
+            "showProfileDesc": "السماح للطلاب الآخرين بمشاهدة ملفك الشخصي",
+            "showEmail": "إظهار عنوان البريد الإلكتروني",
+            "showEmailDesc": "عرض بريدك الإلكتروني في ملفك الشخصي العام"
+        },
+        "appearance": {
+            "title": "المظهر",
+            "fontSize": "حجم الخط",
+            "small": "صغير",
+            "medium": "متوسط",
+            "large": "كبير"
+        },
+        "security": {
+            "title": "إعدادات الأمان",
+            "changePassword": "تغيير كلمة المرور",
+            "currentPassword": "كلمة المرور الحالية",
+            "newPassword": "كلمة المرور الجديدة",
+            "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+            "passwordPlaceholder": "••••••••",
+            "updatePassword": "تحديث كلمة المرور",
+            "activeSessions": "الجلسات النشطة",
+            "currentSession": "الجلسة الحالية",
+            "lastActive": "آخر نشاط",
+            "now": "الآن",
+            "active": "نشط",
+            "signOutOthers": "تسجيل الخروج من جميع الجلسات الأخرى",
+            "passwordMismatch": "كلمات المرور الجديدة غير متطابقة!",
+            "passwordTooShort": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل!",
+            "passwordChanged": "تم تغيير كلمة المرور بنجاح!",
+            "settingsSaved": "تم حفظ الإعدادات بنجاح!"
+        }
+    }
+}

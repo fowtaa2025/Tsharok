@@ -97,8 +97,8 @@
                     <!-- Right Side - User Info -->
                     <div class="flex items-center space-x-4">
                         <a href="student.html" class="text-gray-700 hover:text-primary">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            <span>Back to Dashboard</span>
+                            <i class="fas fa-arrow-left me-2"></i>
+                            <span data-i18n="settings.backToDashboard">Back to Dashboard</span>
                         </a>
                         <span class="text-gray-700 font-medium" data-user-name>student name</span>
                         <div id="profileButton"
@@ -113,8 +113,9 @@
         <!-- Main Content -->
         <main class="relative z-10 max-w-6xl mx-auto px-6 py-8">
             <div class="mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
-                <p class="text-gray-600 mt-2">Manage your account preferences and settings</p>
+                <h1 class="text-3xl font-bold text-gray-900" data-i18n="settings.pageTitle">Settings</h1>
+                <p class="text-gray-600 mt-2" data-i18n="settings.pageSubtitle">Manage your account preferences and
+                    settings</p>
             </div>
 
             <div class="grid lg:grid-cols-4 gap-6">
@@ -125,23 +126,23 @@
 
                             <button onclick="showSection('notifications')"
                                 class="settings-tab active w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition flex items-center">
-                                <i class="fas fa-bell w-5 mr-3"></i>
-                                <span>Notifications</span>
+                                <i class="fas fa-bell w-5 me-3"></i>
+                                <span data-i18n="settings.nav.notifications">Notifications</span>
                             </button>
                             <button onclick="showSection('privacy')"
                                 class="settings-tab w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition flex items-center">
-                                <i class="fas fa-shield-alt w-5 mr-3"></i>
-                                <span>Privacy</span>
+                                <i class="fas fa-shield-alt w-5 me-3"></i>
+                                <span data-i18n="settings.nav.privacy">Privacy</span>
                             </button>
                             <button onclick="showSection('appearance')"
                                 class="settings-tab w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition flex items-center">
-                                <i class="fas fa-palette w-5 mr-3"></i>
-                                <span>Appearance</span>
+                                <i class="fas fa-palette w-5 me-3"></i>
+                                <span data-i18n="settings.nav.appearance">Appearance</span>
                             </button>
                             <button onclick="showSection('security')"
                                 class="settings-tab w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition flex items-center">
-                                <i class="fas fa-lock w-5 mr-3"></i>
-                                <span>Security</span>
+                                <i class="fas fa-lock w-5 me-3"></i>
+                                <span data-i18n="settings.nav.security">Security</span>
                             </button>
                         </nav>
                     </div>
@@ -152,17 +153,23 @@
                     <!-- Notification Settings -->
                     <div id="section-notifications" class="settings-section">
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Notification Preferences</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="settings.notifications.title">
+                                Notification Preferences</h2>
 
                             <div class="space-y-6">
                                 <!-- Email Notifications -->
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Email Notifications</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4"
+                                        data-i18n="settings.notifications.emailNotifications">Email Notifications</h3>
                                     <div class="space-y-4">
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">New Course Materials</p>
-                                                <p class="text-sm text-gray-500">Get notified when new materials are
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.notifications.newCourseMaterials">New Course
+                                                    Materials</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.notifications.newCourseMaterialsDesc">Get
+                                                    notified when new materials are
                                                     uploaded</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
@@ -178,8 +185,12 @@
 
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">Assignment Reminders</p>
-                                                <p class="text-sm text-gray-500">Receive reminders about upcoming
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.notifications.assignmentReminders">Assignment
+                                                    Reminders</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.notifications.assignmentRemindersDesc">Receive
+                                                    reminders about upcoming
                                                     deadlines</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
@@ -195,8 +206,11 @@
 
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">Course Updates</p>
-                                                <p class="text-sm text-gray-500">Get updates about course changes</p>
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.notifications.courseUpdates">Course Updates</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.notifications.courseUpdatesDesc">Get updates
+                                                    about course changes</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" class="toggle-checkbox sr-only peer">
@@ -211,8 +225,11 @@
 
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">Weekly Summary</p>
-                                                <p class="text-sm text-gray-500">Receive a weekly summary of your
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.notifications.weeklySummary">Weekly Summary</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.notifications.weeklySummaryDesc">Receive a
+                                                    weekly summary of your
                                                     activity</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
@@ -230,12 +247,17 @@
 
                                 <!-- Push Notifications -->
                                 <div class="pt-6 border-t">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Push Notifications</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4"
+                                        data-i18n="settings.notifications.pushNotifications">Push Notifications</h3>
                                     <div class="space-y-4">
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">Browser Notifications</p>
-                                                <p class="text-sm text-gray-500">Allow browser notifications</p>
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.notifications.browserNotifications">Browser
+                                                    Notifications</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.notifications.browserNotificationsDesc">Allow
+                                                    browser notifications</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" class="toggle-checkbox sr-only peer">
@@ -256,17 +278,23 @@
                     <!-- Privacy Settings -->
                     <div id="section-privacy" class="settings-section hidden">
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Privacy Settings</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="settings.privacy.title">Privacy
+                                Settings</h2>
 
                             <div class="space-y-6">
                                 <!-- Profile Visibility -->
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Visibility</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4"
+                                        data-i18n="settings.privacy.profileVisibility">Profile Visibility</h3>
                                     <div class="space-y-4">
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">Show Profile to Other Students</p>
-                                                <p class="text-sm text-gray-500">Allow other students to view your
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.privacy.showProfile">Show Profile to Other
+                                                    Students</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.privacy.showProfileDesc">Allow other students to
+                                                    view your
                                                     profile</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
@@ -282,8 +310,11 @@
 
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <p class="font-medium text-gray-900">Show Email Address</p>
-                                                <p class="text-sm text-gray-500">Display your email on your public
+                                                <p class="font-medium text-gray-900"
+                                                    data-i18n="settings.privacy.showEmail">Show Email Address</p>
+                                                <p class="text-sm text-gray-500"
+                                                    data-i18n="settings.privacy.showEmailDesc">Display your email on
+                                                    your public
                                                     profile</p>
                                             </div>
                                             <label class="relative inline-flex items-center cursor-pointer">
@@ -310,7 +341,8 @@
                     <!-- Appearance Settings -->
                     <div id="section-appearance" class="settings-section hidden">
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Appearance</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="settings.appearance.title">
+                                Appearance</h2>
 
                             <div class="space-y-6">
                                 <!-- Language -->
@@ -318,12 +350,14 @@
 
                                 <!-- Font Size -->
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Font Size</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4"
+                                        data-i18n="settings.appearance.fontSize">Font Size</h3>
                                     <select
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                                        <option value="small">Small</option>
-                                        <option value="medium" selected>Medium</option>
-                                        <option value="large">Large</option>
+                                        <option value="small" data-i18n="settings.appearance.small">Small</option>
+                                        <option value="medium" selected data-i18n="settings.appearance.medium">Medium
+                                        </option>
+                                        <option value="large" data-i18n="settings.appearance.large">Large</option>
                                     </select>
                                 </div>
                             </div>
@@ -333,36 +367,45 @@
                     <!-- Security Settings -->
                     <div id="section-security" class="settings-section hidden">
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Security Settings</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="settings.security.title">
+                                Security Settings</h2>
 
                             <div class="space-y-6">
                                 <!-- Change Password -->
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4"
+                                        data-i18n="settings.security.changePassword">Change Password</h3>
                                     <form id="passwordForm" class="space-y-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Current
+                                            <label class="block text-sm font-medium text-gray-700 mb-2"
+                                                data-i18n="settings.security.currentPassword">Current
                                                 Password</label>
                                             <input type="password"
                                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                                data-i18n-placeholder="settings.security.passwordPlaceholder"
                                                 placeholder="••••••••" required>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">New
+                                            <label class="block text-sm font-medium text-gray-700 mb-2"
+                                                data-i18n="settings.security.newPassword">New
                                                 Password</label>
                                             <input type="password"
                                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                                data-i18n-placeholder="settings.security.passwordPlaceholder"
                                                 placeholder="••••••••" required>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New
+                                            <label class="block text-sm font-medium text-gray-700 mb-2"
+                                                data-i18n="settings.security.confirmNewPassword">Confirm New
                                                 Password</label>
                                             <input type="password"
                                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                                data-i18n-placeholder="settings.security.passwordPlaceholder"
                                                 placeholder="••••••••" required>
                                         </div>
                                         <button type="submit"
-                                            class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition">
+                                            class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition"
+                                            data-i18n="settings.security.updatePassword">
                                             Update Password
                                         </button>
                                     </form>
@@ -373,22 +416,29 @@
 
                                 <!-- Active Sessions -->
                                 <div class="pt-6 border-t">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Active Sessions</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-4"
+                                        data-i18n="settings.security.activeSessions">Active Sessions</h3>
                                     <div class="space-y-3">
                                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                             <div class="flex items-center">
-                                                <i class="fas fa-desktop text-2xl text-gray-600 mr-4"></i>
+                                                <i class="fas fa-desktop text-2xl text-gray-600 me-4"></i>
                                                 <div>
                                                     <p class="font-medium text-gray-900">Windows PC - Chrome</p>
-                                                    <p class="text-sm text-gray-500">Current session • Last active: Now
+                                                    <p class="text-sm text-gray-500"><span
+                                                            data-i18n="settings.security.currentSession">Current
+                                                            session</span> • <span
+                                                            data-i18n="settings.security.lastActive">Last active</span>:
+                                                        <span data-i18n="settings.security.now">Now</span>
                                                     </p>
                                                 </div>
                                             </div>
-                                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
+                                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm"
+                                                data-i18n="settings.security.active">
                                                 Active
                                             </span>
                                         </div>
-                                        <button class="text-red-600 hover:text-red-700 text-sm font-medium">
+                                        <button class="text-red-600 hover:text-red-700 text-sm font-medium"
+                                            data-i18n="settings.security.signOutOthers">
                                             Sign out all other sessions
                                         </button>
                                     </div>
@@ -401,14 +451,15 @@
                     <div class="mt-6">
                         <button onclick="saveSettings()"
                             class="w-full md:w-auto px-8 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition font-semibold shadow-lg">
-                            <i class="fas fa-save mr-2"></i>
-                            Save All Settings
+                            <i class="fas fa-save me-2"></i>
+                            <span data-i18n="settings.saveAllSettings">Save All Settings</span>
                         </button>
                     </div>
                 </div>
             </div>
         </main>
 
+        <script src="../assets/js/i18n.js"></script>
         <script src="../assets/js/session.js"></script>
         <script src="../assets/js/background-styles.js"></script>
         <script>
@@ -493,7 +544,7 @@
                 // Save to localStorage
                 localStorage.setItem('userSettings', JSON.stringify(settings));
 
-                showNotification('Settings saved successfully!', 'success');
+                showNotification(t('settings.security.settingsSaved'), 'success');
             }
 
             // Confirm account deletion
@@ -522,19 +573,19 @@
                 const confirmPassword = e.target[2].value;
 
                 if (newPassword !== confirmPassword) {
-                    showNotification('New passwords do not match!', 'error');
+                    showNotification(t('settings.security.passwordMismatch'), 'error');
                     return;
                 }
 
                 if (newPassword.length < 8) {
-                    showNotification('Password must be at least 8 characters long!', 'error');
+                    showNotification(t('settings.security.passwordTooShort'), 'error');
                     return;
                 }
 
                 // Call API to change password
                 // const response = await fetch('/api/change-password.php', {...});
 
-                showNotification('Password changed successfully!', 'success');
+                showNotification(t('settings.security.passwordChanged'), 'success');
                 e.target.reset();
             });
 

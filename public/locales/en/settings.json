@@ -1,0 +1,63 @@
+{
+    "settings": {
+        "pageTitle": "Settings",
+        "pageSubtitle": "Manage your account preferences and settings",
+        "backToDashboard": "Back to Dashboard",
+        "saveAllSettings": "Save All Settings",
+        "nav": {
+            "notifications": "Notifications",
+            "privacy": "Privacy",
+            "appearance": "Appearance",
+            "security": "Security"
+        },
+        "notifications": {
+            "title": "Notification Preferences",
+            "emailNotifications": "Email Notifications",
+            "newCourseMaterials": "New Course Materials",
+            "newCourseMaterialsDesc": "Get notified when new materials are uploaded",
+            "assignmentReminders": "Assignment Reminders",
+            "assignmentRemindersDesc": "Receive reminders about upcoming deadlines",
+            "courseUpdates": "Course Updates",
+            "courseUpdatesDesc": "Get updates about course changes",
+            "weeklySummary": "Weekly Summary",
+            "weeklySummaryDesc": "Receive a weekly summary of your activity",
+            "pushNotifications": "Push Notifications",
+            "browserNotifications": "Browser Notifications",
+            "browserNotificationsDesc": "Allow browser notifications"
+        },
+        "privacy": {
+            "title": "Privacy Settings",
+            "profileVisibility": "Profile Visibility",
+            "showProfile": "Show Profile to Other Students",
+            "showProfileDesc": "Allow other students to view your profile",
+            "showEmail": "Show Email Address",
+            "showEmailDesc": "Display your email on your public profile"
+        },
+        "appearance": {
+            "title": "Appearance",
+            "fontSize": "Font Size",
+            "small": "Small",
+            "medium": "Medium",
+            "large": "Large"
+        },
+        "security": {
+            "title": "Security Settings",
+            "changePassword": "Change Password",
+            "currentPassword": "Current Password",
+            "newPassword": "New Password",
+            "confirmNewPassword": "Confirm New Password",
+            "passwordPlaceholder": "••••••••",
+            "updatePassword": "Update Password",
+            "activeSessions": "Active Sessions",
+            "currentSession": "Current session",
+            "lastActive": "Last active",
+            "now": "Now",
+            "active": "Active",
+            "signOutOthers": "Sign out all other sessions",
+            "passwordMismatch": "New passwords do not match!",
+            "passwordTooShort": "Password must be at least 8 characters long!",
+            "passwordChanged": "Password changed successfully!",
+            "settingsSaved": "Settings saved successfully!"
+        }
+    }
+}
