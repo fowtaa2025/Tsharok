@@ -290,23 +290,32 @@
                             <!-- Dropdown -->
                             <div id="profileDropdown"
                                 style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);"
-                                class="hidden absolute right-0 mt-2 w-48 rounded-2xl border border-white/30 py-2 z-50">
+                                class="hidden absolute right-0 mt-2 w-56 rounded-2xl border border-white/30 py-2 z-50">
+                                <!-- User Info -->
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <p class="text-sm font-semibold text-gray-900" data-user-name>student name</p>
+                                    <p class="text-xs text-gray-500" data-user-email>student@email.com</p>
+                                </div>
+
+                                <!-- Menu Items -->
                                 <a href="profile.html"
-                                    class="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition rounded-lg mx-2">
-                                    <i class="fas fa-user-circle mr-2 text-purple-500"></i><span
-                                        data-i18n="addcourse.profile.myProfile">My Profile</span>
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-purple-50 transition">
+                                    <i class="fas fa-user-circle w-5 mr-3 text-purple-500"></i>
+                                    <span data-i18n="addcourse.profile.myProfile">My Profile</span>
                                 </a>
                                 <a href="settings.html"
-                                    class="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition rounded-lg mx-2">
-                                    <i class="fas fa-cog mr-2 text-purple-500"></i><span
-                                        data-i18n="addcourse.profile.settings">Settings</span>
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-purple-50 transition">
+                                    <i class="fas fa-cog w-5 mr-3 text-purple-500"></i>
+                                    <span data-i18n="addcourse.profile.settings">Settings</span>
                                 </a>
-                                <hr class="my-2 border-gray-200">
-                                <button onclick="logout()"
-                                    class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition rounded-lg mx-2">
-                                    <i class="fas fa-sign-out-alt mr-2"></i><span
-                                        data-i18n="addcourse.profile.logout">Logout</span>
-                                </button>
+
+                                <div class="border-t border-gray-200 my-2"></div>
+
+                                <a href="#" onclick="logout(); return false;"
+                                    class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
+                                    <i class="fas fa-sign-out-alt w-5 mr-3"></i>
+                                    <span data-i18n="addcourse.profile.logout">Logout</span>
+                                </a>
                             </div>
                         </div>
                         <button onclick="toggleLanguage()" data-i18n="nav.arabic"
@@ -524,6 +533,14 @@
             // Require authentication
             requireAuth(['student', 'admin']).then(authenticated => {
                 if (authenticated) {
+                    // Populate user email in dropdown
+                    const user = getCurrentUser();
+                    if (user) {
+                        const emailElements = document.querySelectorAll('[data-user-email]');
+                        emailElements.forEach(el => {
+                            el.textContent = user.email || 'student@email.com';
+                        });
+                    }
                     loadCourses();
                 }
             });
