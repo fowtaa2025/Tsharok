@@ -912,39 +912,86 @@
                     docsGrid.innerHTML = docsHTML || '<p class="text-gray-400 text-center py-8">No documents uploaded yet</p>';
                     videoGrid.innerHTML = videoHTML || '<p class="text-gray-400 text-center py-8">No videos uploaded yet</p>';
 
+                    // If no files, show empty state message
+                    if (sortedFiles.length === 0 || docsHTML === '') {
+                        docsGrid.innerHTML = `
+                            <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
+                                <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-4xl text-indigo-400"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">${t('courses.emptyState.noDocuments')}</h3>
+                                <p class="text-gray-500">${t('courses.emptyState.noDocumentsMessage')}</p>
+                            </div>
+                        `;
+                    }
+                    if (sortedFiles.length === 0 || videoHTML === '') {
+                        videoGrid.innerHTML = `
+                            <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
+                                <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
+                                    <i class="fas fa-video text-4xl text-red-400"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">${t('courses.emptyState.noVideos')}</h3>
+                                <p class="text-gray-500">${t('courses.emptyState.noVideosMessage')}</p>
+                            </div>
+                        `;
+                    }
+
                     // Initialize search functionality after files are loaded
                     initializeSearchFunctionality();
-                }
 
-                // If no files, show empty state message
-                if (sortedFiles.length === 0 || docsHTML === '') {
-                    docsGrid.innerHTML = `
-                        <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                                <i class="fas fa-file-alt text-4xl text-indigo-400"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">${t('courses.emptyState.noDocuments')}</h3>
-                            <p class="text-gray-500">${t('courses.emptyState.noDocumentsMessage')}</p>
-                        </div>
-                    `;
+                    // Update overall course rating
+                    // calculateOverallCourseRating(); // DEPRECATED - rating is fetched from API now
+                } catch (error) {
+                    console.error('Error loading files:', error);
                 }
-                if (sortedFiles.length === 0 || videoHTML === '') {
-                    videoGrid.innerHTML = `
-                        <div class="col-span-full empty-state rounded-2xl py-12 px-6 text-center">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
-                                <i class="fas fa-video text-4xl text-red-400"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">${t('courses.emptyState.noVideos')}</h3>
-                            <p class="text-gray-500">${t('courses.emptyState.noVideosMessage')}</p>
-                        </div>
-                    `;
-                }
-
-                // Update overall course rating
-                // calculateOverallCourseRating(); // DEPRECATED - rating is fetched from API now
-            } catch (error) {
-                console.error('Error loading files:', error);
             }
+
+            // Search functionality
+            function initializeSearchFunctionality() {
+                const searchInput = document.getElementById('courseSearchInput');
+                const clearSearchBtn = document.getElementById('clearCourseSearch');
+
+                if (!searchInput) return;
+
+                // Search input event
+                searchInput.addEventListener('input', function (e) {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+
+                    // Show/hide clear button
+                    if (clearSearchBtn) {
+                        clearSearchBtn.classList.toggle('hidden', searchTerm === '');
+                    }
+
+                    // Get all file cards
+                    const fileCards = document.querySelectorAll('.file-card');
+
+                    fileCards.forEach(card => {
+                        // Get file name from the card
+                        const fileNameEl = card.querySelector('p.text-sm.font-semibold');
+                        const fileName = fileNameEl ? fileNameEl.textContent.toLowerCase() : '';
+
+                        // Show/hide based on search match
+                        if (searchTerm === '' || fileName.includes(searchTerm)) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+
+                // Clear search button
+                if (clearSearchBtn) {
+                    clearSearchBtn.addEventListener('click', function () {
+                        searchInput.value = '';
+                        clearSearchBtn.classList.add('hidden');
+
+                        // Show all cards
+                        const fileCards = document.querySelectorAll('.file-card');
+                        fileCards.forEach(card => card.classList.remove('hidden'));
+
+                        searchInput.focus();
+                    });
+                }
             }
 
             // Switch between tabs
