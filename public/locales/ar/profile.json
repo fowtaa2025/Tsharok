@@ -1,0 +1,27 @@
+{
+    "profile": {
+        "backToDashboard": "العودة إلى لوحة التحكم",
+        "pageTitle": "ملفي الشخصي",
+        "pageSubtitle": "إدارة معلومات حسابك وتفضيلاتك",
+        "studentRole": "طالب",
+        "personalInfo": "المعلومات الشخصية",
+        "edit": "تعديل",
+        "editing": "جاري التعديل...",
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "email": "البريد الإلكتروني",
+        "dateOfBirth": "تاريخ الميلاد",
+        "bio": "نبذة عني",
+        "bioPlaceholder": "أخبرنا عن نفسك...",
+        "saveChanges": "حفظ التغييرات",
+        "cancel": "إلغاء",
+        "accountActions": "إجراءات الحساب",
+        "changePassword": "تغيير كلمة المرور",
+        "changePasswordDesc": "تحديث كلمة مرور حسابك",
+        "successUpdate": "تم تحديث الملف الشخصي بنجاح!",
+        "errorUpdate": "فشل تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.",
+        "imageSizeError": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت",
+        "imageSuccess": "تم تحديث صورة الملف الشخصي!",
+        "required": "*"
+    }
+}

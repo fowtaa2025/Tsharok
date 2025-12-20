@@ -1,0 +1,27 @@
+{
+    "profile": {
+        "backToDashboard": "Back to Dashboard",
+        "pageTitle": "My Profile",
+        "pageSubtitle": "Manage your account information and preferences",
+        "studentRole": "Student",
+        "personalInfo": "Personal Information",
+        "edit": "Edit",
+        "editing": "Editing...",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "dateOfBirth": "Date of Birth",
+        "bio": "Bio",
+        "bioPlaceholder": "Tell us about yourself...",
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "accountActions": "Account Actions",
+        "changePassword": "Change Password",
+        "changePasswordDesc": "Update your account password",
+        "successUpdate": "Profile updated successfully!",
+        "errorUpdate": "Failed to update profile. Please try again.",
+        "imageSizeError": "Image size should be less than 5MB",
+        "imageSuccess": "Profile picture updated!",
+        "required": "*"
+    }
+}
