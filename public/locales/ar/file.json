@@ -1,0 +1,63 @@
+{
+    "file": {
+        "breadcrumb": {
+            "dashboard": "لوحة التحكم",
+            "course": "المادة",
+            "file": "الملف"
+        },
+        "profile": {
+            "myProfile": "ملفي الشخصي",
+            "settings": "الإعدادات",
+            "logout": "تسجيل الخروج"
+        },
+        "header": {
+            "download": "تحميل",
+            "share": "مشاركة"
+        },
+        "fileTypes": {
+            "video": "فيديو",
+            "document": "مستند",
+            "pdfDocument": "مستند PDF",
+            "wordDocument": "مستند Word",
+            "excelSpreadsheet": "جدول Excel",
+            "powerpoint": "عرض PowerPoint",
+            "image": "صورة",
+            "file": "ملف"
+        },
+        "info": {
+            "title": "معلومات الملف",
+            "knowledgeRating": "تقييم المعرفة",
+            "ratings": "تقييمات",
+            "uploadedBy": "رفعه",
+            "uploadDate": "تاريخ الرفع",
+            "fileType": "نوع الملف",
+            "fileSize": "حجم الملف"
+        },
+        "description": {
+            "title": "الوصف",
+            "edit": "تعديل",
+            "noDescription": "لا يوجد وصف متاح لهذا الملف.",
+            "placeholder": "اكتب وصفاً لهذا الملف...",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "comments": {
+            "title": "التعليقات",
+            "placeholder": "شاركنا رأيك حول هذا الملف...",
+            "yourRating": "تقييمك:",
+            "ratingError": "قيّم بـ 1-3 نجوم على الأقل!",
+            "post": "نشر"
+        },
+        "preview": {
+            "fileContent": "محتوى الملف",
+            "previewWillAppear": "سيظهر المعاينة هنا",
+            "videoNotSupported": "متصفحك لا يدعم تشغيل الفيديو.",
+            "documentFile": "ملف مستند",
+            "cannotPreview": "لا يمكن معاينة هذا المستند في المتصفح",
+            "downloadToView": "حمّل للعرض",
+            "fileTooLarge": "الملف كبير جداً للمعاينة في المتصفح",
+            "browserLimit": "(حد تخزين المتصفح: ~5 ميجابايت)",
+            "originalFile": "الملف الأصلي:"
+        }
+    }
+}

@@ -46,6 +46,7 @@
             border-radius: 50% !important;
         }
     </style>
+    <script src="../assets/js/i18n.js"></script>
     <script src="student_chatbot.js"></script>
 </head>
 
@@ -91,13 +92,13 @@
                                 <a href="profile.html"
                                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
                                     <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
-                                    <span>My Profile</span>
+                                    <span data-i18n="file.profile.myProfile">My Profile</span>
                                 </a>
 
                                 <a href="settings.html"
                                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
                                     <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
-                                    <span>Settings</span>
+                                    <span data-i18n="file.profile.settings">Settings</span>
                                 </a>
 
                                 <div class="border-t border-gray-200 my-2"></div>
@@ -105,13 +106,14 @@
                                 <a href="#" onclick="logout(); return false;"
                                     class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
                                     <i class="fas fa-sign-out-alt w-5 mr-3"></i>
-                                    <span>Logout</span>
+                                    <span data-i18n="file.profile.logout">Logout</span>
                                 </a>
                             </div>
                         </div>
 
-                        <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium">
-                            عربي
+                        <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium"
+                            data-i18n="nav.arabic">
+                            العربية
                         </button>
                     </div>
                 </div>
@@ -122,7 +124,7 @@
         <main class="max-w-7xl mx-auto px-4 py-6">
             <!-- Breadcrumb -->
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
-                <a href="student.html" class="hover:text-primary">Dashboard</a>
+                <a href="student.html" class="hover:text-primary" data-i18n="file.breadcrumb.dashboard">Dashboard</a>
                 <i class="fas fa-chevron-right text-xs"></i>
                 <a href="#" id="courseBreadcrumb" class="hover:text-primary">Course</a>
                 <i class="fas fa-chevron-right text-xs"></i>
@@ -150,11 +152,12 @@
                                 <div class="flex items-center gap-2">
                                     <button onclick="downloadFile()"
                                         class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition"
-                                        title="Download">
+                                        data-i18n-title="file.header.download">
                                         <i class="fas fa-download"></i>
                                     </button>
                                     <button onclick="shareFile()"
-                                        class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition" title="Share">
+                                        class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition"
+                                        data-i18n-title="file.header.share">
                                         <i class="fas fa-share-alt"></i>
                                     </button>
                                 </div>
@@ -170,8 +173,10 @@
                                     class="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
                                     <i class="fas fa-file-alt text-4xl text-gray-400"></i>
                                 </div>
-                                <p class="text-xl font-semibold text-gray-600 mb-2">File Content</p>
-                                <p class="text-gray-400">Preview will appear here</p>
+                                <p class="text-xl font-semibold text-gray-600 mb-2"
+                                    data-i18n="file.preview.fileContent">File Content</p>
+                                <p class="text-gray-400" data-i18n="file.preview.previewWillAppear">Preview will appear
+                                    here</p>
                             </div>
 
                             <!-- Image Preview -->
@@ -181,7 +186,8 @@
 
                             <!-- Video Preview -->
                             <video id="videoPreview" class="hidden w-full max-h-[700px] rounded-lg shadow-lg" controls>
-                                Your browser does not support the video tag.
+                                <span data-i18n="file.preview.videoNotSupported">Your browser does not support the video
+                                    tag.</span>
                             </video>
 
                             <!-- PDF Preview -->
@@ -193,11 +199,14 @@
                                     class="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
                                     <i class="fas fa-file-word text-4xl text-blue-500"></i>
                                 </div>
-                                <p class="text-xl font-semibold text-gray-600 mb-2">Document File</p>
-                                <p class="text-gray-500 mb-4">This document cannot be previewed in browser</p>
+                                <p class="text-xl font-semibold text-gray-600 mb-2"
+                                    data-i18n="file.preview.documentFile">Document File</p>
+                                <p class="text-gray-500 mb-4" data-i18n="file.preview.cannotPreview">This document
+                                    cannot be previewed in browser</p>
                                 <button onclick="downloadFile()"
                                     class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary-dark transition shadow-lg">
-                                    <i class="fas fa-download mr-2"></i>Download to View
+                                    <i class="fas fa-download mr-2"></i><span
+                                        data-i18n="file.preview.downloadToView">Download to View</span>
                                 </button>
                             </div>
                         </div>
@@ -207,11 +216,12 @@
                     <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-lg font-bold text-gray-800">
-                                <i class="fas fa-info-circle text-primary mr-2"></i>Description
+                                <i class="fas fa-info-circle text-primary mr-2"></i><span
+                                    data-i18n="file.description.title">Description</span>
                             </h3>
                             <button id="editDescBtn" onclick="toggleEditDescription()"
                                 class="hidden text-primary hover:text-primary-dark text-sm">
-                                <i class="fas fa-edit mr-1"></i>Edit
+                                <i class="fas fa-edit mr-1"></i><span data-i18n="file.description.edit">Edit</span>
                             </button>
                         </div>
                         <p id="fileDescription" class="text-gray-600 leading-relaxed">
@@ -221,15 +231,16 @@
                         <div id="editDescForm" class="hidden">
                             <textarea id="descriptionInput"
                                 class="w-full p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                rows="4" placeholder="Write a description for this file..."></textarea>
+                                rows="4" data-i18n-placeholder="file.description.placeholder"></textarea>
                             <div class="flex justify-end gap-2 mt-2">
                                 <button onclick="cancelEditDescription()"
-                                    class="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
+                                    class="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm"
+                                    data-i18n="file.description.cancel">
                                     Cancel
                                 </button>
                                 <button onclick="saveDescription()"
                                     class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark text-sm">
-                                    <i class="fas fa-save mr-1"></i>Save
+                                    <i class="fas fa-save mr-1"></i><span data-i18n="file.description.save">Save</span>
                                 </button>
                             </div>
                         </div>
@@ -241,13 +252,15 @@
                     <!-- File Info Card -->
                     <div class="bg-white rounded-2xl shadow-lg p-6">
                         <h3 class="text-lg font-bold text-gray-800 mb-4">
-                            <i class="fas fa-file-invoice text-primary mr-2"></i>File Information
+                            <i class="fas fa-file-invoice text-primary mr-2"></i><span data-i18n="file.info.title">File
+                                Information</span>
                         </h3>
 
                         <!-- Average Rating from all users -->
                         <div class="mb-4 pb-4 border-b">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-gray-600">Knowledge Rating</span>
+                                <span class="text-gray-600" data-i18n="file.info.knowledgeRating">Knowledge
+                                    Rating</span>
                                 <div class="flex items-center gap-2">
                                     <div class="flex items-center gap-0.5" id="avgRatingStars">
                                         <i class="far fa-star text-lg text-gray-300"></i>
@@ -260,14 +273,15 @@
                                 </div>
                             </div>
                             <div class="text-xs text-gray-400 text-right">
-                                <span id="totalRatings">0</span> ratings
+                                <span id="totalRatings">0</span> <span data-i18n="file.info.ratings">ratings</span>
                             </div>
                         </div>
 
                         <!-- File Details -->
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-500"><i class="fas fa-user-circle mr-2"></i>Uploaded by</span>
+                                <span class="text-gray-500"><i class="fas fa-user-circle mr-2"></i><span
+                                        data-i18n="file.info.uploadedBy">Uploaded by</span></span>
                                 <div class="flex items-center gap-2">
                                     <!-- Uploader Avatar (rectangular/square) -->
                                     <div id="uploaderAvatar"
@@ -279,15 +293,18 @@
                             </div>
 
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-500"><i class="fas fa-calendar mr-2"></i>Upload Date</span>
+                                <span class="text-gray-500"><i class="fas fa-calendar mr-2"></i><span
+                                        data-i18n="file.info.uploadDate">Upload Date</span></span>
                                 <span id="uploadDate" class="text-gray-800">-</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-500"><i class="fas fa-file mr-2"></i>File Type</span>
+                                <span class="text-gray-500"><i class="fas fa-file mr-2"></i><span
+                                        data-i18n="file.info.fileType">File Type</span></span>
                                 <span id="fileExtension" class="text-gray-800 uppercase">-</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-500"><i class="fas fa-weight mr-2"></i>File Size</span>
+                                <span class="text-gray-500"><i class="fas fa-weight mr-2"></i><span
+                                        data-i18n="file.info.fileSize">File Size</span></span>
                                 <span id="fileSize" class="text-gray-800">-</span>
                             </div>
                         </div>
@@ -296,7 +313,8 @@
                     <!-- Comments Section -->
                     <div class="bg-white rounded-2xl shadow-lg p-6">
                         <h3 class="text-lg font-bold text-gray-800 mb-4">
-                            <i class="fas fa-comments text-primary mr-2"></i>Comments
+                            <i class="fas fa-comments text-primary mr-2"></i><span
+                                data-i18n="file.comments.title">Comments</span>
                             <span id="commentCount" class="text-sm font-normal text-gray-500 ml-2">(0)</span>
                         </h3>
 
@@ -308,12 +326,13 @@
                                     <span id="commentUserInitial" class="text-white font-bold">S</span>
                                 </div>
                                 <div class="flex-1">
-                                    <textarea id="commentInput" placeholder="Share your thoughts about this file..."
+                                    <textarea id="commentInput" data-i18n-placeholder="file.comments.placeholder"
                                         class="w-full p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
                                         rows="3"></textarea>
                                     <div class="flex items-center justify-between mt-2">
                                         <div class="flex items-center gap-2 text-sm">
-                                            <span class="text-gray-500">Your rating:</span>
+                                            <span class="text-gray-500" data-i18n="file.comments.yourRating">Your
+                                                rating:</span>
                                             <div id="commentRating" class="flex gap-1">
                                                 <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
                                                     onclick="setCommentRating(1)"></i>
@@ -326,12 +345,14 @@
                                                 <i class="far fa-star text-lg text-gray-300 cursor-pointer hover:text-yellow-400 transition"
                                                     onclick="setCommentRating(5)"></i>
                                             </div>
-                                            <span id="commentRatingError" class="text-red-500 text-xs hidden">Rate 1-3
+                                            <span id="commentRatingError" class="text-red-500 text-xs hidden"
+                                                data-i18n="file.comments.ratingError">Rate 1-3
                                                 stars minimum!</span>
                                         </div>
                                         <button onclick="addComment()"
                                             class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark text-sm transition">
-                                            <i class="fas fa-paper-plane mr-1"></i>Post
+                                            <i class="fas fa-paper-plane mr-1"></i><span
+                                                data-i18n="file.comments.post">Post</span>
                                         </button>
                                     </div>
                                 </div>
@@ -404,7 +425,17 @@
                         commentUserInitial.textContent = initial;
                     }
                 }
+
+                // Load file
+                loadFile();
             });
+
+            // Listen for language changes and reload file to regenerate dynamic content with new translations
+            window.addEventListener('languageChanged', () => {
+                // Reload file to regenerate all dynamic content with translations
+                loadFile();
+            });
+
 
             // Get parameters from URL
 
@@ -463,30 +494,30 @@
             // Get file type name
             function getFileTypeName(extension, fileType) {
                 // Check file type first (from upload)
-                if (fileType === 'video') return 'Video';
-                if (fileType === 'document') return 'Document';
+                if (fileType === 'video') return t('file.fileTypes.video');
+                if (fileType === 'document') return t('file.fileTypes.document');
 
                 const types = {
-                    'pdf': 'PDF Document',
-                    'doc': 'Word Document',
-                    'docx': 'Word Document',
-                    'xls': 'Excel Spreadsheet',
-                    'xlsx': 'Excel Spreadsheet',
-                    'ppt': 'PowerPoint',
-                    'pptx': 'PowerPoint',
-                    'png': 'Image',
-                    'jpg': 'Image',
-                    'jpeg': 'Image',
-                    'gif': 'Image',
-                    'mp4': 'Video',
-                    'avi': 'Video',
-                    'mov': 'Video',
-                    'mkv': 'Video',
-                    'webm': 'Video',
-                    'wmv': 'Video',
-                    'flv': 'Video'
+                    'pdf': t('file.fileTypes.pdfDocument'),
+                    'doc': t('file.fileTypes.wordDocument'),
+                    'docx': t('file.fileTypes.wordDocument'),
+                    'xls': t('file.fileTypes.excelSpreadsheet'),
+                    'xlsx': t('file.fileTypes.excelSpreadsheet'),
+                    'ppt': t('file.fileTypes.powerpoint'),
+                    'pptx': t('file.fileTypes.powerpoint'),
+                    'png': t('file.fileTypes.image'),
+                    'jpg': t('file.fileTypes.image'),
+                    'jpeg': t('file.fileTypes.image'),
+                    'gif': t('file.fileTypes.image'),
+                    'mp4': t('file.fileTypes.video'),
+                    'avi': t('file.fileTypes.video'),
+                    'mov': t('file.fileTypes.video'),
+                    'mkv': t('file.fileTypes.video'),
+                    'webm': t('file.fileTypes.video'),
+                    'wmv': t('file.fileTypes.video'),
+                    'flv': t('file.fileTypes.video')
                 };
-                return types[extension?.toLowerCase()] || 'File';
+                return types[extension?.toLowerCase()] || t('file.fileTypes.file');
             }
 
             // Course data for breadcrumb
@@ -566,7 +597,7 @@
                     // Update file info
                     document.getElementById('fileName').textContent = file.title;
                     document.getElementById('fileBreadcrumb').textContent = file.title;
-                    document.getElementById('fileDescription').textContent = file.description || 'No description available for this file.';
+                    document.getElementById('fileDescription').textContent = file.description || t('file.description.noDescription');
                     document.title = file.title + ' - Tsharok';
 
                     // Update file info
@@ -644,10 +675,10 @@
                     <div class="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
                         <i class="fas ${file.type === 'video' ? 'fa-video' : 'fa-file-alt'} text-4xl text-gray-400"></i>
                     </div>
-                    <p class="text-xl font-semibold text-gray-600 mb-2">${file.type === 'video' ? 'Video' : 'File'} Content</p>
-                    <p class="text-gray-500 mb-4">File is too large to preview in browser</p>
-                    <p class="text-sm text-gray-400">(Browser storage limit: ~5MB)</p>
-                    <p class="text-sm text-gray-400 mt-2">Original file: ${file.originalName || 'Unknown'}</p>
+                    <p class="text-xl font-semibold text-gray-600 mb-2">${file.type === 'video' ? t('file.fileTypes.video') : t('file.fileTypes.file')} ${t('file.preview.fileContent')}</p>
+                    <p class="text-gray-500 mb-4">${t('file.preview.fileTooLarge')}</p>
+                    <p class="text-sm text-gray-400">${t('file.preview.browserLimit')}</p>
+                    <p class="text-sm text-gray-400 mt-2">${t('file.preview.originalFile')} ${file.originalName || 'Unknown'}</p>
                 `;
                     placeholder.classList.remove('hidden');
                     return;

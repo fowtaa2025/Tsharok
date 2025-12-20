@@ -1,0 +1,63 @@
+{
+    "file": {
+        "breadcrumb": {
+            "dashboard": "Dashboard",
+            "course": "Course",
+            "file": "File"
+        },
+        "profile": {
+            "myProfile": "My Profile",
+            "settings": "Settings",
+            "logout": "Logout"
+        },
+        "header": {
+            "download": "Download",
+            "share": "Share"
+        },
+        "fileTypes": {
+            "video": "Video",
+            "document": "Document",
+            "pdfDocument": "PDF Document",
+            "wordDocument": "Word Document",
+            "excelSpreadsheet": "Excel Spreadsheet",
+            "powerpoint": "PowerPoint",
+            "image": "Image",
+            "file": "File"
+        },
+        "info": {
+            "title": "File Information",
+            "knowledgeRating": "Knowledge Rating",
+            "ratings": "ratings",
+            "uploadedBy": "Uploaded by",
+            "uploadDate": "Upload Date",
+            "fileType": "File Type",
+            "fileSize": "File Size"
+        },
+        "description": {
+            "title": "Description",
+            "edit": "Edit",
+            "noDescription": "No description available for this file.",
+            "placeholder": "Write a description for this file...",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "comments": {
+            "title": "Comments",
+            "placeholder": "Share your thoughts about this file...",
+            "yourRating": "Your rating:",
+            "ratingError": "Rate 1-3 stars minimum!",
+            "post": "Post"
+        },
+        "preview": {
+            "fileContent": "File Content",
+            "previewWillAppear": "Preview will appear here",
+            "videoNotSupported": "Your browser does not support the video tag.",
+            "documentFile": "Document File",
+            "cannotPreview": "This document cannot be previewed in browser",
+            "downloadToView": "Download to View",
+            "fileTooLarge": "File is too large to preview in browser",
+            "browserLimit": "(Browser storage limit: ~5MB)",
+            "originalFile": "Original file:"
+        }
+    }
+}
