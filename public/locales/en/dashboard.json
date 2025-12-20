@@ -1,0 +1,53 @@
+{
+    "dashboard": {
+        "nav": {
+            "arabic": "العربية"
+        },
+        "profile": {
+            "myProfile": "My Profile",
+            "settings": "Settings",
+            "logout": "Logout"
+        },
+        "search": {
+            "placeholder": "Search my courses..."
+        },
+        "courses": {
+            "title": "My courses",
+            "addCourse": "Add Course",
+            "noCourses": "No courses yet"
+        },
+        "notifications": {
+            "title": "Recent Notification",
+            "loading": "Loading notifications...",
+            "noNotifications": "No notifications yet",
+            "addCoursesInfo": "Add courses to receive notifications when new content is uploaded"
+        },
+        "calendar": {
+            "sun": "Sun",
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "todayTasks": "Today tasks"
+        },
+        "taskModal": {
+            "title": "Add Task",
+            "selectDate": "Select a date",
+            "taskTitle": "Task Title",
+            "required": "*",
+            "titlePlaceholder": "e.g., Submit assignment",
+            "description": "Description (Optional)",
+            "descriptionPlaceholder": "Add more details...",
+            "priority": "Priority",
+            "priorityNormal": "📘 Normal (Blue)",
+            "priorityMedium": "📙 Medium (Yellow)",
+            "priorityHigh": "📕 High (Red)",
+            "priorityLow": "📗 Low (Green)",
+            "cancel": "Cancel",
+            "addTask": "Add Task",
+            "tasksOnDay": "Tasks on this day:"
+        }
+    }
+}

@@ -150,7 +150,8 @@
                     <!-- Center - Search -->
                     <div class="flex-1 max-w-2xl mx-8">
                         <div class="relative">
-                            <input type="text" id="dashboardSearchInput" placeholder="Search my courses..."
+                            <input type="text" id="dashboardSearchInput"
+                                data-i18n-placeholder="dashboard.search.placeholder" placeholder="Search my courses..."
                                 class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                             <button id="clearDashboardSearch"
@@ -184,13 +185,13 @@
                                 <a href="profile.html"
                                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
                                     <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
-                                    <span>My Profile</span>
+                                    <span data-i18n="dashboard.profile.myProfile">My Profile</span>
                                 </a>
 
                                 <a href="settings.html"
                                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
                                     <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
-                                    <span>Settings</span>
+                                    <span data-i18n="dashboard.profile.settings">Settings</span>
                                 </a>
 
                                 <div class="border-t border-gray-200 my-2"></div>
@@ -198,12 +199,13 @@
                                 <a href="#" onclick="logout(); return false;"
                                     class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
                                     <i class="fas fa-sign-out-alt w-5 mr-3"></i>
-                                    <span>Logout</span>
+                                    <span data-i18n="dashboard.profile.logout">Logout</span>
                                 </a>
                             </div>
                         </div>
 
-                        <button onclick="toggleLanguage()" class="text-gray-700 hover:text-primary font-medium">
+                        <button onclick="toggleLanguage()" data-i18n="nav.arabic"
+                            class="text-gray-700 hover:text-primary font-medium">
                             عربي
                         </button>
                     </div>
@@ -216,7 +218,7 @@
             <!-- My Courses Section (Full Width) -->
             <section class="mb-8">
                 <div class="mb-4">
-                    <h2 class="text-xl font-semibold text-gray-900">My courses</h2>
+                    <h2 class="text-xl font-semibold text-gray-900" data-i18n="dashboard.courses.title">My courses</h2>
                 </div>
 
                 <div class="relative">
@@ -237,7 +239,8 @@
                                 class="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-2">
                                 <i class="fas fa-plus text-lg text-gray-400"></i>
                             </div>
-                            <p class="text-gray-500 text-base font-medium">Add Course</p>
+                            <p class="text-gray-500 text-base font-medium" data-i18n="dashboard.courses.addCourse">Add
+                                Course</p>
                         </a>
 
                         <!-- Course Cards - Loaded dynamically from user's added courses -->
@@ -249,7 +252,8 @@
                         <div id="no-courses-message"
                             class="hidden flex-shrink-0 w-64 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center py-4">
                             <i class="fas fa-book-open text-2xl text-gray-300 mb-2"></i>
-                            <p class="text-gray-400 text-base">No courses yet</p>
+                            <p class="text-gray-400 text-base" data-i18n="dashboard.courses.noCourses">No courses yet
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -267,7 +271,8 @@
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center">
                                 <i class="fas fa-bell text-2xl text-gray-700 mr-3"></i>
-                                <h2 class="text-xl font-semibold text-gray-900">Recent Notification</h2>
+                                <h2 class="text-xl font-semibold text-gray-900"
+                                    data-i18n="dashboard.notifications.title">Recent Notification</h2>
                             </div>
                             <span id="unreadBadge"
                                 class="hidden px-2 py-1 bg-red-500 text-white text-xs rounded-full"></span>
@@ -277,7 +282,7 @@
                             <!-- Notifications will be loaded dynamically -->
                             <div class="text-center py-8 text-gray-400">
                                 <i class="fas fa-spinner fa-spin text-4xl mb-3"></i>
-                                <p>Loading notifications...</p>
+                                <p data-i18n="dashboard.notifications.loading">Loading notifications...</p>
                             </div>
                         </div>
                     </div>
@@ -304,13 +309,13 @@
                         <!-- Calendar Grid -->
                         <div class="mb-6">
                             <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-500 mb-2">
-                                <div>Sun</div>
-                                <div>Mon</div>
-                                <div>Tue</div>
-                                <div>Wed</div>
-                                <div>Thu</div>
-                                <div>Fri</div>
-                                <div>Sat</div>
+                                <div data-i18n="dashboard.calendar.sun">Sun</div>
+                                <div data-i18n="dashboard.calendar.mon">Mon</div>
+                                <div data-i18n="dashboard.calendar.tue">Tue</div>
+                                <div data-i18n="dashboard.calendar.wed">Wed</div>
+                                <div data-i18n="dashboard.calendar.thu">Thu</div>
+                                <div data-i18n="dashboard.calendar.fri">Fri</div>
+                                <div data-i18n="dashboard.calendar.sat">Sat</div>
                             </div>
 
                             <div id="calendarDays" class="grid grid-cols-7 gap-2 text-center text-sm">
@@ -320,7 +325,8 @@
 
                         <!-- Today Tasks -->
                         <div>
-                            <h3 class="font-semibold text-gray-900 mb-3">Today tasks</h3>
+                            <h3 class="font-semibold text-gray-900 mb-3" data-i18n="dashboard.calendar.todayTasks">Today
+                                tasks</h3>
                             <ul id="todayTasks" class="space-y-2 text-sm text-gray-700">
                                 <!-- Tasks will be loaded dynamically -->
                             </ul>
@@ -490,44 +496,56 @@
                             class="inline-flex items-center justify-center w-16 h-16 bg-primary bg-opacity-10 rounded-full mb-4">
                             <i class="fas fa-calendar-plus text-3xl text-primary"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Add Task</h2>
-                        <p class="text-gray-600" id="modalDate">Select a date</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2" data-i18n="dashboard.taskModal.title">Add Task
+                        </h2>
+                        <p class="text-gray-600" id="modalDate" data-i18n="dashboard.taskModal.selectDate">Select a date
+                        </p>
                     </div>
 
                     <form id="taskForm" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Task Title <span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2"><span
+                                    data-i18n="dashboard.taskModal.taskTitle">Task Title</span> <span
+                                    class="text-red-500" data-i18n="dashboard.taskModal.required">*</span></label>
                             <input type="text" id="taskTitle"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                data-i18n-placeholder="dashboard.taskModal.titlePlaceholder"
                                 placeholder="e.g., Submit assignment" required>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2"
+                                data-i18n="dashboard.taskModal.description">Description (Optional)</label>
                             <textarea id="taskDescription" rows="3"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                data-i18n-placeholder="dashboard.taskModal.descriptionPlaceholder"
                                 placeholder="Add more details..."></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2"
+                                data-i18n="dashboard.taskModal.priority">Priority</label>
                             <select id="taskPriority"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition">
-                                <option value="blue">📘 Normal (Blue)</option>
-                                <option value="yellow">📙 Medium (Yellow)</option>
-                                <option value="red">📕 High (Red)</option>
-                                <option value="green">📗 Low (Green)</option>
+                                <option value="blue" data-i18n="dashboard.taskModal.priorityNormal">📘 Normal (Blue)
+                                </option>
+                                <option value="yellow" data-i18n="dashboard.taskModal.priorityMedium">📙 Medium (Yellow)
+                                </option>
+                                <option value="red" data-i18n="dashboard.taskModal.priorityHigh">📕 High (Red)</option>
+                                <option value="green" data-i18n="dashboard.taskModal.priorityLow">📗 Low (Green)
+                                </option>
                             </select>
                         </div>
 
                         <div class="flex gap-3 mt-6">
                             <button type="button" onclick="closeTaskModal()"
-                                class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition">
+                                class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
+                                data-i18n="dashboard.taskModal.cancel">
                                 Cancel
                             </button>
                             <button type="submit"
-                                class="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition">
+                                class="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
+                                data-i18n="dashboard.taskModal.addTask">
                                 Add Task
                             </button>
                         </div>
@@ -536,7 +554,8 @@
                     <!-- Existing Tasks for Selected Date -->
                     <div id="existingTasks" class="mt-6 hidden">
                         <div class="border-t pt-4">
-                            <h3 class="font-semibold text-gray-900 mb-3">Tasks on this day:</h3>
+                            <h3 class="font-semibold text-gray-900 mb-3" data-i18n="dashboard.taskModal.tasksOnDay">
+                                Tasks on this day:</h3>
                             <div id="tasksList" class="space-y-2"></div>
                         </div>
                     </div>
@@ -544,6 +563,7 @@
             </div>
         </div>
 
+        <script src="../assets/js/i18n.js"></script>
         <script src="../assets/js/session.js"></script>
         <script src="../assets/js/dashboard.js"></script>
         <script src="../assets/js/background-styles.js"></script>
@@ -553,6 +573,11 @@
                 if (authenticated) {
                     loadDashboardData();
                 }
+            });
+
+            // Listen for language changes and reload dashboard
+            window.addEventListener('languageChanged', () => {
+                loadDashboardData();
             });
 
             async function loadDashboardData() {
@@ -762,8 +787,8 @@
                     container.innerHTML = `
                     <div class="text-center py-8 text-gray-400">
                         <i class="fas fa-bell-slash text-4xl mb-3"></i>
-                        <p>No notifications yet</p>
-                        <p class="text-xs mt-1">Add courses to receive notifications when new content is uploaded</p>
+                        <p data-i18n="dashboard.notifications.noNotifications">${t('dashboard.notifications.noNotifications')}</p>
+                        <p class="text-xs mt-1" data-i18n="dashboard.notifications.addCoursesInfo">${t('dashboard.notifications.addCoursesInfo')}</p>
                     </div>
                 `;
                     return;

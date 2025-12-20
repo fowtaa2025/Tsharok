@@ -72,7 +72,7 @@ let currentLanguage = localStorage.getItem('language') || 'en';
  * @returns {Promise<Object>} - Merged translations object
  */
 async function loadTranslations(lang) {
-    const files = ['common', 'auth', 'courses', 'admin', 'file', 'addcourse'];
+    const files = ['common', 'auth', 'courses', 'admin', 'file', 'addcourse', 'dashboard'];
     const mergedTranslations = {};
 
     try {
