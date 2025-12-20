@@ -14,7 +14,7 @@
     function createMobileChatbot() {
         const chatbotHTML = `
             <!-- Mobile Floating Chatbot Button -->
-            <div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50 xl:hidden">
+            <div id="mobileChatbotButton" class="fixed bottom-6 right-6 z-50 lg:hidden">
                 <button onclick="toggleMobileChatbot()"
                     class="w-16 h-16 bg-primary rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
                     <i class="fas fa-robot text-2xl"></i>
