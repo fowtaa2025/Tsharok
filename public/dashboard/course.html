@@ -164,7 +164,9 @@
                     <!-- Center - Search -->
                     <div class="flex-1 max-w-2xl mx-8">
                         <div class="relative">
-                            <input type="text" id="courseSearchInput" placeholder="Search files in this course..."
+                            <input type="text" id="courseSearchInput"
+                                data-i18n-placeholder="courses.nav.searchPlaceholder"
+                                placeholder="Search files in this course..."
                                 class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                             <button id="clearCourseSearch"
@@ -198,13 +200,13 @@
                                 <a href="profile.html"
                                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
                                     <i class="fas fa-user-circle w-5 mr-3 text-gray-600"></i>
-                                    <span>My Profile</span>
+                                    <span data-i18n="courses.nav.myProfile">My Profile</span>
                                 </a>
 
                                 <a href="settings.html"
                                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition">
                                     <i class="fas fa-cog w-5 mr-3 text-gray-600"></i>
-                                    <span>Settings</span>
+                                    <span data-i18n="courses.nav.settings">Settings</span>
                                 </a>
 
                                 <div class="border-t border-gray-200 my-2"></div>
@@ -212,7 +214,7 @@
                                 <a href="#" onclick="logout(); return false;"
                                     class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition">
                                     <i class="fas fa-sign-out-alt w-5 mr-3"></i>
-                                    <span>Logout</span>
+                                    <span data-i18n="courses.nav.logout">Logout</span>
                                 </a>
                             </div>
                         </div>
@@ -238,7 +240,8 @@
                             </div>
                             <div>
                                 <h1 id="courseName" class="text-3xl font-bold">Loading...</h1>
-                                <p class="text-white/70 text-sm">Course Materials</p>
+                                <p class="text-white/70 text-sm" data-i18n="courses.header.courseMaterials">Course
+                                    Materials</p>
                             </div>
                         </div>
                         <div id="descriptionBox" class="bg-white/10 backdrop-blur-sm rounded-xl p-5 max-w-2xl mt-4">
@@ -248,7 +251,8 @@
                     <div class="text-right ml-8">
                         <div class="knowledge-badge rounded-xl px-5 py-3 inline-flex items-center gap-3">
                             <div class="text-left">
-                                <p class="text-xs text-amber-700 font-medium">Knowledge Rating</p>
+                                <p class="text-xs text-amber-700 font-medium"
+                                    data-i18n="courses.header.knowledgeRating">Knowledge Rating</p>
                                 <p id="courseRating" class="text-2xl font-bold text-amber-600">0.0<span
                                         class="rating-star">★</span></p>
                             </div>
@@ -263,12 +267,12 @@
                     <button id="docsTab" onclick="switchTab('documents')"
                         class="px-8 py-3 font-semibold tab-active rounded-xl flex items-center gap-2 transition-all">
                         <i class="fas fa-file-alt"></i>
-                        <span>Documents</span>
+                        <span data-i18n="courses.tabs.documents">Documents</span>
                     </button>
                     <button id="videoTab" onclick="switchTab('video')"
                         class="px-8 py-3 font-semibold tab-inactive rounded-xl flex items-center gap-2 transition-all">
                         <i class="fas fa-video"></i>
-                        <span>Videos</span>
+                        <span data-i18n="courses.tabs.videos">Videos</span>
                     </button>
                 </div>
             </div>
@@ -276,15 +280,16 @@
             <!-- Filter/Sort Dropdown -->
             <div class="flex justify-end mb-6">
                 <div class="relative">
-                    <label class="text-sm text-gray-600 font-medium mr-2">Sort by:</label>
+                    <label class="text-sm text-gray-600 font-medium mr-2" data-i18n="courses.sort.sortBy">Sort
+                        by:</label>
                     <select id="sortFilter" onchange="applyFilter(this.value)"
                         class="px-4 py-2 pr-10 border-2 border-gray-200 rounded-xl bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition cursor-pointer hover:border-indigo-300">
-                        <option value="newest">🕐 Newest First</option>
-                        <option value="oldest">🕐 Oldest First</option>
-                        <option value="a-z">📝 A to Z</option>
-                        <option value="z-a">📝 Z to A</option>
-                        <option value="highest-rating">⭐ Highest Rating</option>
-                        <option value="lowest-rating">⭐ Lowest Rating</option>
+                        <option value="newest" data-i18n="courses.sort.newest">🕐 Newest First</option>
+                        <option value="oldest" data-i18n="courses.sort.oldest">🕐 Oldest First</option>
+                        <option value="a-z" data-i18n="courses.sort.az">📝 A to Z</option>
+                        <option value="z-a" data-i18n="courses.sort.za">📝 Z to A</option>
+                        <option value="highest-rating" data-i18n="courses.sort.highestRating">⭐ Highest Rating</option>
+                        <option value="lowest-rating" data-i18n="courses.sort.lowestRating">⭐ Lowest Rating</option>
                     </select>
                 </div>
             </div>
@@ -299,8 +304,9 @@
                             class="add-icon w-16 h-16 rounded-2xl bg-white border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 shadow-sm">
                             <i class="fas fa-plus text-gray-400 text-2xl group-hover:text-white"></i>
                         </div>
-                        <p class="text-gray-600 font-semibold">Add Document</p>
-                        <p class="text-gray-400 text-xs mt-1">PDF, DOCX, Images</p>
+                        <p class="text-gray-600 font-semibold" data-i18n="courses.addFile.addDocument">Add Document</p>
+                        <p class="text-gray-400 text-xs mt-1" data-i18n="courses.addFile.documentTypes">PDF, DOCX,
+                            Images</p>
                     </div>
 
                     <!-- File Cards will be loaded dynamically -->
@@ -318,8 +324,8 @@
                             class="add-icon w-16 h-16 rounded-2xl bg-white border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 shadow-sm">
                             <i class="fas fa-video text-gray-400 text-2xl group-hover:text-white"></i>
                         </div>
-                        <p class="text-gray-600 font-semibold">Add Video</p>
-                        <p class="text-gray-400 text-xs mt-1">MP4, AVI, MOV</p>
+                        <p class="text-gray-600 font-semibold" data-i18n="courses.addFile.addVideo">Add Video</p>
+                        <p class="text-gray-400 text-xs mt-1" data-i18n="courses.addFile.videoTypes">MP4, AVI, MOV</p>
                     </div>
 
                     <!-- Video Cards will be loaded dynamically -->
@@ -341,8 +347,10 @@
                             <i id="modalIcon" class="fas fa-file-upload text-white text-xl"></i>
                         </div>
                         <div>
-                            <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Add New File</h3>
-                            <p class="text-sm text-gray-500">Share materials with your classmates</p>
+                            <h3 id="modalTitle" class="text-xl font-bold text-gray-800"
+                                data-i18n="courses.uploadModal.title">Add New File</h3>
+                            <p class="text-sm text-gray-500" data-i18n="courses.uploadModal.subtitle">Share materials
+                                with your classmates</p>
                         </div>
                     </div>
                     <button onclick="closeModal()"
@@ -355,28 +363,34 @@
                     <!-- File Name Input -->
                     <div class="mb-5">
                         <label class="block text-gray-700 font-semibold mb-2">
-                            <i class="fas fa-tag mr-2 text-indigo-500"></i>File Name
+                            <i class="fas fa-tag mr-2 text-indigo-500"></i><span
+                                data-i18n="courses.uploadModal.fileNameLabel">File Name</span>
                         </label>
                         <input type="text" id="fileName" required
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            data-i18n-placeholder="courses.uploadModal.fileNamePlaceholder"
                             placeholder="Enter a name for this file">
                     </div>
 
                     <!-- Description Input -->
                     <div class="mb-5">
                         <label class="block text-gray-700 font-semibold mb-2">
-                            <i class="fas fa-align-left mr-2 text-indigo-500"></i>Description
-                            <span class="text-gray-400 font-normal text-sm">(optional)</span>
+                            <i class="fas fa-align-left mr-2 text-indigo-500"></i><span
+                                data-i18n="courses.uploadModal.descriptionLabel">Description</span>
+                            <span class="text-gray-400 font-normal text-sm"
+                                data-i18n="courses.uploadModal.descriptionOptional">(optional)</span>
                         </label>
                         <textarea id="fileDescription"
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none transition"
-                            rows="3" placeholder="Describe what this file contains..."></textarea>
+                            rows="3" data-i18n-placeholder="courses.uploadModal.descriptionPlaceholder"
+                            placeholder="Describe what this file contains..."></textarea>
                     </div>
 
                     <!-- Upload Box -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">
-                            <i class="fas fa-upload mr-2 text-indigo-500"></i>Upload File
+                            <i class="fas fa-upload mr-2 text-indigo-500"></i><span
+                                data-i18n="courses.uploadModal.uploadLabel">Upload File</span>
                         </label>
                         <div id="uploadBox"
                             class="upload-box border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer hover:border-indigo-500 transition">
@@ -386,8 +400,10 @@
                                     class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
                                     <i id="uploadIcon" class="fas fa-cloud-upload-alt text-3xl text-indigo-500"></i>
                                 </div>
-                                <p class="text-gray-700 font-medium">Click to upload or drag and drop</p>
-                                <p id="acceptedFormats" class="text-sm text-gray-400 mt-2">Accepted: PDF, PNG, DOCX, PPT
+                                <p class="text-gray-700 font-medium" data-i18n="courses.uploadModal.uploadText">Click to
+                                    upload or drag and drop</p>
+                                <p id="acceptedFormats" class="text-sm text-gray-400 mt-2"
+                                    data-i18n="courses.uploadModal.acceptedFormats">Accepted: PDF, PNG, DOCX, PPT
                                 </p>
                                 <p id="selectedFileName" class="text-indigo-600 font-semibold mt-3"></p>
                                 <p id="fileError" class="text-red-500 text-sm mt-2 hidden"></p>
@@ -398,18 +414,20 @@
                     <!-- Action Buttons -->
                     <div class="flex gap-4">
                         <button type="button" onclick="closeModal()"
-                            class="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">
+                            class="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition"
+                            data-i18n="courses.uploadModal.cancel">
                             Cancel
                         </button>
                         <button type="submit" id="uploadBtn"
                             class="flex-1 px-6 py-3 btn-gradient text-white rounded-xl font-semibold shadow-lg">
-                            <i class="fas fa-upload mr-2"></i>Upload
+                            <i class="fas fa-upload mr-2"></i><span data-i18n="courses.uploadModal.upload">Upload</span>
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <script src="../assets/js/i18n.js"></script>
         <script src="../assets/js/session.js"></script>
         <script src="../assets/js/background-styles.js"></script>
         <script>

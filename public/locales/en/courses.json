@@ -1,0 +1,48 @@
+{
+    "courses": {
+        "nav": {
+            "searchPlaceholder": "Search files in this course...",
+            "myProfile": "My Profile",
+            "settings": "Settings",
+            "logout": "Logout"
+        },
+        "header": {
+            "courseMaterials": "Course Materials",
+            "knowledgeRating": "Knowledge Rating"
+        },
+        "tabs": {
+            "documents": "Documents",
+            "videos": "Videos"
+        },
+        "sort": {
+            "sortBy": "Sort by:",
+            "newest": "🕐 Newest First",
+            "oldest": "🕐 Oldest First",
+            "az": "📝 A to Z",
+            "za": "📝 Z to A",
+            "highestRating": "⭐ Highest Rating",
+            "lowestRating": "⭐ Lowest Rating"
+        },
+        "addFile": {
+            "addDocument": "Add Document",
+            "addVideo": "Add Video",
+            "documentTypes": "PDF, DOCX, Images",
+            "videoTypes": "MP4, AVI, MOV"
+        },
+        "uploadModal": {
+            "title": "Add New File",
+            "subtitle": "Share materials with your classmates",
+            "fileNameLabel": "File Name",
+            "fileNamePlaceholder": "Enter a name for this file",
+            "descriptionLabel": "Description",
+            "descriptionOptional": "(optional)",
+            "descriptionPlaceholder": "Describe what this file contains...",
+            "uploadLabel": "Upload File",
+            "uploadText": "Click to upload or drag and drop",
+            "acceptedFormats": "Accepted: PDF, PNG, DOCX, PPT",
+            "acceptedFormatsVideo": "Accepted: MP4, AVI, MOV",
+            "cancel": "Cancel",
+            "upload": "Upload"
+        }
+    }
+}

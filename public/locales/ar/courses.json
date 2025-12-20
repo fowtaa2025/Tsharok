@@ -1,0 +1,48 @@
+{
+    "courses": {
+        "nav": {
+            "searchPlaceholder": "ابحث عن الملفات في هذه المادة...",
+            "myProfile": "ملفي الشخصي",
+            "settings": "الإعدادات",
+            "logout": "تسجيل الخروج"
+        },
+        "header": {
+            "courseMaterials": "مواد الدورة",
+            "knowledgeRating": "تقييم المعرفة"
+        },
+        "tabs": {
+            "documents": "المستندات",
+            "videos": "الفيديوهات"
+        },
+        "sort": {
+            "sortBy": "الترتيب حسب:",
+            "newest": "🕐 الأحدث أولاً",
+            "oldest": "🕐 الأقدم أولاً",
+            "az": "📝 من أ إلى ي",
+            "za": "📝 من ي إلى أ",
+            "highestRating": "⭐ الأعلى تقييماً",
+            "lowestRating": "⭐ الأقل تقييماً"
+        },
+        "addFile": {
+            "addDocument": "إضافة مستند",
+            "addVideo": "إضافة فيديو",
+            "documentTypes": "PDF, DOCX, صور",
+            "videoTypes": "MP4, AVI, MOV"
+        },
+        "uploadModal": {
+            "title": "إضافة ملف جديد",
+            "subtitle": "شارك المواد مع زملائك",
+            "fileNameLabel": "اسم الملف",
+            "fileNamePlaceholder": "أدخل اسماً لهذا الملف",
+            "descriptionLabel": "الوصف",
+            "descriptionOptional": "(اختياري)",
+            "descriptionPlaceholder": "اوصف محتوى هذا الملف...",
+            "uploadLabel": "رفع الملف",
+            "uploadText": "انقر للرفع أو اسحب وأفلت",
+            "acceptedFormats": "المسموح: PDF, PNG, DOCX, PPT",
+            "acceptedFormatsVideo": "المسموح: MP4, AVI, MOV",
+            "cancel": "إلغاء",
+            "upload": "رفع"
+        }
+    }
+}
