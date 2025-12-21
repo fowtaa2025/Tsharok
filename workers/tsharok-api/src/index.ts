@@ -737,3 +737,478 @@ async function handleGetRatings(request: Request, env: Env, corsHeaders: Record<
 		);
 	}
 }
+
+/**
+ * Handle GET /api/comments
+ * Get reviews/comments for a content item with pagination
+ */
+async function handleGetComments(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const contentId = url.searchParams.get('contentId');
+const page = parseInt(url.searchParams.get('page') || '1');
+const limit = parseInt(url.searchParams.get('limit') || '10');
+const userIdParam = url.searchParams.get('userId') || '0';
+const userId = getUserIdFromToken(userIdParam) || 0;
+
+if (!contentId) {
+return new Response(
+JSON.stringify({ success: false, message: 'contentId parameter is required' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+
+try {
+const offset = (page - 1) * limit;
+const query = `
+SELECT 
+c.id, c.content, c.created_at, c.updated_at,
+u.user_id, u.username,
+u.first_name || ' ' || u.last_name as user_name,
+u.profile_image as user_avatar,
+r.score,
+CASE WHEN c.user_id = ? THEN 1 ELSE 0 END as is_own_comment,
+(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes,
+CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 1 ELSE 0 END as likedByMe
+FROM comments c
+INNER JOIN users u ON c.user_id = u.user_id
+LEFT JOIN ratings r ON c.user_id = r.user_id AND c.content_id = r.content_id
+WHERE c.content_id = ?
+ORDER BY 
+CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 0 ELSE 1 END,
+c.created_at DESC
+LIMIT ? OFFSET ?
+`;
+
+const params = [userId, userId, contentId, userId, limit + 1, offset];
+const result = await env.DB.prepare(query).bind(...params).all();
+const comments = result.results as any[];
+const hasMore = comments.length > limit;
+
+if (hasMore) {
+comments.pop();
+}
+
+for (const comment of comments) {
+const repliesResult = await env.DB.prepare(`
+SELECT cr.id, cr.content as text, cr.created_at,
+u.first_name || ' ' || u.last_name as author, u.username
+FROM comment_replies cr
+JOIN users u ON cr.user_id = u.user_id
+WHERE cr.comment_id = ?
+ORDER BY cr.created_at ASC
+`).bind(comment.id).all();
+comment.replies = repliesResult.results || [];
+}
+
+const formattedComments = comments.map((comment) => ({
+id: comment.id,
+userName: comment.user_name,
+username: comment.username,
+userAvatar: comment.user_avatar,
+score: comment.score || 0,
+content: comment.content,
+createdAt: comment.created_at,
+updatedAt: comment.updated_at,
+isOwnComment: Boolean(comment.is_own_comment),
+likes: comment.likes || 0,
+likedByMe: Boolean(comment.likedByMe),
+replies: (comment.replies || []).map((reply: any) => ({
+id: reply.id,
+text: reply.text,
+author: reply.author,
+username: reply.username,
+createdAt: reply.created_at,
+})),
+}));
+
+return new Response(
+JSON.stringify({
+success: true,
+message: 'Comments retrieved successfully',
+data: { comments: formattedComments, hasMore, page, limit },
+}),
+{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+} catch (error: any) {
+console.error('Get comments error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Failed to retrieve comments', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+
+/**
+ * Handle POST /api/comments/add
+ * Add a new rating and comment for content
+ */
+async function handleAddComment(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const data = (await request.json()) as any;
+
+		// Validate required fields
+		if (!data.userId || !data.contentId || !data.score || !data.content) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing required fields: userId, contentId, score, content' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		const userId = parseInt(data.userId);
+		const contentId = parseInt(data.contentId);
+		const score = parseFloat(data.score);
+		const content = data.content.trim();
+
+		// Validate score
+		if (score < 0 || score > 5) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Score must be between 0 and 5' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Validate content length
+		if (content.length < 1 || content.length > 5000) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Comment must be between 1 and 5000 characters' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if user has already rated this content
+		const existingRating = await env.DB.prepare(`SELECT id FROM ratings WHERE user_id = ? AND content_id = ?`)
+			.bind(userId, contentId)
+			.first();
+
+		if (existingRating) {
+			// Update existing rating
+			await env.DB.prepare(`UPDATE ratings SET score = ?, updated_at = datetime('now') WHERE user_id = ? AND content_id = ?`)
+				.bind(score, userId, contentId)
+				.run();
+		} else {
+			// Insert new rating
+			await env.DB.prepare(`INSERT INTO ratings (user_id, content_id, score, created_at) VALUES (?, ?, ?, datetime('now'))`)
+				.bind(userId, contentId, score)
+				.run();
+		}
+
+		// Insert comment
+		const commentResult = await env.DB.prepare(
+			`INSERT INTO comments (user_id, content_id, content, created_at) VALUES (?, ?, ?, datetime('now'))`
+		)
+			.bind(userId, contentId, content)
+			.run();
+
+		const commentId = commentResult.meta.last_row_id;
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Rating and comment submitted successfully',
+				data: {
+					commentId: commentId,
+				},
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Add comment error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to submit rating and comment', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/comments/like
+ * Toggle like on a comment
+ */
+async function handleCommentLike(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const authHeader = request.headers.get('Authorization');
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'Authentication required' }),
+			{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		const data = await request.json() as any;
+		const commentId = data.commentId;
+		const token = authHeader.substring(7);
+		const userId = getUserIdFromToken(token);
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Invalid token' }),
+				{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (!commentId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'commentId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if comment exists
+		const commentExists = await env.DB.prepare('SELECT id FROM comments WHERE id = ?')
+			.bind(commentId)
+			.first();
+
+		if (!commentExists) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Comment not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if user already liked
+		const existingLike = await env.DB.prepare(
+			'SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?'
+		)
+			.bind(commentId, userId)
+			.first();
+
+		let liked = false;
+		if (existingLike) {
+			// Unlike - remove like
+			await env.DB.prepare('DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?')
+				.bind(commentId, userId)
+				.run();
+			liked = false;
+		} else {
+			// Like - add like
+			await env.DB.prepare(
+				"INSERT INTO comment_likes (comment_id, user_id, created_at) VALUES (?, ?, datetime('now'))"
+			)
+				.bind(commentId, userId)
+				.run();
+			liked = true;
+		}
+
+		// Get updated like count
+		const likeCountResult = await env.DB.prepare(
+			'SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?'
+		)
+			.bind(commentId)
+			.first();
+
+		const likeCount = (likeCountResult as any).count || 0;
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				liked: liked,
+				likes: likeCount,
+				message: liked ? 'Comment liked' : 'Comment unliked',
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Comment like error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to toggle like', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/comments/reply
+ * Add a reply to a comment
+ */
+async function handleCommentReply(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const authHeader = request.headers.get('Authorization');
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'Authentication required' }),
+			{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		const data = await request.json() as any;
+		const commentId = data.commentId;
+		const text = data.text?.trim();
+		const token = authHeader.substring(7);
+		const userId = getUserIdFromToken(token);
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Invalid token' }),
+				{ status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (!commentId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'commentId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (!text) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Reply text is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (text.length > 1000) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Reply text is too long (max 1000 characters)' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if comment exists
+		const commentExists = await env.DB.prepare('SELECT id FROM comments WHERE id = ?')
+			.bind(commentId)
+			.first();
+
+		if (!commentExists) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Comment not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Insert reply
+		const replyResult = await env.DB.prepare(
+			`INSERT INTO comment_replies (comment_id, user_id, content, created_at, updated_at) 
+			 VALUES (?, ?, ?, datetime('now'), datetime('now'))`
+		)
+			.bind(commentId, userId, text)
+			.run();
+
+		const replyId = replyResult.meta.last_row_id;
+
+		// Get reply with user info
+		const reply = await env.DB.prepare(
+			`SELECT 
+				cr.id,
+				cr.comment_id,
+				cr.user_id,
+				cr.content as text,
+				cr.created_at,
+				u.first_name || ' ' || u.last_name as author,
+				u.username
+			 FROM comment_replies cr
+			 JOIN users u ON cr.user_id = u.user_id
+			 WHERE cr.id = ?`
+		)
+			.bind(replyId)
+			.first();
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				reply: reply,
+				message: 'Reply added successfully',
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Comment reply error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to add reply', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/upload
+ * Upload file to R2 and save metadata to D1
+ */
+async function handleUpload(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const formData = await request.formData();
+
+		// Get form fields
+		const file = formData.get('file') as File;
+		const title = formData.get('title') as string;
+		const courseId = formData.get('courseId') as string;
+		const userId = formData.get('userId') as string;
+		const description = formData.get('description') as string || '';
+		const type = formData.get('type') as string || 'document';
+
+		// Validate
+		if (!file || !title || !courseId || !userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing required fields' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Generate unique filename
+		const timestamp = Date.now();
+		const extension = file.name.split('.').pop();
+		const r2Key = `uploads/${courseId}/${timestamp}-${file.name}`;
+
+		// Upload to R2
+		await env.BUCKET.put(r2Key, file.stream(), {
+			httpMetadata: {
+				contentType: file.type,
+			},
+		});
+
+		// Get public URL
+		const fileUrl = `https://pub-cd42bce9da7242b69d703b8bf1e9e4b6.r2.dev/${r2Key}`;
+
+		// Save to D1 database
+		const result = await env.DB.prepare(`
+			INSERT INTO content (
+				course_id, uploader_id, title, description,
+				type, file_url, file_key, file_size, mime_type, file_extension,
+				is_approved, upload_date
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
+		`)
+			.bind(
+				courseId,
+				userId,
+				title,
+				description,
+				type,
+				fileUrl,
+				r2Key,
+				file.size,
+				file.type,
+				extension
+			)
+			.run();
+
+		// Create notifications for enrolled students
+		await createContentNotifications(
+			parseInt(courseId),
+			result.meta.last_row_id as number,
+			title,
+			parseInt(userId),
+			env
+		);
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'File uploaded successfully',
+				data: {
+					id: result.meta.last_row_id,
+					title: title,
+					fileUrl: fileUrl,
+					r2Key: r2Key,
+				},
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Upload error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Upload failed', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
