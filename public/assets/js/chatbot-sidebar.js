@@ -23,7 +23,7 @@
         // Create the chatbot panel HTML (as a grid column)
         const chatbotHTML = `
             <div class="hidden lg:block">
-                <div class="bg-white rounded-2xl shadow-lg sticky top-24 flex flex-col" style="height: 931px;">
+                <div class="bg-white rounded-2xl shadow-lg sticky top-24 flex flex-col" style="height: 932px;">
                     <!-- Header -->
                     <div class="bg-gradient-to-br from-teal-600 to-teal-500 p-4 rounded-t-2xl">
                         <div class="flex items-center gap-3">
