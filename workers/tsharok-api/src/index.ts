@@ -114,7 +114,11 @@ export default {
 				return await handleUnenroll(request, env, corsHeaders);
 			}
 
-			if (url.pathname === '/api/my-courses' && request.method === 'GET') {
+			if (url.pathname === '/api/courses' && request.method === 'GET') {
+return await handleGetCourses(request, env, corsHeaders);
+}
+
+if (url.pathname === '/api/my-courses' && request.method === 'GET') {
 				return await handleMyCourses(request, env, corsHeaders);
 			}
 
@@ -1395,6 +1399,40 @@ total: (courses.results?.length || 0) + (materials.results?.length || 0),
 console.error('Search error:', error);
 return new Response(
 JSON.stringify({ success: false, message: 'Search failed', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+
+/**
+ * Handle GET /api/courses - Get all available courses
+ */
+async function handleGetCourses(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+try {
+const result = await env.DB.prepare(`
+SELECT 
+course_id, title, description, instructor_name,
+created_at, updated_at
+FROM courses
+ORDER BY title ASC
+`).all();
+
+return new Response(
+JSON.stringify({
+success: true,
+message: 'Courses fetched successfully',
+data: {
+courses: result.results || [],
+total: (result.results || []).length
+}
+}),
+{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+} catch (error: any) {
+console.error('Get courses error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Failed to fetch courses', error: error.message }),
 { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 );
 }
