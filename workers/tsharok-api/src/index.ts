@@ -354,15 +354,25 @@ async function handleChatbot(
 			console.log('Courses query result:', courses.results);
 
 			if (courses.results && courses.results.length > 0) {
-				const courseList = courses.results.map((c: any) => c.title).join(', ');
-				userContext = `Student's enrolled courses: ${courseList}\n\n`;
+				// Format as numbered list for clarity
+				const courseListItems = courses.results
+					.map((c: any, index: number) => `${index + 1}. ${c.title}`)
+					.join('\n');
+
+				userContext = `THE STUDENT IS CURRENTLY ENROLLED IN THESE EXACT COURSES:
+${courseListItems}
+
+CRITICAL: When asked about courses, you MUST list ONLY the courses shown above. 
+Do NOT make up example courses like "English 101" or "Mathematics 120".
+Use the EXACT course names from the list above.
+`;
 				console.log('User context set:', userContext);
 			} else {
 				console.log('No courses found for user:', userId);
 			}
 		}
 
-		const systemPrompt = `You are Tsharok Assistant, an intelligent AI helper for students at Qassim University.
+		const systemPrompt = `You are Tsharok Assistant, an intelligent AI helper for students at Umm Al-Qura University.
 
 Your role:
 - Help students find courses and materials
@@ -372,9 +382,11 @@ Your role:
 - Respond in the SAME language the user uses (Arabic or English)
 
 ${userContext}
-Guidelines:
+IMPORTANT INSTRUCTIONS:
+- When asked about enrolled courses, YOU MUST list them from the information provided above
+- This course enrollment information is meant to be shared with the student - it is NOT private
+- If the student asks "what courses am I taking" or similar, directly tell them their enrolled courses
 - Be friendly, helpful, and concise (2-3 sentences max)
-- If asked about courses, reference their enrolled courses
 - If you don't know something, suggest they check with their instructor
 - Keep responses educational and professional`;
 
@@ -384,15 +396,15 @@ Guidelines:
 			{ role: 'user', content: message }
 		];
 
-		console.log('Calling Gemma AI...');
+		console.log('Calling Llama 3 AI...');
 
-		const response = await env.AI.run('@cf/google/gemma-7b-it-lora', {
+		const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
 			messages: messages,
 			max_tokens: 512,
 			temperature: 0.7
 		}) as any;
 
-		console.log('Gemma response:', response);
+		console.log('Llama 3 response:', response);
 
 		const aiReply = response.response || response.text || 'Sorry, I could not generate a response.';
 
@@ -400,7 +412,7 @@ Guidelines:
 			JSON.stringify({
 				success: true,
 				reply: aiReply,
-				model: 'gemma-7b-it-lora',
+				model: 'llama-3-8b-instruct',
 				timestamp: new Date().toISOString()
 			}),
 			{
@@ -539,12 +551,9 @@ async function handleMyCourses(
 		const result = await env.DB.prepare(`
 			SELECT 
 				c.course_id as courseId,
-				c.code,
 				c.title,
 				c.description,
 				c.level,
-				e.progress_percent,
-				e.grade,
 				e.enrollment_date
 			FROM enrollments e
 			JOIN courses c ON e.course_id = c.course_id
