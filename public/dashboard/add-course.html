@@ -694,14 +694,14 @@
 
                     const result = await response.json();
                     if (result.success && result.data && result.data.length > 0) {
-                        // Use API courses
+                        // Use API courses - IMPORTANT: Use course_id or courseId from database, not generic id
                         allCourses = result.data.map(course => ({
-                            id: course.id,
+                            id: course.course_id || course.courseId || course.id,  // Prefer course_id from database
                             code: course.code,
-                            name: course.name,
+                            name: course.title || course.name,  // API might use 'title'
                             hours: course.hours || course.credit_hours || 3,
                             rating: course.rating || 0,
-                            level: course.level || 1
+                            level: course.level || course.semester || 1
                         }));
                         console.log('Loaded courses from API:', allCourses.length);
                     } else {

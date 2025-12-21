@@ -1794,6 +1794,9 @@ async function handleGetNotifications(url: URL, request: Request, env: Env, cors
 			);
 		}
 
+		// Get limit from query parameter (default 10, max 50)
+		const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '10')));
+
 		const result = await env.DB.prepare(`
 			SELECT 
 				n.id, n.user_id, n.course_id, n.content_id,
@@ -1805,8 +1808,8 @@ async function handleGetNotifications(url: URL, request: Request, env: Env, cors
 			LEFT JOIN content co ON n.content_id = co.id
 			WHERE n.user_id = ?
 			ORDER BY n.created_at DESC
-			LIMIT 50
-		`).bind(userId).all();
+			LIMIT ?
+		`).bind(userId, limit).all();
 
 		const unreadResult = await env.DB.prepare(`
 			SELECT COUNT(*) as count
