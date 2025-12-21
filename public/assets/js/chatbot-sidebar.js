@@ -173,7 +173,7 @@
 
         const messageHTML = sender === 'user'
             ? `<div class="flex justify-end mb-2">
-                   <div class="bg-primary text-white p-2 rounded-xl rounded-tr-sm text-xs max-w-[80%] whitespace-pre-wrap">${escapeHtml(message)}</div>
+                   <div class="bg-teal-600 text-white p-2 rounded-xl rounded-tr-sm text-xs max-w-[80%] whitespace-pre-wrap">${escapeHtml(message)}</div>
                </div>`
             : `<div class="flex gap-2 mb-2">
                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
