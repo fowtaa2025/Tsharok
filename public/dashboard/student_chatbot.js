@@ -1,37 +1,84 @@
-// Desktop Chatbot Functions
+/**
+ * Student Dashboard Chatbot with Gemma AI
+ * Handles both desktop and mobile chatbot interactions
+ */
+
+// Conversation history
+let conversationHistory = [];
+
+// ========== DESKTOP CHATBOT FUNCTIONS ==========
+
 function handleChatKeyPressDesktop(event) {
     if (event.key === 'Enter') {
         sendMessageDesktop();
     }
 }
 
-function sendMessageDesktop() {
+async function sendMessageDesktop() {
     const input = document.getElementById('chatbotInputDesktop');
     const message = input.value.trim();
 
     if (!message) return;
+
+    // Get current user
+    let userId = null;
+    try {
+        const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+        userId = user?.userId || user?.id;
+    } catch (e) {
+        console.log('Could not get user ID');
+    }
 
     addMessageDesktop(message, 'user');
     input.value = '';
 
     showTypingIndicatorDesktop();
 
-    setTimeout(() => {
+    try {
+        // Call Gemma AI backend
+        const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/chatbot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message,
+                userId,
+                conversationHistory
+            })
+        });
+
+        const data = await response.json();
         hideTypingIndicatorDesktop();
-        const response = getBotResponse(message);
-        addMessageDesktop(response, 'bot');
-    }, 1000 + Math.random() * 1000);
+
+        if (data.success && data.reply) {
+            addMessageDesktop(data.reply, 'bot');
+
+            // Update conversation history
+            conversationHistory.push(
+                { role: 'user', content: message },
+                { role: 'assistant', content: data.reply }
+            );
+
+            // Keep only last 20 messages
+            if (conversationHistory.length > 20) {
+                conversationHistory = conversationHistory.slice(-20);
+            }
+        } else {
+            addMessageDesktop('Sorry, I encountered an error. Please try again.', 'bot');
+        }
+
+    } catch (error) {
+        console.error('Chatbot error:', error);
+        hideTypingIndicatorDesktop();
+        addMessageDesktop('Network error. Please check your connection.', 'bot');
+    }
 }
 
-function sendQuickReplyDesktop(message) {
-    addMessageDesktop(message, 'user');
-    showTypingIndicatorDesktop();
-
-    setTimeout(() => {
-        hideTypingIndicatorDesktop();
-        const response = getBotResponse(message);
-        addMessageDesktop(response, 'bot');
-    }, 1000);
+async function sendQuickReplyDesktop(message) {
+    const input = document.getElementById('chatbotInputDesktop');
+    input.value = message;
+    await sendMessageDesktop();
 }
 
 function addMessageDesktop(text, sender) {
@@ -46,7 +93,7 @@ function addMessageDesktop(text, sender) {
             </div>
             <div class="flex-1">
                 <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
-                    <p class="text-gray-800 text-xs leading-relaxed">${text}</p>
+                    <p class="text-gray-800 text-xs leading-relaxed">${escapeHtml(text)}</p>
                 </div>
             </div>
         `;
@@ -55,7 +102,7 @@ function addMessageDesktop(text, sender) {
         messageDiv.innerHTML = `
             <div class="flex-1 flex justify-end">
                 <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-3 rounded-xl rounded-tr-sm shadow-sm max-w-[80%]">
-                    <p class="text-white text-xs leading-relaxed">${text}</p>
+                    <p class="text-white text-xs leading-relaxed">${escapeHtml(text)}</p>
                 </div>
             </div>
             <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
@@ -96,37 +143,8 @@ function hideTypingIndicatorDesktop() {
     }
 }
 
-function getBotResponse(message) {
-    const lowerMessage = message.toLowerCase();
+// ========== MOBILE CHATBOT FUNCTIONS ==========
 
-    if (lowerMessage.includes('add') && lowerMessage.includes('course')) {
-        return "To add a course, click on 'Add Course' button in your courses section, then browse and select the courses you want to enroll in. 📚";
-    }
-
-    if (lowerMessage.includes('schedule')) {
-        return "You can view your schedule in the 'My Courses' section on this page. The calendar below shows your upcoming classes and deadlines. 📅";
-    }
-
-    if (lowerMessage.includes('assignment')) {
-        return "To view your assignments, go to the course page and check the 'Assignments' tab. You can also see upcoming deadlines in your calendar. 📝";
-    }
-
-    if (lowerMessage.includes('grade') || lowerMessage.includes('score')) {
-        return "Your grades are available in each course page under the 'Grades' section. You can track your progress there. 📊";
-    }
-
-    if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
-        return "I'm here to help! You can ask me about courses, schedules, assignments, or any other questions about using Tsharok. What would you like to know? 🤝";
-    }
-
-    if (lowerMessage.includes('thank')) {
-        return "You're welcome! Feel free to ask if you need anything else. Happy learning! 😊";
-    }
-
-    return "I understand you're asking about: \"" + message + "\". While I'm still learning, you can browse the help section or contact support for detailed assistance. Is there anything specific I can help you with? 💡";
-}
-
-// Mobile Chatbot Functions
 function toggleMobileChatbot() {
     const window = document.getElementById('mobileChatbotWindow');
     const button = document.getElementById('mobileChatbotButton');
@@ -147,33 +165,71 @@ function handleChatKeyPressMobile(event) {
     }
 }
 
-function sendMessageMobile() {
+async function sendMessageMobile() {
     const input = document.getElementById('mobileChatbotInput');
     const message = input.value.trim();
 
     if (!message) return;
+
+    // Get current user
+    let userId = null;
+    try {
+        const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+        userId = user?.userId || user?.id;
+    } catch (e) {
+        console.log('Could not get user ID');
+    }
 
     addMessageMobile(message, 'user');
     input.value = '';
 
     showTypingIndicatorMobile();
 
-    setTimeout(() => {
+    try {
+        // Call Gemma AI backend
+        const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/chatbot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message,
+                userId,
+                conversationHistory
+            })
+        });
+
+        const data = await response.json();
         hideTypingIndicatorMobile();
-        const response = getBotResponse(message);
-        addMessageMobile(response, 'bot');
-    }, 1000 + Math.random() * 1000);
+
+        if (data.success && data.reply) {
+            addMessageMobile(data.reply, 'bot');
+
+            // Update conversation history
+            conversationHistory.push(
+                { role: 'user', content: message },
+                { role: 'assistant', content: data.reply }
+            );
+
+            // Keep only last 20 messages
+            if (conversationHistory.length > 20) {
+                conversationHistory = conversationHistory.slice(-20);
+            }
+        } else {
+            addMessageMobile('Sorry, I encountered an error. Please try again.', 'bot');
+        }
+
+    } catch (error) {
+        console.error('Chatbot error:', error);
+        hideTypingIndicatorMobile();
+        addMessageMobile('Network error. Please check your connection.', 'bot');
+    }
 }
 
-function sendQuickReplyMobile(message) {
-    addMessageMobile(message, 'user');
-    showTypingIndicatorMobile();
-
-    setTimeout(() => {
-        hideTypingIndicatorMobile();
-        const response = getBotResponse(message);
-        addMessageMobile(response, 'bot');
-    }, 1000);
+async function sendQuickReplyMobile(message) {
+    const input = document.getElementById('mobileChatbotInput');
+    input.value = message;
+    await sendMessageMobile();
 }
 
 function addMessageMobile(text, sender) {
@@ -188,7 +244,7 @@ function addMessageMobile(text, sender) {
             </div>
             <div class="flex-1">
                 <div class="bg-white p-3 rounded-xl rounded-tl-sm shadow-sm">
-                    <p class="text-gray-800 text-sm">${text}</p>
+                    <p class="text-gray-800 text-sm">${escapeHtml(text)}</p>
                 </div>
             </div>
         `;
@@ -197,7 +253,7 @@ function addMessageMobile(text, sender) {
         messageDiv.innerHTML = `
             <div class="flex-1 flex justify-end">
                 <div class="bg-gradient-to-br from-blue-600 to-blue-500 p-3 rounded-xl rounded-tr-sm shadow-sm max-w-[80%]">
-                    <p class="text-white text-sm">${text}</p>
+                    <p class="text-white text-sm">${escapeHtml(text)}</p>
                 </div>
             </div>
             <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
@@ -236,4 +292,12 @@ function hideTypingIndicatorMobile() {
     if (indicator) {
         indicator.remove();
     }
+}
+
+// ========== UTILITY FUNCTIONS ==========
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
