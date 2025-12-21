@@ -1328,42 +1328,6 @@
                 // Reload all files to regenerate empty states and other dynamic content with new translations
                 loadFiles();
             });
-
-            // Search functionality for Course Files
-            const courseSearchInput = document.getElementById('courseSearchInput');
-            const clearCourseSearch = document.getElementById('clearCourseSearch');
-
-            if (courseSearchInput) {
-                courseSearchInput.addEventListener('input', function (e) {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const fileCards = document.querySelectorAll('.file-card');
-
-                    // Show/hide clear button
-                    clearCourseSearch.classList.toggle('hidden', searchTerm === '');
-
-                    if (searchTerm === '') {
-                        fileCards.forEach(card => card.style.display = '');
-                        return;
-                    }
-
-                    fileCards.forEach(card => {
-                        const fileName = card.querySelector('.file-name')?.textContent.toLowerCase() || '';
-                        const fileType = card.querySelector('.file-type')?.textContent.toLowerCase() || '';
-
-                        if (fileName.includes(searchTerm) || fileType.includes(searchTerm)) {
-                            card.style.display = '';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-
-                clearCourseSearch.addEventListener('click', function () {
-                    courseSearchInput.value = '';
-                    clearCourseSearch.classList.add('hidden');
-                    document.querySelectorAll('.file-card').forEach(card => card.style.display = '');
-                });
-            }
         </script>
     </div><!-- End of bg-shapes-container -->
     <!-- Mobile Chatbot loaded via component -->
