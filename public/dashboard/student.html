@@ -1357,33 +1357,10 @@
             // Open notification and mark as read
             async function openNotification(notifId, contentId, courseId) {
                 try {
-                    // Remove notification from UI immediately
-                    const notifElement = event.target.closest('[data-notification-id]') || event.target.closest('.flex.items-start');
-                    if (notifElement) {
-                        notifElement.style.opacity = '0';
-                        notifElement.style.transform = 'translateX(100%)';
-                        notifElement.style.transition = 'all 0.3s ease-out';
-
-                        setTimeout(() => {
-                            notifElement.remove();
-
-                            // Check if no notifications left
-                            const container = document.getElementById('notificationsContainer');
-                            if (container && container.children.length === 0) {
-                                container.innerHTML = `
-                                    <div class="text-center py-8 text-gray-500">
-                                        <i class="fas fa-bell-slash text-4xl mb-3 opacity-50"></i>
-                                        <p class="text-sm">No notifications yet</p>
-                                    </div>
-                                `;
-                            }
-                        }, 300);
-                    }
-
                     const user = getCurrentUser();
                     const token = localStorage.getItem('token') || user?.sessionToken;
 
-                    // Mark as read in background
+                    // Mark as read in background (fire and forget)
                     fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/notifications/mark-read', {
                         method: 'POST',
                         headers: {
@@ -1393,10 +1370,12 @@
                         body: JSON.stringify({ notificationId: notifId })
                     }).catch(err => console.error('Error marking notification:', err));
 
-                    // Optionally navigate to file page (commented out for now)
-                    // window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
+                    // Navigate to file page immediately (notification will be dismissed upon return)
+                    window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
                 } catch (error) {
                     console.error('Error handling notification click:', error);
+                    // Still navigate even if marking fails
+                    window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
                 }
             }
 
