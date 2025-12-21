@@ -1,0 +1,142 @@
+
+/**
+ * Handle POST /api/chatbot - AI chatbot with Gemma
+ */
+async function handleChatbot(
+	request: Request,
+	env: Env,
+	corsHeaders: Record<string, string>
+): Promise<Response> {
+	try {
+		const { message, userId, conversationHistory = [] } = await request.json();
+		console.log('Chatbot request:', { message, userId });
+
+		let userContext = '';
+		
+		if (userId) {
+			const courses = await env.DB.prepare(`
+				SELECT c.title, c.code, c.course_id
+				FROM enrollments e
+				JOIN courses c ON e.course_id = c.course_id
+				WHERE e.student_id = ? AND e.status = 'active'
+				LIMIT 5
+			`).bind(userId).all();
+
+			if (courses.results && courses.results.length > 0) {
+				const courseList = courses.results.map((c: any) => c.title).join(', ');
+				userContext = `Student's enrolled courses: ${courseList}\n\n`;
+			}
+
+			const notifCount = await env.DB.prepare(`
+				SELECT COUNT(*) as count
+				FROM notifications
+				WHERE user_id = ? AND is_read = 0
+			`).bind(userId).first();
+
+			if (notifCount && notifCount.count > 0) {
+				userContext += `Student has ${notifCount.count} unread notifications.\n`;
+			}
+		}
+
+		const isContentQuery = /material|content|file|pdf|video|lecture|note/i.test(message);
+		
+		if (isContentQuery) {
+			const relevantContent = await searchContent(message, env);
+			if (relevantContent) {
+				userContext += `Relevant materials available: ${relevantContent}\n`;
+			}
+		}
+
+		const systemPrompt = `You are Tsharok Assistant, an intelligent AI helper for students at Qassim University.
+
+Your role:
+- Help students find courses and materials
+- Answer questions about assignments and content
+- Guide them through the platform
+- Provide study tips and academic advice
+- Respond in the SAME language the user uses (Arabic or English)
+
+${userContext}
+
+Guidelines:
+- Be friendly, helpful, and concise (2-3 sentences max)
+- If asked about courses, reference their enrolled courses
+- If you don't know something, suggest they check with their instructor
+- Keep responses educational and professional`;
+
+		const messages = [
+			{ role: 'system', content: systemPrompt },
+			...conversationHistory.slice(-10),
+			{ role: 'user', content: message }
+		];
+
+		console.log('Calling Gemma AI...');
+
+		const response = await env.AI.run('@cf/google/gemma-7b-it-lora', {
+			messages: messages,
+			max_tokens: 512,
+			temperature: 0.7
+		});
+
+		console.log('Gemma response:', response);
+
+		const aiReply = response.response || response.text || 'Sorry, I could not generate a response.';
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				reply: aiReply,
+				model: 'gemma-7b-it-lora',
+				timestamp: new Date().toISOString()
+			}),
+			{ 
+				status: 200,
+				headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+			}
+		);
+
+	} catch (error: any) {
+		console.error('Chatbot error:', error);
+		
+		const fallbackResponse = 'I apologize, but I encountered an error. Please try asking your question again.';
+		
+		return new Response(
+			JSON.stringify({
+				success: true,
+				reply: fallbackResponse,
+				error: error.message,
+				fallback: true
+			}),
+			{ 
+				status: 200,
+				headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+			}
+		);
+	}
+}
+
+/**
+ * Search content for chatbot context
+ */
+async function searchContent(query: string, env: Env, limit: number = 5): Promise<string> {
+	try {
+		const results = await env.DB.prepare(`
+			SELECT title, description, type
+			FROM content
+			WHERE title LIKE ? OR description LIKE ?
+			ORDER BY created_at DESC
+			LIMIT ?
+		`).bind(`%${query}%`, `%${query}%`, limit).all();
+
+		if (!results.results || results.results.length === 0) {
+			return '';
+		}
+
+		return results.results.map((item: any) => 
+			`${item.title} (${item.type})`
+		).join(', ');
+	} catch (error) {
+		console.error('Content search error:', error);
+		return '';
+	}
+}

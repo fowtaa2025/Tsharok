@@ -1,0 +1,92 @@
+
+/**
+ * Handle POST /api/enroll - Enroll student in course
+ */
+async function handleEnroll(
+	request: Request,
+	env: Env,
+	corsHeaders: Record<string, string>
+): Promise<Response> {
+	try {
+		const { courseId, userId } = await request.json();
+		
+		if (!courseId || !userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing courseId or userId' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if already enrolled
+		const existing = await env.DB.prepare(`
+			SELECT enrollment_id FROM enrollments 
+			WHERE student_id = ? AND course_id = ?
+		`).bind(userId, courseId).first();
+
+		if (existing) {
+			// Update to active if it was dropped
+			await env.DB.prepare(`
+				UPDATE enrollments 
+				SET status = 'active', enrollment_date = CURRENT_TIMESTAMP
+				WHERE student_id = ? AND course_id = ?
+			`).bind(userId, courseId).run();
+		} else {
+			// Create new enrollment with status='active'
+			await env.DB.prepare(`
+				INSERT INTO enrollments (student_id, course_id, status, enrollment_date, progress_percent)
+				VALUES (?, ?, 'active', CURRENT_TIMESTAMP, 0)
+			`).bind(userId, courseId).run();
+		}
+
+		return new Response(
+			JSON.stringify({ success: true, message: 'Enrolled successfully' }),
+			{ status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+
+	} catch (error: any) {
+		console.error('Enrollment error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle POST /api/unenroll - Unenroll student from course  
+ */
+async function handleUnenroll(
+	request: Request,
+	env: Env,
+	corsHeaders: Record<string, string>
+): Promise<Response> {
+	try {
+		const { courseId, userId } = await request.json();
+		
+		if (!courseId || !userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing courseId or userId' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Mark enrollment as dropped instead of deleting
+		await env.DB.prepare(`
+			UPDATE enrollments 
+			SET status = 'dropped'
+			WHERE student_id = ? AND course_id = ?
+		`).bind(userId, courseId).run();
+
+		return new Response(
+			JSON.stringify({ success: true, message: 'Unenrolled successfully' }),
+			{ status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+
+	} catch (error: any) {
+		console.error('Unenrollment error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}

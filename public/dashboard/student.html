@@ -558,79 +558,111 @@
                 const container = document.getElementById('my-courses-container');
                 const noCoursesMsg = document.getElementById('no-courses-message');
 
-                // Get current user to make storage user-specific
+                // Get current user
                 const user = getCurrentUser();
-                const userId = user?.userId || user?.id || 'guest';
-                const storageKey = `addedCourses_${userId}`;
+                const userId = user?.userId || user?.id;
 
-                const addedCourseIds = JSON.parse(localStorage.getItem(storageKey) || '[]');
-
-                if (addedCourseIds.length === 0) {
+                if (!userId || userId === 'guest') {
                     container.innerHTML = '';
                     noCoursesMsg.classList.remove('hidden');
                     return;
                 }
 
-                noCoursesMsg.classList.add('hidden');
+                try {
+                    // Fetch enrolled courses from API
+                    console.log('Loading courses from API for user:', userId);
+                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/my-courses?userId=${userId}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch courses from API');
+                    }
 
-                let html = '';
+                    const result = await response.json();
+                    console.log('API response:', result);
 
-                // Fetch ratings for all courses concurrently
-                const coursePromises = addedCourseIds.map(async id => {
-                    const course = allCoursesData[id];
-                    if (!course) return null;
+                    if (!result.success || !result.data?.courses || result.data.courses.length === 0) {
+                        container.innerHTML = '';
+                        noCoursesMsg.classList.remove('hidden');
+                        return;
+                    }
 
-                    // Fetch course rating from Worker API
-                    let courseRating = '0.0';
-                    try {
-                        // Fetch files from Worker API (they have database IDs)
-                        const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=${id}`);
+                    noCoursesMsg.classList.add('hidden');
 
-                        if (response.ok) {
-                            const result = await response.json();
+                    // Map database courses to display format
+                    const enrolledCourses = result.data.courses;
+                    let html = '';
 
-                            if (result.success && result.data?.materials && result.data.materials.length > 0) {
-                                const files = result.data.materials;
+                    // Fetch ratings for all courses concurrently
+                    const coursePromises = enrolledCourses.map(async dbCourse => {
+                        const courseId = dbCourse.courseId || dbCourse.course_id;
+                        
+                        // Try to get course data from allCoursesData, or use database data
+                        const course = allCoursesData[courseId] || {
+                            id: courseId,
+                            title: dbCourse.title,
+                            code: dbCourse.code,
+                            description: dbCourse.description,
+                            level: dbCourse.level
+                        };
 
-                                // Fetch ratings for each file
-                                const ratingPromises = files.map(async file => {
-                                    try {
-                                        const ratingResponse = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${file.id}`);
-                                        const ratingData = await ratingResponse.json();
-                                        return ratingData.success ? ratingData.data.averageRating : 0;
-                                    } catch (error) {
-                                        console.error(`Failed to fetch rating for file ${file.id}:`, error);
-                                        return 0;
+                        // Fetch course rating from Worker API
+                        let courseRating = '0.0';
+                        try {
+                            const materialsResponse = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/view-materials?course_id=${courseId}`);
+
+                            if (materialsResponse.ok) {
+                                const materialsResult = await materialsResponse.json();
+
+                                if (materialsResult.success && materialsResult.data?.materials && materialsResult.data.materials.length > 0) {
+                                    const files = materialsResult.data.materials;
+
+                                    // Fetch ratings for each file
+                                    const ratingPromises = files.map(async file => {
+                                        try {
+                                            const ratingResponse = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/ratings?contentId=${file.id}`);
+                                            const ratingData = await ratingResponse.json();
+                                            return ratingData.success ? ratingData.data.averageRating : 0;
+                                        } catch (error) {
+                                            console.error(`Failed to fetch rating for file ${file.id}:`, error);
+                                            return 0;
+                                        }
+                                    });
+
+                                    const ratings = await Promise.all(ratingPromises);
+                                    const validRatings = ratings.filter(r => r > 0);
+
+                                    if (validRatings.length > 0) {
+                                        const avgRating = validRatings.reduce((sum, r) => sum + r, 0) / validRatings.length;
+                                        courseRating = avgRating.toFixed(1);
                                     }
-                                });
-
-                                const ratings = await Promise.all(ratingPromises);
-                                const validRatings = ratings.filter(r => r > 0);
-
-                                if (validRatings.length > 0) {
-                                    const avgRating = validRatings.reduce((sum, r) => sum + r, 0) / validRatings.length;
-                                    courseRating = avgRating.toFixed(1);
                                 }
                             }
+                        } catch (error) {
+                            console.error(`Failed to calculate rating for course ${courseId}:`, error);
                         }
-                    } catch (error) {
-                        console.error(`Failed to calculate rating for course ${id}:`, error);
-                    }
 
-                    const levelText = course.level === 'Elective' ? 'Elective' : `Level ${course.level}`;
-                    return { id, course, levelText, courseRating };
-                });
+                        const levelText = course.level === 'Elective' ? 'Elective' : `Level ${course.level}`;
+                        return { id: courseId, course, levelText, courseRating };
+                    });
 
-                const courses = await Promise.all(coursePromises);
+                    const courses = await Promise.all(coursePromises);
 
-                courses.forEach(item => {
-                    if (item) {
-                        html += getCardHTML(item.id, item.course, item.levelText, item.courseRating);
-                    }
-                });
+                    courses.forEach(item => {
+                        if (item && item.course) {
+                            html += getCardHTML(item.id, item.course, item.levelText, item.courseRating);
+                        }
+                    });
 
-                // Display the cards in the container
-                container.innerHTML = html;
+                    // Display the cards in the container
+                    container.innerHTML = html;
+                    console.log(`Loaded ${courses.length} enrolled courses`);
+
+                } catch (error) {
+                    console.error('Error loading courses:', error);
+                    // Fallback to showing no courses message
+                    container.innerHTML = '';
+                    noCoursesMsg.classList.remove('hidden');
+                }
             }
 
             // Load notifications for courses the student has added
