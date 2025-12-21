@@ -1270,7 +1270,7 @@
 
                 try {
                     const token = localStorage.getItem('token') || user.sessionToken;
-                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?userId=${user.userId}`, {
+                    const response = await fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?userId=${user.userId}&limit=10`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
 
