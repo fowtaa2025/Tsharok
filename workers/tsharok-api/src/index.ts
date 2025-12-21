@@ -118,6 +118,74 @@ export default {
 				return await handleMyCourses(request, env, corsHeaders);
 			}
 
+			// ============================================
+			// CONTENT & MATERIALS
+			// ============================================
+
+			if (url.pathname === '/api/view-materials' && request.method === 'GET') {
+				return await handleViewMaterials(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/upload' && request.method === 'POST') {
+				return await handleUpload(request, env, corsHeaders);
+			}
+
+			// ============================================
+			// COMMENTS & RATINGS
+			// ============================================
+
+			if (url.pathname === '/api/comments' && request.method === 'GET') {
+				return await handleGetComments(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/comments/add' && request.method === 'POST') {
+				return await handleAddComment(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/comments/like' && request.method === 'POST') {
+				return await handleCommentLike(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/comments/reply' && request.method === 'POST') {
+				return await handleCommentReply(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/ratings' && request.method === 'GET') {
+				return await handleGetRatings(request, env, corsHeaders);
+			}
+
+			// ============================================
+			// SEARCH SYSTEM
+			// ============================================
+
+			if (url.pathname === '/api/search' && request.method === 'GET') {
+				return await handleSearch(request, env, corsHeaders);
+			}
+
+			// ============================================
+			// NOTIFICATIONS
+			// ============================================
+
+			if (url.pathname === '/api/notifications' && request.method === 'GET') {
+				return await handleGetNotifications(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/notifications' && request.method === 'DELETE') {
+				return await handleDeleteNotification(request, env, corsHeaders);
+			}
+
+			// ============================================
+			// PROFILE & MISC
+			// ============================================
+
+			if (url.pathname === '/api/register' && request.method === 'POST') {
+				return await handleRegister(request, env, corsHeaders);
+			}
+
+			if (url.pathname === '/api/profile' && request.method === 'GET') {
+				return await handleProfile(request, env, corsHeaders);
+			}
+
 			// Default 404
 			return new Response(
 				JSON.stringify({ success: false, message: 'Not found' }),
@@ -573,6 +641,98 @@ async function handleMyCourses(
 		console.error('My courses error:', error);
 		return new Response(
 			JSON.stringify({ success: false, message: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+// ============================================
+// PHASE 3 HANDLER FUNCTIONS
+// ============================================
+
+/**
+ * Handle GET /api/profile?user_id=X
+ */
+async function handleProfile(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const userId = url.searchParams.get('user_id');
+
+if (!userId) {
+return new Response(
+JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+
+try {
+const user = await env.DB.prepare(`
+SELECT 
+user_id, username, email, first_name, last_name,
+role, major_id, phone, profile_image,
+created_at, last_login
+FROM users
+WHERE user_id = ?
+`).bind(userId).first();
+
+if (!user) {
+return new Response(
+JSON.stringify({ success: false, message: 'User not found' }),
+{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+
+const profile = {
+userId: user.user_id,
+username: user.username,
+email: user.email,
+firstName: user.first_name,
+lastName: user.last_name,
+fullName: `${user.first_name} ${user.last_name}`,
+role: user.role,
+majorId: user.major_id,
+phone: user.phone,
+profileImage: user.profile_image,
+createdAt: user.created_at,
+lastLogin: user.last_login,
+};
+
+return new Response(
+JSON.stringify({ success: true, message: 'Profile fetched successfully', user: profile }),
+{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+} catch (error: any) {
+console.error('Profile error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Failed to fetch profile', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+/**
+ * Handle GET /api/ratings?contentId=X
+ */
+async function handleGetRatings(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const url = new URL(request.url);
+	const contentId = url.searchParams.get('contentId');
+	if (!contentId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'contentId parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+	try {
+		const result = await env.DB.prepare(`SELECT AVG(score) as averageRating, COUNT(*) as totalRatings FROM ratings WHERE content_id = ?`).bind(contentId).first();
+		const averageRating = result ? (result.averageRating as number) || 0 : 0;
+		const totalRatings = result ? (result.totalRatings as number) || 0 : 0;
+		return new Response(
+			JSON.stringify({ success: true, message: 'Ratings retrieved successfully', data: { averageRating, totalRatings } }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get ratings error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to retrieve ratings', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
