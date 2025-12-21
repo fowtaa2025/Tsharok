@@ -267,6 +267,11 @@ export default {
 				return await handleResendVerification(request, env, corsHeaders);
 			}
 
+			// Route: DELETE /api/notifications - Delete notification
+			if (url.pathname === '/api/notifications' && request.method === 'DELETE') {
+				return await handleDeleteNotification(request, env, corsHeaders);
+			}
+
 			// Route: POST /api/admin-login - Admin authentication
 			if (url.pathname === '/api/admin-login' && request.method === 'POST') {
 				return await handleAdminLogin(request, env, corsHeaders);
@@ -1843,6 +1848,50 @@ async function handleGetNotifications(url: URL, request: Request, env: Env, cors
 		console.error('Get notifications error:', error);
 		return new Response(
 			JSON.stringify({ success: false, message: 'Failed to get notifications', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+
+/**
+ * Handle DELETE /api/notifications - Delete a notification permanently
+ */
+async function handleDeleteNotification(
+	request: Request,
+	env: Env,
+	corsHeaders: Record<string, string>
+): Promise<Response> {
+	try {
+		const url = new URL(request.url);
+		const notificationId = parseInt(url.searchParams.get('notificationId') || '0');
+
+		if (!notificationId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'notificationId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Delete the notification from database
+		await env.DB.prepare(`
+			DELETE FROM notifications
+			WHERE id = ?
+		`).bind(notificationId).run();
+
+		console.log(`Deleted notification ${notificationId}`);
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Notification deleted successfully'
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Delete notification error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to delete notification', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}

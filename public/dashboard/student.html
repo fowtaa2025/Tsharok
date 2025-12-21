@@ -1360,21 +1360,20 @@
                     const user = getCurrentUser();
                     const token = localStorage.getItem('token') || user?.sessionToken;
 
-                    // Mark as read in background (fire and forget)
-                    fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/notifications/mark-read', {
-                        method: 'POST',
+                    // Delete notification permanently
+                    fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notificationId=${notifId}`, {
+                        method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ notificationId: notifId })
-                    }).catch(err => console.error('Error marking notification:', err));
+                        }
+                    }).catch(err => console.error('Error deleting notification:', err));
 
-                    // Navigate to file page immediately (notification will be dismissed upon return)
+                    // Navigate to file page immediately
                     window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
                 } catch (error) {
                     console.error('Error handling notification click:', error);
-                    // Still navigate even if marking fails
+                    // Still navigate even if delete fails
                     window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
                 }
             }
