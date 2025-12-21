@@ -23,7 +23,7 @@
             <div class="hidden lg:block">
                 <div class="bg-white rounded-2xl shadow-lg sticky top-24 flex flex-col" style="height: 932px;">
                     <!-- Header -->
-                    <div class="bg-gradient-to-br from-[#8B1538] to-[#6B0F2A] p-4 rounded-t-2xl">
+                    <div class="bg-gradient-to-br from-teal-600 to-teal-500 p-4 rounded-t-2xl">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                                 <i class="fas fa-robot text-2xl text-primary"></i>
@@ -73,7 +73,7 @@
                                 id="chatbotInputDesktop" placeholder="Ask me anything..."
                                 onkeypress="handleChatKeyPressDesktop(event)">
                             <button onclick="sendMessageDesktop()"
-                                class="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
+                                class="w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-full text-white flex items-center justify-center hover:scale-110 transition shadow-lg">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
