@@ -1230,14 +1230,14 @@
                     return;
                 }
 
-                const token = localStorage.getItem('token');
+                const token = sessionStorage.getItem('token') || localStorage.getItem('token');
                 if (!token) {
                     showToast(t('file.messages.pleaseLoginToComment'), 'error');
                     return;
                 }
 
                 // Post comment to database
-                fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/comments', {
+                fetch('/api/comments', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
