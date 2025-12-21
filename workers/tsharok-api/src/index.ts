@@ -1212,3 +1212,190 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
 		);
 	}
 }
+
+/**
+ * Handle GET /api/view-materials?course_id=X
+ */
+async function handleViewMaterials(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const courseId = url.searchParams.get('course_id');
+
+if (!courseId) {
+return new Response(
+JSON.stringify({ success: false, message: 'course_id parameter is required' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+
+try {
+const result = await env.DB.prepare(`
+SELECT 
+c.id, c.title, c.type, c.file_url, c.upload_date,
+c.description, c.file_size, c.mime_type, c.file_extension,
+c.is_approved, c.uploader_id,
+u.first_name || ' ' || u.last_name as uploader_name,
+COALESCE(AVG(r.score), 0) as avg_rating,
+COUNT(r.id) as rating_count
+FROM content c
+LEFT JOIN users u ON c.uploader_id = u.user_id
+LEFT JOIN ratings r ON c.id = r.content_id
+WHERE c.course_id = ? AND c.is_approved = 1
+GROUP BY c.id
+ORDER BY c.upload_date DESC
+`).bind(courseId).all();
+
+const materials = (result.results || []).map((material: any) => ({
+id: material.id,
+title: material.title,
+type: material.type,
+description: material.description,
+file_url: material.file_url,
+file_size: material.file_size,
+mime_type: material.mime_type,
+file_extension: material.file_extension,
+is_approved: Boolean(material.is_approved),
+upload_date: material.upload_date,
+uploader: {
+id: material.uploader_id,
+name: material.uploader_name || 'Student',
+},
+statistics: {
+avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
+rating_count: Number(material.rating_count) || 0,
+},
+}));
+
+return new Response(JSON.stringify({
+success: true,
+message: 'Materials fetched successfully',
+timestamp: new Date().toISOString(),
+data: {
+materials: materials,
+total_count: materials.length,
+returned_count: materials.length,
+},
+}), {
+headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+});
+} catch (error: any) {
+console.error('Database error:', error);
+return new Response(
+JSON.stringify({
+success: false,
+message: 'Failed to fetch materials',
+error: error.message,
+}),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+/**
+ * Handle GET /api/notifications?user_id=X
+ */
+async function handleGetNotifications(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const userId = url.searchParams.get('user_id');
+if (!userId) {
+return new Response(
+JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+try {
+const notifications = await env.DB.prepare(`
+SELECT n.id, n.type, n.message, n.is_read, n.created_at, c.title as course_title
+FROM notifications n
+LEFT JOIN courses c ON n.course_id = c.course_id
+WHERE n.user_id = ?
+ORDER BY n.created_at DESC
+LIMIT 50
+`).bind(userId).all();
+return new Response(
+JSON.stringify({
+success: true,
+message: 'Notifications fetched successfully',
+data: { notifications: notifications.results || [], count: (notifications.results || []).length },
+}),
+{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+} catch (error: any) {
+console.error('Get notifications error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Failed to fetch notifications', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+/**
+ * Handle DELETE /api/notifications?notification_id=X
+ */
+async function handleDeleteNotification(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const notificationId = url.searchParams.get('notification_id');
+if (!notificationId) {
+return new Response(
+JSON.stringify({ success: false, message: 'notification_id parameter is required' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+try {
+await env.DB.prepare(`DELETE FROM notifications WHERE id = ?`).bind(notificationId).run();
+return new Response(
+JSON.stringify({ success: true, message: 'Notification deleted successfully' }),
+{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+} catch (error: any) {
+console.error('Delete notification error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Failed to delete notification', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+/**
+ * Handle GET /api/search?query=X
+ */
+async function handleSearch(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const query = url.searchParams.get('query');
+if (!query || query.trim().length < 2) {
+return new Response(
+JSON.stringify({ success: false, message: 'Search query must be at least 2 characters' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+try {
+const searchTerm = `%${query.trim()}%`;
+const courses = await env.DB.prepare(`
+SELECT course_id, title, description FROM courses 
+WHERE title LIKE ? OR description LIKE ?
+LIMIT 20
+`).bind(searchTerm, searchTerm).all();
+const materials = await env.DB.prepare(`
+SELECT id, title, description, type FROM content 
+WHERE (title LIKE ? OR description LIKE ?) AND is_approved = 1
+LIMIT 20
+`).bind(searchTerm, searchTerm).all();
+return new Response(
+JSON.stringify({
+success: true,
+message: 'Search completed successfully',
+data: {
+courses: courses.results || [],
+materials: materials.results || [],
+total: (courses.results?.length || 0) + (materials.results?.length || 0),
+},
+}),
+{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+} catch (error: any) {
+console.error('Search error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Search failed', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
