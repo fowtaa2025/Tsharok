@@ -1139,10 +1139,16 @@
                 const file = fileInput.files[0];
                 const extension = file.name.split('.').pop().toLowerCase();
 
-                // Get user data
+                // Get user data - try session first, then localStorage
                 const userData = (typeof getCurrentUser === 'function' ? getCurrentUser() : null) ||
-                    JSON.parse(sessionStorage.getItem('user') || '{}') ||
-                    JSON.parse(localStorage.getItem('user') || '{}');
+                    JSON.parse(sessionStorage.getItem('user') || 'null') ||
+                    JSON.parse(localStorage.getItem('user') || 'null');
+
+                // Validate user is logged in
+                const userId = userData?.userId || userData?.id || userData?.user_id;
+                if (!userId) {
+                    throw new Error('Please login to upload files - user ID not found');
+                }
 
                 // Show loading state
                 const uploadBtn = document.getElementById('uploadBtn');
@@ -1160,7 +1166,7 @@
                     const formData = new FormData();
                     formData.append('file', file);
                     formData.append('courseId', currentCourseId);
-                    formData.append('userId', userData.userId || userData.id || '1');  // Add userId
+                    formData.append('userId', userId);  // Send validated userId
                     formData.append('title', name);  // API expects 'title' not 'fileName'
                     formData.append('description', description);
                     formData.append('type', currentFileType || 'document');  // Add file type
