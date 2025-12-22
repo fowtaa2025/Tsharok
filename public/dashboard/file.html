@@ -427,10 +427,11 @@
             });
 
             // Listen for language changes and reload file to regenerate dynamic content with new translations
-            window.addEventListener('languageChanged', () => {
-                // Reload file to regenerate all dynamic content with translations
-                loadFile();
-            });
+            // DISABLED: This was causing multiple page loads (3-4x API calls)
+            // window.addEventListener('languageChanged', () => {
+            //     // Reload file to regenerate all dynamic content with translations
+            //     loadFile();
+            // });
 
 
             // Get parameters from URL
