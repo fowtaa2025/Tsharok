@@ -1346,9 +1346,9 @@
                     });
 
                     const result = await response.json();
-                    if (result.success) {
-                        displayNotifications(result.notifications);
-                        updateUnreadBadge(result.unreadCount);
+                    if (result.success && result.data) {
+                        displayNotifications(result.data.notifications);
+                        updateUnreadBadge(result.data.count);
                     } else {
                         throw new Error(result.message);
                     }
