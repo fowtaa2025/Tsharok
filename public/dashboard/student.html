@@ -1408,31 +1408,29 @@
                 } else {
                     badge.classList.add('hidden');
                 }
-            }
 
-            // Open notification and mark as read
-            async function openNotification(notifId, contentId, courseId) {
-                try {
-                    const user = getCurrentUser();
-                    const token = localStorage.getItem('token') || user?.sessionToken;
+                // Handle notification click - delete notification and navigate to content
+                async function openNotification(notificationId, contentId, courseId) {
+                    try {
+                        // Delete the notification first
+                        fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notificationId=${notificationId}`, {
+                            method: 'DELETE'
+                        }).catch(err => console.error('Error deleting notification:', err));
 
-                    // Delete notification permanently
-                    fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notificationId=${notifId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
+                        // Navigate to the file page
+                        if (contentId && courseId) {
+                            window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
+                        } else {
+                            console.error('Missing contentId or courseId');
+                            await loadNotifications(); // Just refresh if can't navigate
                         }
-                    }).catch(err => console.error('Error deleting notification:', err));
-
-                    // Navigate to file page immediately
-                    window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
-                } catch (error) {
-                    console.error('Error handling notification click:', error);
-                    // Still navigate even if delete fails
-                    window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
+                    } catch (error) {
+                        console.error('Error handling notification click:', error);
+                    }
                 }
             }
+
+
 
             // Format date helper
             function formatDate(dateString) {
