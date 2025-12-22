@@ -183,9 +183,13 @@ function handleLoginForm() {
                 if (result.success) {
                     showMessage(result.message, 'success');
 
-                    // Store user data in sessionStorage
+                    // Store user data in both sessionStorage and localStorage
                     if (result.user) {
                         sessionStorage.setItem('user', JSON.stringify(result.user));
+                        localStorage.setItem('user', JSON.stringify(result.user));  // Also save to localStorage for persistence
+                        if (result.user.sessionToken) {
+                            localStorage.setItem('token', result.user.sessionToken);  // Save token for API auth
+                        }
                     }
 
                     // Redirect to appropriate dashboard

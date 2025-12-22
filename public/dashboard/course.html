@@ -1144,11 +1144,8 @@
                     JSON.parse(sessionStorage.getItem('user') || 'null') ||
                     JSON.parse(localStorage.getItem('user') || 'null');
 
-                // Validate user is logged in
-                const userId = userData?.userId || userData?.id || userData?.user_id;
-                if (!userId) {
-                    throw new Error('Please login to upload files - user ID not found');
-                }
+                // Get userId - let backend validate if missing
+                const userId = userData?.userId || userData?.id || userData?.user_id || '';
 
                 // Show loading state
                 const uploadBtn = document.getElementById('uploadBtn');
@@ -1158,15 +1155,12 @@
                 try {
                     // Get JWT token for authentication
                     const token = localStorage.getItem('token');
-                    if (!token) {
-                        throw new Error('Please login to upload files');
-                    }
 
                     // Create FormData for upload
                     const formData = new FormData();
                     formData.append('file', file);
                     formData.append('courseId', currentCourseId);
-                    formData.append('userId', userId);  // Send validated userId
+                    formData.append('userId', userId);  // Send userId (backend will validate)
                     formData.append('title', name);  // API expects 'title' not 'fileName'
                     formData.append('description', description);
                     formData.append('type', currentFileType || 'document');  // Add file type
