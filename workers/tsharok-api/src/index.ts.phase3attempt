@@ -114,10 +114,6 @@ export default {
 				return await handleUnenroll(request, env, corsHeaders);
 			}
 
-			if (url.pathname === '/api/courses' && request.method === 'GET') {
-				return await handleGetCourses(request, env, corsHeaders);
-			}
-
 			if (url.pathname === '/api/my-courses' && request.method === 'GET') {
 				return await handleMyCourses(request, env, corsHeaders);
 			}
@@ -544,8 +540,8 @@ async function handleEnroll(
 			`).bind(userId, courseId).run();
 		} else {
 			await env.DB.prepare(`
-				INSERT INTO enrollments (student_id, course_id, status, enrollment_date)
-				VALUES (?, ?, 'active', CURRENT_TIMESTAMP)
+				INSERT INTO enrollments (student_id, course_id, status, enrollment_date, progress_percent)
+				VALUES (?, ?, 'active', CURRENT_TIMESTAMP, 0)
 			`).bind(userId, courseId).run();
 		}
 
@@ -651,92 +647,250 @@ async function handleMyCourses(
 }
 
 // ============================================
+// HANDLER FUNCTIONS - PHASE 3
+// ============================================
+
+/**
+ * Handle GET /api/view-materials?course_id=X
+ */
+async function handleViewMaterials(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+const url = new URL(request.url);
+const courseId = url.searchParams.get('course_id');
+
+if (!courseId) {
+return new Response(
+JSON.stringify({ success: false, message: 'course_id parameter is required' }),
+{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+
+try {
+const result = await env.DB.prepare(`
+SELECT 
+c.id, c.title, c.type, c.file_url, c.upload_date,
+c.description, c.file_size, c.mime_type, c.file_extension,
+c.is_approved, c.uploader_id,
+u.first_name || ' ' || u.last_name as uploader_name,
+COALESCE(AVG(r.score), 0) as avg_rating,
+COUNT(r.id) as rating_count
+FROM content c
+LEFT JOIN users u ON c.uploader_id = u.user_id
+LEFT JOIN ratings r ON c.id = r.content_id
+WHERE c.course_id = ? AND c.is_approved = 1
+GROUP BY c.id
+ORDER BY c.upload_date DESC
+`).bind(courseId).all();
+
+const materials = (result.results || []).map((material: any) => ({
+id: material.id,
+title: material.title,
+type: material.type,
+description: material.description,
+file_url: material.file_url,
+file_size: material.file_size,
+mime_type: material.mime_type,
+file_extension: material.file_extension,
+is_approved: Boolean(material.is_approved),
+upload_date: material.upload_date,
+uploader: {
+id: material.uploader_id,
+name: material.uploader_name || 'Student',
+},
+statistics: {
+avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
+rating_count: Number(material.rating_count) || 0,
+},
+}));
+
+return new Response(JSON.stringify({
+success: true,
+message: 'Materials fetched successfully',
+data: { materials, total_count: materials.length },
+}), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+} catch (error: any) {
+console.error('Database error:', error);
+return new Response(
+JSON.stringify({ success: false, message: 'Failed to fetch materials', error: error.message }),
+{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+);
+}
+}
+
+// ============================================
 // PHASE 3 HANDLER FUNCTIONS
 // ============================================
 
 /**
- * Handle GET /api/profile?user_id=X
+ * Handle GET /api/view-materials?course_id=X
  */
-async function handleProfile(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const userId = url.searchParams.get('user_id');
+async function handleViewMaterials(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const courseId = url.searchParams.get('course_id');
 
-	if (!userId) {
+	if (!courseId) {
 		return new Response(
-			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+			JSON.stringify({ success: false, message: 'course_id parameter is required' }),
 			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
 
 	try {
-		const user = await env.DB.prepare(`
-SELECT 
-user_id, username, email, first_name, last_name,
-role, major_id, phone, profile_image,
-created_at, last_login
-FROM users
-WHERE user_id = ?
-`).bind(userId).first();
+		// Query D1 database
+		const result = await env.DB.prepare(`
+		SELECT 
+			c.id, c.title, c.type, c.file_url, c.upload_date,
+			c.description, c.file_size, c.mime_type, c.file_extension,
+			c.is_approved, c.uploader_id,
+			u.first_name || ' ' || u.last_name as uploader_name, u.email as uploader_email,
+			COALESCE(AVG(r.score), 0) as avg_rating,
+			COUNT(r.id) as rating_count
+		FROM content c
+		LEFT JOIN users u ON c.uploader_id = u.user_id
+		LEFT JOIN ratings r ON c.id = r.content_id
+		WHERE c.course_id = ? AND c.is_approved = 1
+		GROUP BY c.id
+		ORDER BY c.upload_date DESC
+	`)
+			.bind(courseId)
+			.all();
 
-		if (!user) {
-			return new Response(
-				JSON.stringify({ success: false, message: 'User not found' }),
-				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-			);
-		}
+		// Format response
+		const materials = result.results.map((material: any) => ({
+			id: material.id,
+			title: material.title,
+			type: material.type,
+			description: material.description,
+			file_url: material.file_url,
+			file_size: material.file_size,
+			mime_type: material.mime_type,
+			file_extension: material.file_extension,
+			is_approved: Boolean(material.is_approved),
+			upload_date: material.upload_date,
+			uploader: {
+				id: material.uploader_id,
+				name: material.uploader_name || 'Student',
+				email: material.uploader_email,
+			},
+			statistics: {
+				avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
+				rating_count: Number(material.rating_count) || 0,
+			},
+		}));
 
-		const profile = {
-			userId: user.user_id,
-			username: user.username,
-			email: user.email,
-			firstName: user.first_name,
-			lastName: user.last_name,
-			fullName: `${user.first_name} ${user.last_name}`,
-			role: user.role,
-			majorId: user.major_id,
-			phone: user.phone,
-			profileImage: user.profile_image,
-			createdAt: user.created_at,
-			lastLogin: user.last_login,
+		const response = {
+			success: true,
+			message: 'Materials fetched successfully',
+			timestamp: new Date().toISOString(),
+			data: {
+				materials: materials,
+				total_count: materials.length,
+				returned_count: materials.length,
+			},
 		};
 
-		return new Response(
-			JSON.stringify({ success: true, message: 'Profile fetched successfully', user: profile }),
-			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
+		return new Response(JSON.stringify(response), {
+			headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+		});
 	} catch (error: any) {
-		console.error('Profile error:', error);
+		console.error('Database error:', error);
 		return new Response(
-			JSON.stringify({ success: false, message: 'Failed to fetch profile', error: error.message }),
+			JSON.stringify({
+				success: false,
+				message: 'Failed to fetch materials',
+				error: error.message,
+			}),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
 }
 
 /**
- * Handle GET /api/ratings?contentId=X
+ * Handle POST /api/upload
+ * Upload file to R2 and save metadata to D1
  */
-async function handleGetRatings(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const contentId = url.searchParams.get('contentId');
-	if (!contentId) {
-		return new Response(
-			JSON.stringify({ success: false, message: 'contentId parameter is required' }),
-			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
+async function handleUpload(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
 	try {
-		const result = await env.DB.prepare(`SELECT AVG(score) as averageRating, COUNT(*) as totalRatings FROM ratings WHERE content_id = ?`).bind(contentId).first();
-		const averageRating = result ? (result.averageRating as number) || 0 : 0;
-		const totalRatings = result ? (result.totalRatings as number) || 0 : 0;
+		const formData = await request.formData();
+
+		// Get form fields
+		const file = formData.get('file') as File;
+		const title = formData.get('title') as string;
+		const courseId = formData.get('courseId') as string;
+		const userId = formData.get('userId') as string;
+		const description = formData.get('description') as string || '';
+		const type = formData.get('type') as string || 'document';
+
+		// Validate
+		if (!file || !title || !courseId || !userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing required fields' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Generate unique filename
+		const timestamp = Date.now();
+		const extension = file.name.split('.').pop();
+		const r2Key = `uploads/${courseId}/${timestamp}-${file.name}`;
+
+		// Upload to R2
+		await env.BUCKET.put(r2Key, file.stream(), {
+			httpMetadata: {
+				contentType: file.type,
+			},
+		});
+
+		// Get public URL
+		const fileUrl = `https://pub-cd42bce9da7242b69d703b8bf1e9e4b6.r2.dev/${r2Key}`;
+
+		// Save to D1 database
+		const result = await env.DB.prepare(`
+			INSERT INTO content (
+				course_id, uploader_id, title, description,
+				type, file_url, file_key, file_size, mime_type, file_extension,
+				is_approved, upload_date
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
+		`)
+			.bind(
+				courseId,
+				userId,
+				title,
+				description,
+				type,
+				fileUrl,
+				r2Key,
+				file.size,
+				file.type,
+				extension
+			)
+			.run();
+
+		// Create notifications for enrolled students
+		await createContentNotifications(
+			parseInt(courseId),
+			result.meta.last_row_id as number,
+			title,
+			parseInt(userId),
+			env
+		);
+
 		return new Response(
-			JSON.stringify({ success: true, message: 'Ratings retrieved successfully', data: { averageRating, totalRatings } }),
+			JSON.stringify({
+				success: true,
+				message: 'File uploaded successfully',
+				data: {
+					id: result.meta.last_row_id,
+					title: title,
+					fileUrl: fileUrl,
+					r2Key: r2Key,
+				},
+			}),
 			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	} catch (error: any) {
-		console.error('Get ratings error:', error);
+		console.error('Upload error:', error);
 		return new Response(
-			JSON.stringify({ success: false, message: 'Failed to retrieve ratings', error: error.message }),
+			JSON.stringify({ success: false, message: 'Upload failed', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
@@ -746,12 +900,13 @@ async function handleGetRatings(request: Request, env: Env, corsHeaders: Record<
  * Handle GET /api/comments
  * Get reviews/comments for a content item with pagination
  */
-async function handleGetComments(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
+async function handleGetComments(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
 	const contentId = url.searchParams.get('contentId');
 	const page = parseInt(url.searchParams.get('page') || '1');
 	const limit = parseInt(url.searchParams.get('limit') || '10');
 	const userIdParam = url.searchParams.get('userId') || '0';
+
+	// Decode JWT if it's a token, otherwise use as-is
 	const userId = getUserIdFromToken(userIdParam) || 0;
 
 	if (!contentId) {
@@ -763,28 +918,35 @@ async function handleGetComments(request: Request, env: Env, corsHeaders: Record
 
 	try {
 		const offset = (page - 1) * limit;
+
+		// Get comments with ratings and like info
 		const query = `
-SELECT 
-c.id, c.content, c.created_at, c.updated_at,
-u.user_id, u.username,
-u.first_name || ' ' || u.last_name as user_name,
-u.profile_image as user_avatar,
-r.score,
-CASE WHEN c.user_id = ? THEN 1 ELSE 0 END as is_own_comment,
-(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes,
-CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 1 ELSE 0 END as likedByMe
-FROM comments c
-INNER JOIN users u ON c.user_id = u.user_id
-LEFT JOIN ratings r ON c.user_id = r.user_id AND c.content_id = r.content_id
-WHERE c.content_id = ?
-ORDER BY 
-CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 0 ELSE 1 END,
-c.created_at DESC
-LIMIT ? OFFSET ?
-`;
+			SELECT 
+				c.id,
+				c.content,
+				c.created_at,
+				c.updated_at,
+				u.user_id,
+				u.username,
+				u.first_name || ' ' || u.last_name as user_name,
+				u.profile_image as user_avatar,
+				r.score,
+				CASE WHEN c.user_id = ? THEN 1 ELSE 0 END as is_own_comment,
+				(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes,
+				CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 1 ELSE 0 END as likedByMe
+			FROM comments c
+			INNER JOIN users u ON c.user_id = u.user_id
+			LEFT JOIN ratings r ON c.user_id = r.user_id AND c.content_id = r.content_id
+			WHERE c.content_id = ?
+			ORDER BY 
+				CASE WHEN EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) THEN 0 ELSE 1 END,
+				c.created_at DESC
+			LIMIT ? OFFSET ?
+		`;
 
 		const params = [userId, userId, contentId, userId, limit + 1, offset];
 		const result = await env.DB.prepare(query).bind(...params).all();
+
 		const comments = result.results as any[];
 		const hasMore = comments.length > limit;
 
@@ -792,18 +954,27 @@ LIMIT ? OFFSET ?
 			comments.pop();
 		}
 
+		// Fetch replies for each comment
 		for (const comment of comments) {
-			const repliesResult = await env.DB.prepare(`
-SELECT cr.id, cr.content as text, cr.created_at,
-u.first_name || ' ' || u.last_name as author, u.username
-FROM comment_replies cr
-JOIN users u ON cr.user_id = u.user_id
-WHERE cr.comment_id = ?
-ORDER BY cr.created_at ASC
-`).bind(comment.id).all();
+			const repliesResult = await env.DB.prepare(
+				`SELECT 
+					cr.id,
+					cr.content as text,
+					cr.created_at,
+					u.first_name || ' ' || u.last_name as author,
+					u.username
+				FROM comment_replies cr
+				JOIN users u ON cr.user_id = u.user_id
+				WHERE cr.comment_id = ?
+				ORDER BY cr.created_at ASC`
+			)
+				.bind(comment.id)
+				.all();
+
 			comment.replies = repliesResult.results || [];
 		}
 
+		// Format comments
 		const formattedComments = comments.map((comment) => ({
 			id: comment.id,
 			userName: comment.user_name,
@@ -829,7 +1000,12 @@ ORDER BY cr.created_at ASC
 			JSON.stringify({
 				success: true,
 				message: 'Comments retrieved successfully',
-				data: { comments: formattedComments, hasMore, page, limit },
+				data: {
+					comments: formattedComments,
+					hasMore: hasMore,
+					page: page,
+					limit: limit,
+				},
 			}),
 			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
@@ -842,6 +1018,54 @@ ORDER BY cr.created_at ASC
 	}
 }
 
+/**
+ * Handle GET /api/ratings
+ * Get average rating for content
+ */
+async function handleGetRatings(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const contentId = url.searchParams.get('contentId');
+
+	if (!contentId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'contentId parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		// Get average rating and count
+		const result = await env.DB.prepare(
+			`SELECT 
+				AVG(score) as averageRating,
+				COUNT(*) as totalRatings
+			FROM ratings
+			WHERE content_id = ?`
+		)
+			.bind(contentId)
+			.first();
+
+		const averageRating = result ? (result.averageRating as number) || 0 : 0;
+		const totalRatings = result ? (result.totalRatings as number) || 0 : 0;
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Ratings retrieved successfully',
+				data: {
+					averageRating: averageRating,
+					totalRatings: totalRatings,
+				},
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get ratings error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to retrieve ratings', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
 
 /**
  * Handle POST /api/comments/add
@@ -1126,228 +1350,264 @@ async function handleCommentReply(request: Request, env: Env, corsHeaders: Recor
 }
 
 /**
- * Handle POST /api/upload
- * Upload file to R2 and save metadata to D1
+ * Handle GET /api/search
+ * Search courses with filters, sorting, and pagination
  */
-async function handleUpload(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+async function handleSearch(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const searchQuery = url.searchParams.get('q')?.trim() || '';
+	const category = url.searchParams.get('category')?.trim() || '';
+	const level = url.searchParams.get('level')?.trim() || '';
+	const minRating = parseFloat(url.searchParams.get('minRating') || '0');
+	const sortBy = url.searchParams.get('sortBy') || 'relevance';
+	const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+	const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '12')));
+	const offset = (page - 1) * limit;
+
 	try {
-		const formData = await request.formData();
+		// Build WHERE conditions
+		const whereConditions = ['c.is_published = 1'];
+		const params: any[] = [];
 
-		// Get form fields
-		const file = formData.get('file') as File;
-		const title = formData.get('title') as string;
-		const courseId = formData.get('courseId') as string;
-		const userId = formData.get('userId') as string;
-		const description = formData.get('description') as string || '';
-		const type = formData.get('type') as string || 'document';
+		// Search relevance calculation
+		let relevanceScore = '0 as relevance';
+		if (searchQuery) {
+			relevanceScore = `
+				CASE
+					WHEN c.title = ? THEN 3
+					WHEN c.title LIKE ? THEN 2
+					WHEN c.description LIKE ? THEN 1
+					ELSE 0
+				END as relevance
+			`;
+			params.push(searchQuery, searchQuery + '%', '%' + searchQuery + '%');
 
-		// Validate
-		if (!file || !title || !courseId || !userId) {
-			return new Response(
-				JSON.stringify({ success: false, message: 'Missing required fields' }),
-				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-			);
+			// Add search filter
+			whereConditions.push('(c.title LIKE ? OR c.description LIKE ?)');
+			params.push('%' + searchQuery + '%', '%' + searchQuery + '%');
 		}
 
-		// Generate unique filename
-		const timestamp = Date.now();
-		const extension = file.name.split('.').pop();
-		const r2Key = `uploads/${courseId}/${timestamp}-${file.name}`;
+		// Category filter
+		if (category && category !== 'all') {
+			whereConditions.push('c.category = ?');
+			params.push(category);
+		}
 
-		// Upload to R2
-		await env.BUCKET.put(r2Key, file.stream(), {
-			httpMetadata: {
-				contentType: file.type,
-			},
-		});
+		// Level filter
+		if (level && level !== 'all') {
+			whereConditions.push('c.level = ?');
+			params.push(level);
+		}
 
-		// Get public URL
-		const fileUrl = `https://pub-cd42bce9da7242b69d703b8bf1e9e4b6.r2.dev/${r2Key}`;
+		const whereClause = whereConditions.join(' AND ');
 
-		// Save to D1 database
-		const result = await env.DB.prepare(`
-			INSERT INTO content (
-				course_id, uploader_id, title, description,
-				type, file_url, file_key, file_size, mime_type, file_extension,
-				is_approved, upload_date
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
-		`)
-			.bind(
-				courseId,
-				userId,
-				title,
-				description,
-				type,
-				fileUrl,
-				r2Key,
-				file.size,
-				file.type,
-				extension
-			)
-			.run();
+		// Count total results
+		const countQuery = `
+			SELECT COUNT(DISTINCT c.course_id) as total
+			FROM courses c
+			WHERE ${whereClause}
+		`;
+		const countResult = await env.DB.prepare(countQuery).bind(...params).first();
+		const totalResults = countResult?.total || 0;
 
-		// Create notifications for enrolled students
-		await createContentNotifications(
-			parseInt(courseId),
-			result.meta.last_row_id as number,
-			title,
-			parseInt(userId),
-			env
-		);
+		// Build main query
+		const query = `
+			SELECT 
+				c.course_id,
+				c.title,
+				c.description,
+				c.category,
+				c.level,
+				c.duration_weeks,
+				c.thumbnail,
+				c.start_date,
+				c.end_date,
+				c.semester,
+				c.created_at,
+				${relevanceScore},
+				COUNT(DISTINCT e.enrollment_id) as enrollment_count,
+				COALESCE(AVG(r.score), 0) as average_rating,
+				COUNT(DISTINCT r.id) as rating_count
+			FROM courses c
+			LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'active'
+			LEFT JOIN ratings r ON c.course_id = r.content_id
+			WHERE ${whereClause}
+			GROUP BY c.course_id
+			HAVING (? = 0 OR average_rating >= ?)
+			ORDER BY ${getSortOrder(sortBy, !!searchQuery)}
+			LIMIT ? OFFSET ?
+		`;
+
+		const queryParams = [...params, minRating, minRating, limit + 1, offset];
+		const result = await env.DB.prepare(query).bind(...queryParams).all();
+
+		const courses = result.results as any[];
+		const hasMore = courses.length > limit;
+		if (hasMore) courses.pop();
+
+		// Format courses
+		const formattedCourses = courses.map((course) => ({
+			courseId: course.course_id,
+			title: course.title,
+			description: truncateText(course.description || '', 150),
+			category: course.category || 'General',
+			level: capitalize(course.level),
+			duration: course.duration_weeks ? `${course.duration_weeks} weeks` : 'N/A',
+			thumbnail: course.thumbnail || '/assets/images/default-course.jpg',
+			enrollmentCount: course.enrollment_count || 0,
+			averageRating: Math.round(course.average_rating * 10) / 10,
+			ratingCount: course.rating_count || 0,
+			startDate: course.start_date,
+			endDate: course.end_date,
+			semester: course.semester,
+			relevance: course.relevance || 0,
+			createdAt: course.created_at,
+		}));
+
+		const totalPages = Math.ceil(totalResults / limit);
 
 		return new Response(
 			JSON.stringify({
 				success: true,
-				message: 'File uploaded successfully',
+				message: 'Search completed successfully',
 				data: {
-					id: result.meta.last_row_id,
-					title: title,
-					fileUrl: fileUrl,
-					r2Key: r2Key,
+					courses: formattedCourses,
+					pagination: {
+						currentPage: page,
+						totalPages: totalPages,
+						totalResults: totalResults,
+						hasMore: hasMore,
+						limit: limit,
+					},
+					filters: {
+						searchQuery: searchQuery,
+						category: category,
+						level: level,
+						minRating: minRating,
+						sortBy: sortBy,
+					},
 				},
 			}),
 			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	} catch (error: any) {
-		console.error('Upload error:', error);
+		console.error('Search error:', error);
 		return new Response(
-			JSON.stringify({ success: false, message: 'Upload failed', error: error.message }),
+			JSON.stringify({ success: false, message: 'Failed to perform search', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
 }
 
 /**
- * Handle GET /api/view-materials?course_id=X
+ * Handle GET /api/notifications - Get notifications for a user
  */
-async function handleViewMaterials(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const courseId = url.searchParams.get('course_id');
-
-	if (!courseId) {
-		return new Response(
-			JSON.stringify({ success: false, message: 'course_id parameter is required' }),
-			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
-
+async function handleGetNotifications(url: URL, request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
 	try {
-		const result = await env.DB.prepare(`
-SELECT 
-c.id, c.title, c.type, c.file_url, c.upload_date,
-c.description, c.file_size, c.mime_type, c.file_extension,
-c.is_approved, c.uploader_id,
-u.first_name || ' ' || u.last_name as uploader_name,
-COALESCE(AVG(r.score), 0) as avg_rating,
-COUNT(r.id) as rating_count
-FROM content c
-LEFT JOIN users u ON c.uploader_id = u.user_id
-LEFT JOIN ratings r ON c.id = r.content_id
-WHERE c.course_id = ? AND c.is_approved = 1
-GROUP BY c.id
-ORDER BY c.upload_date DESC
-`).bind(courseId).all();
+		const authHeader = request.headers.get('Authorization');
+		let userId: number | null = null;
 
-		const materials = (result.results || []).map((material: any) => ({
-			id: material.id,
-			title: material.title,
-			type: material.type,
-			description: material.description,
-			file_url: material.file_url,
-			file_size: material.file_size,
-			mime_type: material.mime_type,
-			file_extension: material.file_extension,
-			is_approved: Boolean(material.is_approved),
-			upload_date: material.upload_date,
-			uploader: {
-				id: material.uploader_id,
-				name: material.uploader_name || 'Student',
-			},
-			statistics: {
-				avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
-				rating_count: Number(material.rating_count) || 0,
-			},
+		if (authHeader) {
+			const token = authHeader.replace('Bearer ', '');
+			userId = getUserIdFromToken(token);
+		}
+
+		if (!userId) {
+			userId = parseInt(url.searchParams.get('userId') || '0');
+		}
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'userId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Get limit from query parameter (default 10, max 50)
+		const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '10')));
+
+		const result = await env.DB.prepare(`
+			SELECT 
+				n.id, n.user_id, n.course_id, n.content_id,
+				n.type, n.title, n.message, n.is_read, n.created_at,
+				c.title as course_name,
+				co.title as content_title
+			FROM notifications n
+			LEFT JOIN courses c ON n.course_id = c.course_id
+			LEFT JOIN content co ON n.content_id = co.id
+			WHERE n.user_id = ?
+			ORDER BY n.created_at DESC
+			LIMIT ?
+		`).bind(userId, limit).all();
+
+		const unreadResult = await env.DB.prepare(`
+			SELECT COUNT(*) as count
+			FROM notifications
+			WHERE user_id = ? AND is_read = 0
+		`).bind(userId).first();
+
+		const notifications = result.results.map((notif: any) => ({
+			id: notif.id,
+			userId: notif.user_id,
+			courseId: notif.course_id,
+			contentId: notif.content_id,
+			type: notif.type,
+			title: notif.title,
+			message: notif.message,
+			isRead: Boolean(notif.is_read),
+			createdAt: notif.created_at,
+			courseName: notif.course_name,
+			contentTitle: notif.content_title,
 		}));
 
-		return new Response(JSON.stringify({
-			success: true,
-			message: 'Materials fetched successfully',
-			timestamp: new Date().toISOString(),
-			data: {
-				materials: materials,
-				total_count: materials.length,
-				returned_count: materials.length,
-			},
-		}), {
-			headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-		});
-	} catch (error: any) {
-		console.error('Database error:', error);
-		return new Response(
-			JSON.stringify({
-				success: false,
-				message: 'Failed to fetch materials',
-				error: error.message,
-			}),
-			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
-}
-
-/**
- * Handle GET /api/notifications?user_id=X
- */
-async function handleGetNotifications(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const userId = url.searchParams.get('user_id') || url.searchParams.get('userId');  // Accept both formats
-	if (!userId) {
-		return new Response(
-			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
-			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
-	try {
-		const notifications = await env.DB.prepare(`
-SELECT n.id, n.type, n.title, n.message, n.content_id, n.course_id, n.is_read, n.created_at, c.title as course_title
-FROM notifications n
-LEFT JOIN courses c ON n.course_id = c.course_id
-WHERE n.user_id = ?
-ORDER BY n.created_at DESC
-LIMIT 50
-`).bind(userId).all();
 		return new Response(
 			JSON.stringify({
 				success: true,
-				message: 'Notifications fetched successfully',
-				data: { notifications: notifications.results || [], count: (notifications.results || []).length },
+				notifications: notifications,
+				unreadCount: unreadResult?.count || 0,
 			}),
 			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	} catch (error: any) {
 		console.error('Get notifications error:', error);
 		return new Response(
-			JSON.stringify({ success: false, message: 'Failed to fetch notifications', error: error.message }),
+			JSON.stringify({ success: false, message: 'Failed to get notifications', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
 }
 
 /**
- * Handle DELETE /api/notifications?notification_id=X
+ * Handle DELETE /api/notifications - Delete a notification permanently
  */
-async function handleDeleteNotification(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const notificationId = url.searchParams.get('notification_id');
-	if (!notificationId) {
-		return new Response(
-			JSON.stringify({ success: false, message: 'notification_id parameter is required' }),
-			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
+async function handleDeleteNotification(
+	request: Request,
+	env: Env,
+	corsHeaders: Record<string, string>
+): Promise<Response> {
 	try {
-		await env.DB.prepare(`DELETE FROM notifications WHERE id = ?`).bind(notificationId).run();
+		const url = new URL(request.url);
+		const notificationId = parseInt(url.searchParams.get('notificationId') || '0');
+
+		if (!notificationId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'notificationId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Delete the notification from database
+		await env.DB.prepare(`
+			DELETE FROM notifications
+			WHERE id = ?
+		`).bind(notificationId).run();
+
+		console.log(`Deleted notification ${notificationId}`);
+
 		return new Response(
-			JSON.stringify({ success: true, message: 'Notification deleted successfully' }),
+			JSON.stringify({
+				success: true,
+				message: 'Notification deleted successfully'
+			}),
 			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	} catch (error: any) {
@@ -1359,118 +1619,78 @@ async function handleDeleteNotification(request: Request, env: Env, corsHeaders:
 	}
 }
 
-/**
- * Handle GET /api/search?query=X
+ * Handle POST /api/notifications/mark-read
  */
-async function handleSearch(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const query = url.searchParams.get('query');
-	if (!query || query.trim().length < 2) {
-		return new Response(
-			JSON.stringify({ success: false, message: 'Search query must be at least 2 characters' }),
-			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
+async function handleMarkNotificationRead(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
 	try {
-		const searchTerm = `%${query.trim()}%`;
-		const courses = await env.DB.prepare(`
-SELECT course_id, title, description FROM courses 
-WHERE title LIKE ? OR description LIKE ?
-LIMIT 20
-`).bind(searchTerm, searchTerm).all();
-		const materials = await env.DB.prepare(`
-SELECT id, title, description, type FROM content 
-WHERE (title LIKE ? OR description LIKE ?) AND is_approved = 1
-LIMIT 20
-`).bind(searchTerm, searchTerm).all();
-		return new Response(
-			JSON.stringify({
-				success: true,
-				message: 'Search completed successfully',
-				data: {
-					courses: courses.results || [],
-					materials: materials.results || [],
-					total: (courses.results?.length || 0) + (materials.results?.length || 0),
-				},
-			}),
-			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	} catch (error: any) {
-		console.error('Search error:', error);
-		return new Response(
-			JSON.stringify({ success: false, message: 'Search failed', error: error.message }),
-			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-		);
-	}
-}
+		const data = await request.json() as any;
 
-
-/**
- * Handle GET /api/courses - Get all available courses OR single course by ID
- */
-async function handleGetCourses(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-	const url = new URL(request.url);
-	const courseId = url.searchParams.get('id');
-
-	try {
-		// If id parameter exists, return single course
-		if (courseId) {
-			const course = await env.DB.prepare(`
-				SELECT 
-					course_id, title, description,
-					created_at, updated_at
-				FROM courses
-				WHERE course_id = ?
-			`).bind(courseId).first();
-
-			if (!course) {
-				return new Response(
-					JSON.stringify({ success: false, message: 'Course not found' }),
-					{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-				);
-			}
-
+		if (!data.notificationId) {
 			return new Response(
-				JSON.stringify({
-					success: true,
-					message: 'Course fetched successfully',
-					data: course
-				}),
-				{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+				JSON.stringify({ success: false, message: 'notificationId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 			);
 		}
 
-		// Otherwise return all courses
-		const result = await env.DB.prepare(`
-			SELECT 
-				course_id, title, description,
-				created_at, updated_at
-			FROM courses
-			ORDER BY title ASC
-		`).all();
+		await env.DB.prepare(`UPDATE notifications SET is_read = 1 WHERE id = ?`)
+			.bind(data.notificationId)
+			.run();
 
 		return new Response(
-			JSON.stringify({
-				success: true,
-				message: 'Courses fetched successfully',
-				data: {
-					courses: result.results || [],
-					total: (result.results || []).length
-				}
-			}),
+			JSON.stringify({ success: true, message: 'Notification marked as read' }),
 			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	} catch (error: any) {
-		console.error('Get courses error:', error);
+		console.error('Mark notification read error:', error);
 		return new Response(
-			JSON.stringify({ success: false, message: 'Failed to fetch courses', error: error.message }),
+			JSON.stringify({ success: false, message: 'Failed to mark notification as read', error: error.message }),
 			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
 		);
 	}
 }
 
 /**
- * Helper: Create notifications for enrolled students when new content is uploaded
+ * Handle POST /api/notifications/mark-all-read
+ */
+async function handleMarkAllNotificationsRead(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const data = await request.json() as any;
+		let userId = data.userId;
+
+		if (!userId) {
+			const authHeader = request.headers.get('Authorization');
+			if (authHeader) {
+				const token = authHeader.replace('Bearer ', '');
+				userId = getUserIdFromToken(token);
+			}
+		}
+
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'userId is required' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		await env.DB.prepare(`UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0`)
+			.bind(userId)
+			.run();
+
+		return new Response(
+			JSON.stringify({ success: true, message: 'All notifications marked as read' }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Mark all notifications read error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to mark all notifications as read', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Create notifications for enrolled students when new content is uploaded
  */
 async function createContentNotifications(
 	courseId: number,
@@ -1480,45 +1700,251 @@ async function createContentNotifications(
 	env: Env
 ): Promise<void> {
 	try {
-		// Get all students enrolled in this course (excluding the uploader)
-		const enrolledStudents = await env.DB.prepare(`
-			SELECT DISTINCT e.student_id
-			FROM enrollments e
-			WHERE e.course_id = ? 
-				AND e.status = 'active'
-				AND e.student_id != ?
+		console.log('=== CREATE CONTENT NOTIFICATIONS ===');
+		console.log('Course ID:', courseId);
+		console.log('Content ID:', contentId);
+		console.log('Content Title:', contentTitle);
+		console.log('Uploader ID:', uploaderId);
+
+		// Fetch course name
+		const course = await env.DB.prepare(`
+			SELECT title FROM courses WHERE course_id = ?
+		`).bind(courseId).first();
+
+		const courseName = course?.title || 'your course';
+		console.log('Course Name:', courseName);
+
+		const enrolled = await env.DB.prepare(`
+			SELECT student_id
+			FROM enrollments
+			WHERE course_id = ? AND student_id != ? AND status = 'active'
 		`).bind(courseId, uploaderId).all();
 
-		if (!enrolledStudents.results || enrolledStudents.results.length === 0) {
-			console.log('No enrolled students to notify for course:', courseId);
+		console.log('Enrolled students found:', enrolled.results?.length || 0);
+		console.log('Enrolled students:', enrolled.results);
+
+		if (!enrolled.results || enrolled.results.length === 0) {
+			console.log('No students to notify for course', courseId);
 			return;
 		}
 
-		// Get course name
-		const course = await env.DB.prepare(`
-			SELECT title FROM courses WHERE course_id = ?
-		`).bind(courseId).first() as any;
-
-		const courseName = course?.title || `Course ${courseId}`;
-
-		// Create notification for each enrolled student
-		const notificationPromises = (enrolledStudents.results as any[]).map(async (student) => {
-			return env.DB.prepare(`
-				INSERT INTO notifications (user_id, type, title, message, course_id, content_id, is_read, created_at)
-				VALUES (?, 'new_content', ?, ?, ?, ?, 0, datetime('now'))
+		for (const student of enrolled.results as any[]) {
+			console.log('Creating notification for student:', student.student_id);
+			await env.DB.prepare(`
+				INSERT INTO notifications (user_id, course_id, content_id, type, title, message)
+				VALUES (?, ?, ?, 'content_upload', 'New content uploaded', ?)
 			`).bind(
 				student.student_id,
-				`New content in ${courseName}`,
-				`New content "${contentTitle}" added to ${courseName}`,
 				courseId,
-				contentId
+				contentId,
+				`${contentTitle} was uploaded to ${courseName}`
 			).run();
-		});
+		}
 
-		await Promise.all(notificationPromises);
-		console.log(`Created ${notificationPromises.length} notifications for new content in course ${courseId}`);
+		console.log(`Created ${enrolled.results.length} notifications for course ${courseId}`);
 	} catch (error: any) {
 		console.error('Error creating content notifications:', error);
-		// Don't throw - notifications are not critical
 	}
 }
+
+
+/**
+ * Handle POST /api/enroll - Enroll student in course
+ */
+async function handleEnroll(
+	request: Request,
+	env: Env,
+	corsHeaders: Record<string, string>
+): Promise<Response> {
+	try {
+		const { courseId, userId } = await request.json();
+
+		if (!courseId || !userId) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Missing courseId or userId' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if already enrolled
+		const existing = await env.DB.prepare(`
+			SELECT enrollment_id FROM enrollments 
+			WHERE student_id = ? AND course_id = ?
+		`).bind(userId, courseId).first();
+
+		if (existing) {
+			// Update to active if it was dropped
+			await env.DB.prepare(`
+				UPDATE enrollments 
+				SET status = 'active', enrollment_date = CURRENT_TIMESTAMP
+				WHERE student_id = ? AND course_id = ?
+			`).bind(userId, courseId).run();
+		} else {
+			// Create new enrollment with status='active'
+			await env.DB.prepare(`
+				INSERT INTO enrollments (student_id, course_id, status, enrollment_date, progress_percent)
+
+/**
+ * Handle POST /api/register
+ */
+async function handleRegister(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	try {
+		const data = await request.json() as any;
+
+		// Validate required fields
+		const requiredFields = ['firstName', 'lastName', 'username', 'email', 'password'];
+		for (const field of requiredFields) {
+			if (!data[field] || !data[field].trim()) {
+				return new Response(
+					JSON.stringify({ success: false, message: `${field} is required` }),
+					{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+				);
+			}
+		}
+
+		// Basic validation
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(data.email)) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Invalid email format' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		if (data.password.length < 6) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Password must be at least 6 characters' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if username exists
+		const existingUsername = await env.DB.prepare('SELECT user_id FROM users WHERE username = ?')
+			.bind(data.username)
+			.first();
+
+		if (existingUsername) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Username already taken' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Check if email exists
+		const existingEmail = await env.DB.prepare('SELECT user_id FROM users WHERE email = ?')
+			.bind(data.email)
+			.first();
+
+		if (existingEmail) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'Email already registered' }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Hash password
+		const hashedPassword = await hashPassword(data.password);
+
+		// Insert user (set is_active to 1 for now - skip email verification)
+		const result = await env.DB.prepare(`
+			INSERT INTO users (
+				username, email, password_hash,
+				first_name, last_name, role, major_id,
+				phone, is_active, created_at
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now'))
+		`)
+			.bind(
+				data.username,
+				data.email,
+				hashedPassword,
+				data.firstName,
+				data.lastName,
+				'student', // Force student role
+				data.major || null,
+				data.phone || null
+			)
+			.run();
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Registration successful! You can now login.',
+				userId: result.meta.last_row_id,
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Registration error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Registration failed', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
+/**
+ * Handle GET /api/profile?user_id=X
+ */
+async function handleProfile(url: URL, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
+	const userId = url.searchParams.get('user_id');
+
+	if (!userId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+
+	try {
+		// Query user data
+		const user = await env.DB.prepare(`
+			SELECT 
+				user_id, username, email, first_name, last_name,
+				role, major_id, phone, profile_image,
+				created_at, last_login
+			FROM users
+			WHERE user_id = ?
+		`)
+			.bind(userId)
+			.first();
+
+		if (!user) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'User not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Return user profile
+		const profile = {
+			userId: user.user_id,
+			username: user.username,
+			email: user.email,
+			firstName: user.first_name,
+			lastName: user.last_name,
+			fullName: `${user.first_name} ${user.last_name}`,
+			role: user.role,
+			majorId: user.major_id,
+			phone: user.phone,
+			profileImage: user.profile_image,
+			createdAt: user.created_at,
+			lastLogin: user.last_login,
+		};
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Profile fetched successfully',
+				user: profile,
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Profile error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to fetch profile', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+}
+
