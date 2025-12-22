@@ -796,26 +796,51 @@
             }
 
             // Remove course from dashboard
-            function removeCourseFromDashboard(courseId) {
+            async function removeCourseFromDashboard(courseId) {
                 console.log('Attempting to remove course:', courseId);
 
-                // Get current user to use the same storage key as loadMyCourses
+                // Get current user
                 const user = getCurrentUser();
-                const userId = user?.userId || user?.id || 'guest';
-                const storageKey = `addedCourses_${userId}`;
+                const userId = user?.userId || user?.id;
 
-                console.log('Using storage key:', storageKey);
+                if (!userId) {
+                    alert('Please login to unenroll from courses');
+                    return;
+                }
 
-                let addedCourses = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                console.log('Current courses before delete:', addedCourses);
+                try {
+                    // Call unenroll API
+                    const response = await fetch('https://tsharok-api.fow-taa-2025.workers.dev/api/unenroll', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            courseId: courseId,
+                            userId: userId
+                        })
+                    });
 
-                addedCourses = addedCourses.filter(id => id !== courseId);
-                console.log('Courses after delete:', addedCourses);
+                    const result = await response.json();
 
-                localStorage.setItem(storageKey, JSON.stringify(addedCourses));
-                console.log('Saved to localStorage, reloading courses...');
+                    if (result.success) {
+                        console.log('Successfully unenrolled from API');
 
-                loadMyCourses();
+                        // Also update localStorage for immediate UI update
+                        const storageKey = `addedCourses_${userId}`;
+                        let addedCourses = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                        addedCourses = addedCourses.filter(id => id !== courseId);
+                        localStorage.setItem(storageKey, JSON.stringify(addedCourses));
+
+                        // Reload courses from API
+                        loadMyCourses();
+                    } else {
+                        alert('Failed to unenroll: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Unenroll error:', error);
+                    alert('Failed to unenroll from course');
+                }
             }
 
 

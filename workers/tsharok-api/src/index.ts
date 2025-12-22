@@ -544,8 +544,8 @@ async function handleEnroll(
 			`).bind(userId, courseId).run();
 		} else {
 			await env.DB.prepare(`
-				INSERT INTO enrollments (student_id, course_id, status, enrollment_date, progress_percent)
-				VALUES (?, ?, 'active', CURRENT_TIMESTAMP, 0)
+				INSERT INTO enrollments (student_id, course_id, status, enrollment_date)
+				VALUES (?, ?, 'active', CURRENT_TIMESTAMP)
 			`).bind(userId, courseId).run();
 		}
 
@@ -1300,7 +1300,7 @@ ORDER BY c.upload_date DESC
  */
 async function handleGetNotifications(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
 	const url = new URL(request.url);
-	const userId = url.searchParams.get('user_id');
+	const userId = url.searchParams.get('user_id') || url.searchParams.get('userId');  // Accept both formats
 	if (!userId) {
 		return new Response(
 			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
@@ -1418,7 +1418,7 @@ async function handleGetCourses(request: Request, env: Env, corsHeaders: Record<
 		if (courseId) {
 			const course = await env.DB.prepare(`
 				SELECT 
-					course_id, title, description, instructor_name,
+					course_id, title, description,
 					created_at, updated_at
 				FROM courses
 				WHERE course_id = ?
@@ -1444,7 +1444,7 @@ async function handleGetCourses(request: Request, env: Env, corsHeaders: Record<
 		// Otherwise return all courses
 		const result = await env.DB.prepare(`
 			SELECT 
-				course_id, title, description, instructor_name,
+				course_id, title, description,
 				created_at, updated_at
 			FROM courses
 			ORDER BY title ASC
