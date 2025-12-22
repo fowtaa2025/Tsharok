@@ -115,10 +115,10 @@ export default {
 			}
 
 			if (url.pathname === '/api/courses' && request.method === 'GET') {
-return await handleGetCourses(request, env, corsHeaders);
-}
+				return await handleGetCourses(request, env, corsHeaders);
+			}
 
-if (url.pathname === '/api/my-courses' && request.method === 'GET') {
+			if (url.pathname === '/api/my-courses' && request.method === 'GET') {
 				return await handleMyCourses(request, env, corsHeaders);
 			}
 
@@ -658,18 +658,18 @@ async function handleMyCourses(
  * Handle GET /api/profile?user_id=X
  */
 async function handleProfile(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-const url = new URL(request.url);
-const userId = url.searchParams.get('user_id');
+	const url = new URL(request.url);
+	const userId = url.searchParams.get('user_id');
 
-if (!userId) {
-return new Response(
-JSON.stringify({ success: false, message: 'user_id parameter is required' }),
-{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+	if (!userId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 
-try {
-const user = await env.DB.prepare(`
+	try {
+		const user = await env.DB.prepare(`
 SELECT 
 user_id, username, email, first_name, last_name,
 role, major_id, phone, profile_image,
@@ -678,39 +678,39 @@ FROM users
 WHERE user_id = ?
 `).bind(userId).first();
 
-if (!user) {
-return new Response(
-JSON.stringify({ success: false, message: 'User not found' }),
-{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+		if (!user) {
+			return new Response(
+				JSON.stringify({ success: false, message: 'User not found' }),
+				{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
 
-const profile = {
-userId: user.user_id,
-username: user.username,
-email: user.email,
-firstName: user.first_name,
-lastName: user.last_name,
-fullName: `${user.first_name} ${user.last_name}`,
-role: user.role,
-majorId: user.major_id,
-phone: user.phone,
-profileImage: user.profile_image,
-createdAt: user.created_at,
-lastLogin: user.last_login,
-};
+		const profile = {
+			userId: user.user_id,
+			username: user.username,
+			email: user.email,
+			firstName: user.first_name,
+			lastName: user.last_name,
+			fullName: `${user.first_name} ${user.last_name}`,
+			role: user.role,
+			majorId: user.major_id,
+			phone: user.phone,
+			profileImage: user.profile_image,
+			createdAt: user.created_at,
+			lastLogin: user.last_login,
+		};
 
-return new Response(
-JSON.stringify({ success: true, message: 'Profile fetched successfully', user: profile }),
-{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-} catch (error: any) {
-console.error('Profile error:', error);
-return new Response(
-JSON.stringify({ success: false, message: 'Failed to fetch profile', error: error.message }),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+		return new Response(
+			JSON.stringify({ success: true, message: 'Profile fetched successfully', user: profile }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Profile error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to fetch profile', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 /**
@@ -747,23 +747,23 @@ async function handleGetRatings(request: Request, env: Env, corsHeaders: Record<
  * Get reviews/comments for a content item with pagination
  */
 async function handleGetComments(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-const url = new URL(request.url);
-const contentId = url.searchParams.get('contentId');
-const page = parseInt(url.searchParams.get('page') || '1');
-const limit = parseInt(url.searchParams.get('limit') || '10');
-const userIdParam = url.searchParams.get('userId') || '0';
-const userId = getUserIdFromToken(userIdParam) || 0;
+	const url = new URL(request.url);
+	const contentId = url.searchParams.get('contentId');
+	const page = parseInt(url.searchParams.get('page') || '1');
+	const limit = parseInt(url.searchParams.get('limit') || '10');
+	const userIdParam = url.searchParams.get('userId') || '0';
+	const userId = getUserIdFromToken(userIdParam) || 0;
 
-if (!contentId) {
-return new Response(
-JSON.stringify({ success: false, message: 'contentId parameter is required' }),
-{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+	if (!contentId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'contentId parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 
-try {
-const offset = (page - 1) * limit;
-const query = `
+	try {
+		const offset = (page - 1) * limit;
+		const query = `
 SELECT 
 c.id, c.content, c.created_at, c.updated_at,
 u.user_id, u.username,
@@ -783,17 +783,17 @@ c.created_at DESC
 LIMIT ? OFFSET ?
 `;
 
-const params = [userId, userId, contentId, userId, limit + 1, offset];
-const result = await env.DB.prepare(query).bind(...params).all();
-const comments = result.results as any[];
-const hasMore = comments.length > limit;
+		const params = [userId, userId, contentId, userId, limit + 1, offset];
+		const result = await env.DB.prepare(query).bind(...params).all();
+		const comments = result.results as any[];
+		const hasMore = comments.length > limit;
 
-if (hasMore) {
-comments.pop();
-}
+		if (hasMore) {
+			comments.pop();
+		}
 
-for (const comment of comments) {
-const repliesResult = await env.DB.prepare(`
+		for (const comment of comments) {
+			const repliesResult = await env.DB.prepare(`
 SELECT cr.id, cr.content as text, cr.created_at,
 u.first_name || ' ' || u.last_name as author, u.username
 FROM comment_replies cr
@@ -801,45 +801,45 @@ JOIN users u ON cr.user_id = u.user_id
 WHERE cr.comment_id = ?
 ORDER BY cr.created_at ASC
 `).bind(comment.id).all();
-comment.replies = repliesResult.results || [];
-}
+			comment.replies = repliesResult.results || [];
+		}
 
-const formattedComments = comments.map((comment) => ({
-id: comment.id,
-userName: comment.user_name,
-username: comment.username,
-userAvatar: comment.user_avatar,
-score: comment.score || 0,
-content: comment.content,
-createdAt: comment.created_at,
-updatedAt: comment.updated_at,
-isOwnComment: Boolean(comment.is_own_comment),
-likes: comment.likes || 0,
-likedByMe: Boolean(comment.likedByMe),
-replies: (comment.replies || []).map((reply: any) => ({
-id: reply.id,
-text: reply.text,
-author: reply.author,
-username: reply.username,
-createdAt: reply.created_at,
-})),
-}));
+		const formattedComments = comments.map((comment) => ({
+			id: comment.id,
+			userName: comment.user_name,
+			username: comment.username,
+			userAvatar: comment.user_avatar,
+			score: comment.score || 0,
+			content: comment.content,
+			createdAt: comment.created_at,
+			updatedAt: comment.updated_at,
+			isOwnComment: Boolean(comment.is_own_comment),
+			likes: comment.likes || 0,
+			likedByMe: Boolean(comment.likedByMe),
+			replies: (comment.replies || []).map((reply: any) => ({
+				id: reply.id,
+				text: reply.text,
+				author: reply.author,
+				username: reply.username,
+				createdAt: reply.created_at,
+			})),
+		}));
 
-return new Response(
-JSON.stringify({
-success: true,
-message: 'Comments retrieved successfully',
-data: { comments: formattedComments, hasMore, page, limit },
-}),
-{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-} catch (error: any) {
-console.error('Get comments error:', error);
-return new Response(
-JSON.stringify({ success: false, message: 'Failed to retrieve comments', error: error.message }),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Comments retrieved successfully',
+				data: { comments: formattedComments, hasMore, page, limit },
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get comments error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to retrieve comments', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 
@@ -1187,13 +1187,14 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
 			.run();
 
 		// Create notifications for enrolled students
-		await createContentNotifications(
-			parseInt(courseId),
-			result.meta.last_row_id as number,
-			title,
-			parseInt(userId),
-			env
-		);
+		// TODO: Implement createContentNotifications function
+		// await createContentNotifications(
+		// 	parseInt(courseId),
+		// 	result.meta.last_row_id as number,
+		// 	title,
+		// 	parseInt(userId),
+		// 	env
+		// );
 
 		return new Response(
 			JSON.stringify({
@@ -1221,18 +1222,18 @@ async function handleUpload(request: Request, env: Env, corsHeaders: Record<stri
  * Handle GET /api/view-materials?course_id=X
  */
 async function handleViewMaterials(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-const url = new URL(request.url);
-const courseId = url.searchParams.get('course_id');
+	const url = new URL(request.url);
+	const courseId = url.searchParams.get('course_id');
 
-if (!courseId) {
-return new Response(
-JSON.stringify({ success: false, message: 'course_id parameter is required' }),
-{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+	if (!courseId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'course_id parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 
-try {
-const result = await env.DB.prepare(`
+	try {
+		const result = await env.DB.prepare(`
 SELECT 
 c.id, c.title, c.type, c.file_url, c.upload_date,
 c.description, c.file_size, c.mime_type, c.file_extension,
@@ -1248,66 +1249,66 @@ GROUP BY c.id
 ORDER BY c.upload_date DESC
 `).bind(courseId).all();
 
-const materials = (result.results || []).map((material: any) => ({
-id: material.id,
-title: material.title,
-type: material.type,
-description: material.description,
-file_url: material.file_url,
-file_size: material.file_size,
-mime_type: material.mime_type,
-file_extension: material.file_extension,
-is_approved: Boolean(material.is_approved),
-upload_date: material.upload_date,
-uploader: {
-id: material.uploader_id,
-name: material.uploader_name || 'Student',
-},
-statistics: {
-avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
-rating_count: Number(material.rating_count) || 0,
-},
-}));
+		const materials = (result.results || []).map((material: any) => ({
+			id: material.id,
+			title: material.title,
+			type: material.type,
+			description: material.description,
+			file_url: material.file_url,
+			file_size: material.file_size,
+			mime_type: material.mime_type,
+			file_extension: material.file_extension,
+			is_approved: Boolean(material.is_approved),
+			upload_date: material.upload_date,
+			uploader: {
+				id: material.uploader_id,
+				name: material.uploader_name || 'Student',
+			},
+			statistics: {
+				avg_rating: material.avg_rating ? parseFloat(parseFloat(String(material.avg_rating)).toFixed(1)) : 0.0,
+				rating_count: Number(material.rating_count) || 0,
+			},
+		}));
 
-return new Response(JSON.stringify({
-success: true,
-message: 'Materials fetched successfully',
-timestamp: new Date().toISOString(),
-data: {
-materials: materials,
-total_count: materials.length,
-returned_count: materials.length,
-},
-}), {
-headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-});
-} catch (error: any) {
-console.error('Database error:', error);
-return new Response(
-JSON.stringify({
-success: false,
-message: 'Failed to fetch materials',
-error: error.message,
-}),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+		return new Response(JSON.stringify({
+			success: true,
+			message: 'Materials fetched successfully',
+			timestamp: new Date().toISOString(),
+			data: {
+				materials: materials,
+				total_count: materials.length,
+				returned_count: materials.length,
+			},
+		}), {
+			headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+		});
+	} catch (error: any) {
+		console.error('Database error:', error);
+		return new Response(
+			JSON.stringify({
+				success: false,
+				message: 'Failed to fetch materials',
+				error: error.message,
+			}),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 /**
  * Handle GET /api/notifications?user_id=X
  */
 async function handleGetNotifications(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-const url = new URL(request.url);
-const userId = url.searchParams.get('user_id');
-if (!userId) {
-return new Response(
-JSON.stringify({ success: false, message: 'user_id parameter is required' }),
-{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
-try {
-const notifications = await env.DB.prepare(`
+	const url = new URL(request.url);
+	const userId = url.searchParams.get('user_id');
+	if (!userId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'user_id parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+	try {
+		const notifications = await env.DB.prepare(`
 SELECT n.id, n.type, n.message, n.is_read, n.created_at, c.title as course_title
 FROM notifications n
 LEFT JOIN courses c ON n.course_id = c.course_id
@@ -1315,125 +1316,156 @@ WHERE n.user_id = ?
 ORDER BY n.created_at DESC
 LIMIT 50
 `).bind(userId).all();
-return new Response(
-JSON.stringify({
-success: true,
-message: 'Notifications fetched successfully',
-data: { notifications: notifications.results || [], count: (notifications.results || []).length },
-}),
-{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-} catch (error: any) {
-console.error('Get notifications error:', error);
-return new Response(
-JSON.stringify({ success: false, message: 'Failed to fetch notifications', error: error.message }),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Notifications fetched successfully',
+				data: { notifications: notifications.results || [], count: (notifications.results || []).length },
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get notifications error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to fetch notifications', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 /**
  * Handle DELETE /api/notifications?notification_id=X
  */
 async function handleDeleteNotification(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-const url = new URL(request.url);
-const notificationId = url.searchParams.get('notification_id');
-if (!notificationId) {
-return new Response(
-JSON.stringify({ success: false, message: 'notification_id parameter is required' }),
-{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
-try {
-await env.DB.prepare(`DELETE FROM notifications WHERE id = ?`).bind(notificationId).run();
-return new Response(
-JSON.stringify({ success: true, message: 'Notification deleted successfully' }),
-{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-} catch (error: any) {
-console.error('Delete notification error:', error);
-return new Response(
-JSON.stringify({ success: false, message: 'Failed to delete notification', error: error.message }),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+	const url = new URL(request.url);
+	const notificationId = url.searchParams.get('notification_id');
+	if (!notificationId) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'notification_id parameter is required' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+	try {
+		await env.DB.prepare(`DELETE FROM notifications WHERE id = ?`).bind(notificationId).run();
+		return new Response(
+			JSON.stringify({ success: true, message: 'Notification deleted successfully' }),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Delete notification error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to delete notification', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 /**
  * Handle GET /api/search?query=X
  */
 async function handleSearch(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-const url = new URL(request.url);
-const query = url.searchParams.get('query');
-if (!query || query.trim().length < 2) {
-return new Response(
-JSON.stringify({ success: false, message: 'Search query must be at least 2 characters' }),
-{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
-try {
-const searchTerm = `%${query.trim()}%`;
-const courses = await env.DB.prepare(`
+	const url = new URL(request.url);
+	const query = url.searchParams.get('query');
+	if (!query || query.trim().length < 2) {
+		return new Response(
+			JSON.stringify({ success: false, message: 'Search query must be at least 2 characters' }),
+			{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
+	try {
+		const searchTerm = `%${query.trim()}%`;
+		const courses = await env.DB.prepare(`
 SELECT course_id, title, description FROM courses 
 WHERE title LIKE ? OR description LIKE ?
 LIMIT 20
 `).bind(searchTerm, searchTerm).all();
-const materials = await env.DB.prepare(`
+		const materials = await env.DB.prepare(`
 SELECT id, title, description, type FROM content 
 WHERE (title LIKE ? OR description LIKE ?) AND is_approved = 1
 LIMIT 20
 `).bind(searchTerm, searchTerm).all();
-return new Response(
-JSON.stringify({
-success: true,
-message: 'Search completed successfully',
-data: {
-courses: courses.results || [],
-materials: materials.results || [],
-total: (courses.results?.length || 0) + (materials.results?.length || 0),
-},
-}),
-{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-} catch (error: any) {
-console.error('Search error:', error);
-return new Response(
-JSON.stringify({ success: false, message: 'Search failed', error: error.message }),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Search completed successfully',
+				data: {
+					courses: courses.results || [],
+					materials: materials.results || [],
+					total: (courses.results?.length || 0) + (materials.results?.length || 0),
+				},
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Search error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Search failed', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
 
 
 /**
- * Handle GET /api/courses - Get all available courses
+ * Handle GET /api/courses - Get all available courses OR single course by ID
  */
 async function handleGetCourses(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
-try {
-const result = await env.DB.prepare(`
-SELECT 
-course_id, title, description, instructor_name,
-created_at, updated_at
-FROM courses
-ORDER BY title ASC
-`).all();
+	const url = new URL(request.url);
+	const courseId = url.searchParams.get('id');
 
-return new Response(
-JSON.stringify({
-success: true,
-message: 'Courses fetched successfully',
-data: {
-courses: result.results || [],
-total: (result.results || []).length
-}
-}),
-{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-} catch (error: any) {
-console.error('Get courses error:', error);
-return new Response(
-JSON.stringify({ success: false, message: 'Failed to fetch courses', error: error.message }),
-{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-);
-}
+	try {
+		// If id parameter exists, return single course
+		if (courseId) {
+			const course = await env.DB.prepare(`
+				SELECT 
+					course_id, title, description, instructor_name,
+					created_at, updated_at
+				FROM courses
+				WHERE course_id = ?
+			`).bind(courseId).first();
+
+			if (!course) {
+				return new Response(
+					JSON.stringify({ success: false, message: 'Course not found' }),
+					{ status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+				);
+			}
+
+			return new Response(
+				JSON.stringify({
+					success: true,
+					message: 'Course fetched successfully',
+					data: course
+				}),
+				{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+
+		// Otherwise return all courses
+		const result = await env.DB.prepare(`
+			SELECT 
+				course_id, title, description, instructor_name,
+				created_at, updated_at
+			FROM courses
+			ORDER BY title ASC
+		`).all();
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				message: 'Courses fetched successfully',
+				data: {
+					courses: result.results || [],
+					total: (result.results || []).length
+				}
+			}),
+			{ headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	} catch (error: any) {
+		console.error('Get courses error:', error);
+		return new Response(
+			JSON.stringify({ success: false, message: 'Failed to fetch courses', error: error.message }),
+			{ status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+		);
+	}
 }
