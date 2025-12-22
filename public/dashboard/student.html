@@ -1408,25 +1408,25 @@
                 } else {
                     badge.classList.add('hidden');
                 }
+            }
 
-                // Handle notification click - delete notification and navigate to content
-                async function openNotification(notificationId, contentId, courseId) {
-                    try {
-                        // Delete the notification first
-                        fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notificationId=${notificationId}`, {
-                            method: 'DELETE'
-                        }).catch(err => console.error('Error deleting notification:', err));
+            // Handle notification click - delete notification and navigate to content
+            async function openNotification(notificationId, contentId, courseId) {
+                try {
+                    // Delete the notification first
+                    fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notificationId=${notificationId}`, {
+                        method: 'DELETE'
+                    }).catch(err => console.error('Error deleting notification:', err));
 
-                        // Navigate to the file page
-                        if (contentId && courseId) {
-                            window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
-                        } else {
-                            console.error('Missing contentId or courseId');
-                            await loadNotifications(); // Just refresh if can't navigate
-                        }
-                    } catch (error) {
-                        console.error('Error handling notification click:', error);
+                    // Navigate to the file page
+                    if (contentId && courseId) {
+                        window.location.href = `file.html?courseId=${courseId}&fileId=${contentId}`;
+                    } else {
+                        console.error('Missing contentId or courseId');
+                        await loadNotifications(); // Just refresh if can't navigate
                     }
+                } catch (error) {
+                    console.error('Error handling notification click:', error);
                 }
             }
 
