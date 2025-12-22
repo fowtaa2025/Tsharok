@@ -1382,17 +1382,17 @@
                 }
 
                 container.innerHTML = notifications.slice(0, 5).map(notif => `
-                    <div class="flex items-start gap-3 p-3 ${notif.isRead ? 'bg-white' : 'bg-blue-50'} rounded-lg hover:bg-gray-100 cursor-pointer transition border border-gray-200"
-                         onclick="openNotification(${notif.id}, ${notif.contentId}, ${notif.courseId})">
+                    <div class="flex items-start gap-3 p-3 ${notif.is_read ? 'bg-white' : 'bg-blue-50'} rounded-lg hover:bg-gray-100 cursor-pointer transition border border-gray-200"
+                         onclick="openNotification(${notif.id}, ${notif.content_id}, ${notif.course_id})">
                         <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-file-upload text-white text-sm"></i>
                         </div>
                         <div class="flex-1 min-w-0">
                             <h4 class="font-semibold text-gray-800 text-sm truncate">${notif.title}</h4>
                             <p class="text-xs text-gray-600 line-clamp-2">${notif.message}</p>
-                            <span class="text-xs text-gray-400">${formatDate(notif.createdAt)}</span>
+                            <span class="text-xs text-gray-400">${formatDate(notif.created_at)}</span>
                         </div>
-                        ${!notif.isRead ? '<div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>' : ''}
+                        ${!notif.is_read ? '<div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>' : ''}
                     </div>
                 `).join('');
             }
@@ -1413,8 +1413,8 @@
             // Handle notification click - delete notification and navigate to content
             async function openNotification(notificationId, contentId, courseId) {
                 try {
-                    // Delete the notification first
-                    fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notificationId=${notificationId}`, {
+                    // Delete the notification first (backend expects notification_id parameter)
+                    fetch(`https://tsharok-api.fow-taa-2025.workers.dev/api/notifications?notification_id=${notificationId}`, {
                         method: 'DELETE'
                     }).catch(err => console.error('Error deleting notification:', err));
 
